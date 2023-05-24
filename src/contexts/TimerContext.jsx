@@ -113,7 +113,7 @@ export default function TimerContext({ children }) {
         setIsPaused(false)
         timeoutId.current = setInterval(() => {
             setSeconds(prev => prev - 1)
-        }, 1)
+        }, 1000)
     }
 
     const pauseTimer = () => {
