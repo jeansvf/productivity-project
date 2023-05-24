@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from '../../firebase-config'
+import { auth, continueWithGoogle } from '../../firebase-config'
 
 export default function LoginForm() {
     const [loginCredentials, setLoginCredentials] = useState({
@@ -20,7 +20,7 @@ export default function LoginForm() {
     return (
         <form onSubmit={(e) => LoginFirebaseUser(e)} className="flex flex-col items-center w-full sm:w-[32rem] h-screen sm:h-[36rem] rounded-[.5rem] sm:border-2 border-white">
             <h1 className="mt-7 mb-7 text-[2.8rem] text-white font-semibold">Login</h1>
-            <button type='button' className='flex items-center bg-white px-[.6rem] py-1 rounded-full'>
+            <button onClick={() => continueWithGoogle()} type='button' className='flex items-center bg-white px-[.6rem] py-1 rounded-full'>
                 <FcGoogle className='mr-2 text-3xl' />
                 <p className='text-[1.2rem] leading-8 font-medium'>Continue with Google</p>
             </button>
