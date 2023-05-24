@@ -3,9 +3,10 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
-    const [pomodoroMinutes, setPomodoroMinutes] = useState(10)
-    const [longBreakMinutes, setLongBreakMinutes] = useState(30)
+    const [pomodoroMinutes, setPomodoroMinutes] = useState(25)
+    const [longBreakMinutes, setLongBreakMinutes] = useState(15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(5)
+    const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
@@ -18,44 +19,94 @@ export default function TimerContext({ children }) {
 
     const timeoutId = useRef()
 
+    // every second decrease minutes and check if timer ended
     useEffect(() => {
         decreaseMinutes()
     }, [seconds])
 
-    useEffect(() => {
-        if(breakInfo.isBreak == false) {
-            return
-        }
-        // set short or long break depending on total breaks
-        goToBreak()
-    }, [breakInfo.isBreak])
-
     const decreaseMinutes = () => {
+        // add seconds and decrease minutes when seconds countdown ends
         if(seconds < 0) {
             setSeconds(59)
             setMinutes(prev => prev - 1)
         }
-        // when timer reaches the end
+
+        // return if timer didn't end
         if(!(minutes <= 0 && seconds <= 0)) {
             return
         }
-        // if break is false, set break to true
-        if (breakInfo.isBreak == false) {
-            setBreakInfo({...breakInfo,
-                isBreak: true,
-                timerType: breakInfo.totalBreaks == 3 ? "long_break" : "short_break",
-                totalBreaks: breakInfo.totalBreaks + 1
-            })
+
+        // go to break if last timer wasnt a break
+        if (!breakInfo.isBreak) {
+            goToBreak()
             return
         }
-        // if break is true, set break to false
-        if (breakInfo.isBreak == true) {
-            setBreakInfo({...breakInfo, 
-                isBreak: false,
-                timerType: "pomodoro"
-            })
-            setMinutes(pomodoroMinutes)
+
+        // go to pomodoro if last timer was a break
+        if (breakInfo.isBreak) {
+            goToPomodoro()
         }
+    }
+
+    const goToBreak = (breakType) => {
+        setSeconds(0)
+
+        // if goToBreak() is being called with argument
+        switch (breakType) {
+            case "short_break":
+                pauseTimer()
+                setMinutes(shortBreakMinutes)
+                setBreakInfo({...breakInfo,
+                    isBreak: true,
+                    timerType: "short_break",
+                })
+            return;
+
+            case "long_break":
+                pauseTimer()
+                setMinutes(longBreakMinutes)
+                setBreakInfo({...breakInfo,
+                    isBreak: true,
+                    timerType: "long_break",
+                    totalBreaks: 0,
+                })
+            return;
+        
+            // if goToBreak() is being called without argument
+            default:
+                setBreakInfo({...breakInfo,
+                    isBreak: true,
+                    timerType: breakInfo.totalBreaks >= breaksUntilLongBreak ? "long_break" : "short_break",
+                    totalBreaks: breakInfo.totalBreaks + 1
+                })
+
+                // after 3 breaks execute a long break
+                if (breakInfo.totalBreaks >= breaksUntilLongBreak) {
+                    setMinutes(longBreakMinutes)
+                    setBreakInfo({...breakInfo,
+                        isBreak: true,
+                        timerType: "long_break",
+                        totalBreaks: 0,
+                    })
+                } else {
+                    setMinutes(shortBreakMinutes)
+                }
+            return;
+        }
+    }
+
+    const goToPomodoro = (pause) => {
+        // if pomodoro is being called with arguments
+        if(pause) {
+            setSeconds(0)
+            pauseTimer()
+        }
+
+        setBreakInfo({...breakInfo,
+            isBreak: false,
+            timerType: "pomodoro"
+        })
+        setMinutes(pomodoroMinutes)
     }
 
     const startTimer = () => {
@@ -70,14 +121,7 @@ export default function TimerContext({ children }) {
         clearInterval(timeoutId.current)
     }
 
-    const goToBreak = () => {
-        if(breakInfo.totalBreaks < 4) {
-            setMinutes(shortBreakMinutes)
-        } else {
-            setMinutes(longBreakMinutes)
-        }
-    }
-
+    // context value
     const value = {
         breakInfo,
         minutes,
@@ -85,6 +129,8 @@ export default function TimerContext({ children }) {
         isPaused,
         startTimer,
         pauseTimer,
+        goToPomodoro,
+        goToBreak,
     }
 
     return (
@@ -94,4 +140,5 @@ export default function TimerContext({ children }) {
     )
 }
 
+// timer context hook
 export const useTimerContext = () => useContext(TimerContextProvider);
