@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import arcadeAlarm from "../assets/alarms/arcade.wav"
+import cartoonAlarm from "../assets/alarms/cartoon.wav"
 
 const TimerContextProvider = createContext()
 
@@ -18,6 +20,10 @@ export default function TimerContext({ children }) {
     })
 
     const timeoutId = useRef()
+
+    const playAlarm = () => {
+        new Audio(cartoonAlarm).play()
+    }
 
     // every second decrease minutes and check if timer ended
     useEffect(() => {
@@ -74,6 +80,8 @@ export default function TimerContext({ children }) {
         
             // if goToBreak() is being called without argument
             default:
+                playAlarm()
+
                 setBreakInfo({...breakInfo,
                     isBreak: true,
                     timerType: breakInfo.totalBreaks >= breaksUntilLongBreak ? "long_break" : "short_break",
@@ -96,17 +104,21 @@ export default function TimerContext({ children }) {
     }
 
     const goToPomodoro = (pause) => {
-        // if pomodoro is being called with arguments
-        if(pause) {
-            setSeconds(0)
-            pauseTimer()
-        }
-
+        
         setBreakInfo({...breakInfo,
             isBreak: false,
             timerType: "pomodoro"
         })
         setMinutes(pomodoroMinutes)
+
+        // if pomodoro is being called with arguments
+        if(pause) {
+            setSeconds(0)
+            pauseTimer()
+            return;
+        }
+
+        playAlarm()
     }
 
     const startTimer = () => {
@@ -121,6 +133,22 @@ export default function TimerContext({ children }) {
         clearInterval(timeoutId.current)
     }
 
+    const skipTimer = () => {
+        setSeconds(0)
+        pauseTimer()
+        
+        // go to break if last timer wasnt a break
+        if (!breakInfo.isBreak) {
+            goToBreak()
+            return
+        }
+
+        // go to pomodoro if last timer was a break
+        if (breakInfo.isBreak) {
+            goToPomodoro()
+        }
+    }
+
     // context value
     const value = {
         breakInfo,
@@ -131,6 +159,7 @@ export default function TimerContext({ children }) {
         pauseTimer,
         goToPomodoro,
         goToBreak,
+        skipTimer
     }
 
     return (

@@ -1,9 +1,23 @@
+import { useState } from "react"
 import PomodoroTimer from "./PomodoroTimer"
+import Settings from "./Settings"
+import { AnimatePresence, motion } from "framer-motion"
 
 export default function Pomodoro() {
+    const [pomodoroConfigOpened, setPomodoroConfigOpened] = useState(false)
+
     return (
         <main className="flex items-center justify-center w-full h-screen text-white font-rubik font-medium">
-            <PomodoroTimer />
+            <AnimatePresence>
+                {!pomodoroConfigOpened && (
+                    <PomodoroTimer setPomodoroConfigOpened={setPomodoroConfigOpened} />
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
+                {pomodoroConfigOpened && (
+                    <Settings setPomodoroConfigOpened={setPomodoroConfigOpened} />
+                )}
+            </AnimatePresence>
         </main>
     )
 }

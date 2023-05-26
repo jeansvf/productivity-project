@@ -9,5 +9,8 @@ export default function LoginRoutes() {
     const [isAuth, setIsAuth] = useState(undefined)
     onAuthStateChanged(auth, (user) => user ? setIsAuth(true) : setIsAuth(false))
 
-    return isAuth ? <Navigate to={"/home"} /> : isAuth == undefined ? <LoadingPage /> : <Login />
+    return isAuth ? <Navigate to={"/home"} /> :
+    isAuth == false ? <Outlet /> :
+    isAuth == undefined ? <LoadingPage /> :
+    <Login />
 }
