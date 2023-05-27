@@ -21,14 +21,16 @@ export default function TimerContext({ children }) {
 
     const timeoutId = useRef()
 
-    const playAlarm = () => {
-        new Audio(cartoonAlarm).play()
-    }
-
     // every second decrease minutes and check if timer ended
     useEffect(() => {
         decreaseMinutes()
     }, [seconds])
+    
+    const playAlarm = () => {
+        let alarm = new Audio(arcadeAlarm)
+        alarm.volume = .1
+        alarm.play()
+    }
 
     const decreaseMinutes = () => {
         // add seconds and decrease minutes when seconds countdown ends
@@ -104,15 +106,14 @@ export default function TimerContext({ children }) {
     }
 
     const goToPomodoro = (pause) => {
-        
         setBreakInfo({...breakInfo,
             isBreak: false,
             timerType: "pomodoro"
         })
         setMinutes(pomodoroMinutes)
 
-        // if pomodoro is being called with arguments
-        if(pause) {
+        // if pomodoro was called paused, return
+        if(pause == "pause") {
             setSeconds(0)
             pauseTimer()
             return;
@@ -120,12 +121,12 @@ export default function TimerContext({ children }) {
 
         playAlarm()
     }
-
+    
     const startTimer = () => {
         setIsPaused(false)
         timeoutId.current = setInterval(() => {
             setSeconds(prev => prev - 1)
-        }, 1000)
+        }, 1)
     }
 
     const pauseTimer = () => {
@@ -149,6 +150,28 @@ export default function TimerContext({ children }) {
         }
     }
 
+    const customizeTimer = (timerType, newTime) => {
+        switch(timerType) {
+            case "pomodoro":
+            setPomodoroMinutes(newTime)
+            goToPomodoro("pause")
+            setMinutes(newTime)
+            return
+
+            case "long_break":
+            setLongBreakMinutes(newTime)
+            goToBreak("long_break")
+            setMinutes(newTime)
+            return
+
+            case "short_break":
+            setShortBreakMinutes(newTime)
+            goToBreak("short_break")
+            setMinutes(newTime)
+            return
+        }
+    }
+
     // context value
     const value = {
         breakInfo,
@@ -159,7 +182,11 @@ export default function TimerContext({ children }) {
         pauseTimer,
         goToPomodoro,
         goToBreak,
-        skipTimer
+        skipTimer,
+        customizeTimer,
+        pomodoroMinutes,
+        longBreakMinutes,
+        shortBreakMinutes,
     }
 
     return (
