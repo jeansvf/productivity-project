@@ -4,8 +4,8 @@ import NavBar from "./Navbar";
 export default function WithNav() {
     return (
         <>
-        <NavBar />
-        <Outlet />
+            <NavBar />
+            <Outlet />
         </>
     )
 }

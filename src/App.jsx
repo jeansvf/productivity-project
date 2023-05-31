@@ -8,6 +8,7 @@ import WithNav from "./components/WithNav"
 import WithoutNav from "./components/WithoutNav"
 import LoginRoutes from "./components/LoginRoutes"
 import ProtectedRoutes from "./components/ProtectedRoutes"
+import Todo from "./pages/Todo"
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
             <Route element={<WithNav />}>
               <Route path="/home" element={<Home />} />
               <Route path="/pomodoro" element={<Pomodoro />} />
+              <Route path="/todo" element={<Todo />} />
             </Route>
           </Route>
       </Routes>
