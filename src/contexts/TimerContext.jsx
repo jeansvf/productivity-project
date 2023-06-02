@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import arcadeAlarm from "../assets/alarms/arcade.wav"
 import cartoonAlarm from "../assets/alarms/cartoon.wav"
+import guitarAlarm from "../assets/alarms/guitar.wav"
 
 const TimerContextProvider = createContext()
 
@@ -9,6 +10,8 @@ export default function TimerContext({ children }) {
     const [longBreakMinutes, setLongBreakMinutes] = useState(15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(5)
     const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
+    const [alarm, setAlarm] = useState("arcade")
+    const [alarmVolume, setAlarmVolume] = useState(.5)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
@@ -27,9 +30,25 @@ export default function TimerContext({ children }) {
     }, [seconds])
     
     const playAlarm = () => {
-        let alarm = new Audio(arcadeAlarm)
-        alarm.volume = .1
-        alarm.play()
+        switch (alarm) {
+            case "arcade":
+                let arcade = new Audio(arcadeAlarm)
+                arcade.volume = alarmVolume
+                arcade.play()
+                return;
+        
+            case "cartoon":
+                let cartoon = new Audio(cartoonAlarm)
+                cartoon.volume = alarmVolume
+                cartoon.play()
+                return;
+
+            case "guitar":
+                let guitar = new Audio(guitarAlarm)
+                guitar.volume = alarmVolume
+                guitar.play()
+                return;
+        }
     }
 
     const decreaseMinutes = () => {
@@ -187,6 +206,11 @@ export default function TimerContext({ children }) {
         pomodoroMinutes,
         longBreakMinutes,
         shortBreakMinutes,
+        alarm,
+        alarmVolume,
+        setAlarmVolume,
+        playAlarm,
+        setAlarm
     }
 
     return (

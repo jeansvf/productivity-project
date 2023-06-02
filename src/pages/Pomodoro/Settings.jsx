@@ -1,14 +1,44 @@
 import { AnimatePresence, color, motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
-import { BsFillCaretDownFill } from "react-icons/bs";
+import { BsCaretUpFill, BsFillCaretDownFill } from "react-icons/bs";
 import { useTimerContext } from "../../contexts/TimerContext";
 import { useState } from "react";
+import arcadeAlarm from "../../assets/alarms/arcade.wav"
+import cartoonAlarm from "../../assets/alarms/cartoon.wav"
+import guitarAlarm from "../../assets/alarms/guitar.wav"
 
 export default function Settings({setPomodoroConfigOpened}) {
     const [selectedTimer, setSelectedTimer] = useState("pomodoro")
-    const [dropDownMenu, setDropDownMenu] = useState(false)
+    const [showDropDownMenu, setShowDropDownMenu] = useState(false)
 
-    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes } = useTimerContext()
+    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes, alarm, alarmVolume, setAlarmVolume, setAlarm } = useTimerContext()
+
+    const handleAlarmClick = (selectedAlarm) => {
+        setShowDropDownMenu(false)
+
+        switch (selectedAlarm) {
+            case "cartoon":
+                setAlarm("cartoon")
+                let cartoon = new Audio(cartoonAlarm)
+                cartoon.volume = alarmVolume
+                cartoon.play()
+                return;
+            
+            case "arcade":
+                setAlarm("arcade")
+                let arcade = new Audio(arcadeAlarm)
+                arcade.volume = alarmVolume
+                arcade.play()
+                return;
+
+            case "guitar":
+                setAlarm("guitar")
+                let guitar = new Audio(guitarAlarm)
+                guitar.volume = alarmVolume
+                guitar.play()
+                return;
+        }
+    }
 
     return (
         <motion.div
@@ -38,21 +68,21 @@ export default function Settings({setPomodoroConfigOpened}) {
                 <button onClick={() => setSelectedTimer("long_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "long_break" ? "bg-[#fff082]" : "text-white"} `} type="button">Long Break</button>
                 <button onClick={() => setSelectedTimer("short_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "short_break" ? "bg-[#84FF82]" : "text-white"}`} type="button">Short Break</button>
             </div>
-            <div className="relative text-6xl">
-                <input onChange={(event) => event.target.value < 100 ? customizeTimer(selectedTimer, event.target.value) : null} value={selectedTimer == "pomodoro" ? pomodoroMinutes : selectedTimer == "long_break" ? longBreakMinutes : selectedTimer == "short_break" ? shortBreakMinutes : ""} className="flex bg-black bg-opacity-30 rounded-lg w-52 my-5 px-4" />
-                <span className="absolute pointer-events-none -translate-y-1/2 top-1/2 right-5">:00</span>
+            <div className="flex flex-col relative items-center mt-5 mb-4">
+                <input onChange={(event) => event.target.value < 100 ? customizeTimer(selectedTimer, event.target.value) : null} value={selectedTimer == "pomodoro" ? pomodoroMinutes : selectedTimer == "long_break" ? longBreakMinutes : selectedTimer == "short_break" ? shortBreakMinutes : ""} type="text" className="flex w-24 text-center bg-black text-6xl bg-opacity-30 rounded-lg px-2" />
+                <p>minutes</p>
             </div>
             <div className="flex text-xl">
                 <p className="self-center">Alarm Sound:</p>
                 <div className="mx-2 flex-col relative">
-                    <button onClick={() => setDropDownMenu(!dropDownMenu)} className={`flex items-center justify-between py-1 px-2 ${dropDownMenu ? "rounded-tl-[0.3rem] rounded-tr-[0.3rem]" : "rounded-[0.3rem]"} overflow-hidden text-white bg-black bg-opacity-30`} type="button">
-                        Cartoon
-                        <BsFillCaretDownFill className="pl-1" />
+                    <button onClick={() => setShowDropDownMenu(!showDropDownMenu)} className={`flex items-center justify-between py-1 px-2 ${showDropDownMenu ? "rounded-tl-[0.3rem] rounded-tr-[0.3rem]" : "rounded-[0.3rem]"} overflow-hidden text-white bg-black bg-opacity-30`} type="button">
+                        <p className="capitalize">{alarm}</p>
+                        {showDropDownMenu ? <BsCaretUpFill className="pl-1" /> : <BsFillCaretDownFill className="pl-1" />}
                     </button>
 
                     {/* DROPDOWN MENU */}
                     <AnimatePresence>
-                        {dropDownMenu ? (
+                        {showDropDownMenu ? (
                             <motion.div
                             initial={{
                                 y: -50,
@@ -69,12 +99,20 @@ export default function Settings({setPomodoroConfigOpened}) {
                                     duration: .1
                                 }
                             }} className="absolute left-0 w-full">
-                                <button onClick={() => setDropDownMenu(false)} className={`w-full flex items-center py-1 px-2 text-white bg-black bg-opacity-30 hover:bg-opacity-10`} type="button">
+                                <button onClick={() => handleAlarmClick("cartoon")} className={`w-full flex items-center py-1 px-2 text-white bg-black bg-opacity-30 hover:bg-opacity-10`} type="button">
                                     Cartoon
                                 </button>
-                                <button onClick={() => setDropDownMenu(false)} className={`w-full flex items-center py-1 px-2 rounded-bl-[0.3rem] rounded-br-[0.3rem] text-white bg-black bg-opacity-30 hover:bg-opacity-10`} type="button">
+                                <button onClick={() => handleAlarmClick("arcade")} className={`w-full flex items-center py-1 px-2 text-white bg-black bg-opacity-30 hover:bg-opacity-10`} type="button">
                                     Arcade
                                 </button>
+                                <button onClick={() => handleAlarmClick("guitar")} className={`w-full flex items-center py-1 px-2 text-white bg-black bg-opacity-30 hover:bg-opacity-10`} type="button">
+                                    Guitar
+                                </button>
+                                <div className="bg-black bg-opacity-30 px-1 rounded-bl-[0.3rem] rounded-br-[0.3rem]">
+                                    <input onChange={(event) => {
+                                        setAlarmVolume(event.target.value);
+                                    }} value={alarmVolume} min="0" max="1" step=".1" type="range" className="range accent-white w-full mt-1" /> 
+                                </div>
                             </motion.div> ) : null}    
                     </AnimatePresence>
                 </div>
