@@ -1,4 +1,4 @@
-import { AnimatePresence, color, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { BsCaretUpFill, BsFillCaretDownFill } from "react-icons/bs";
 import { useTimerContext } from "../../contexts/TimerContext";
@@ -10,34 +10,56 @@ import guitarAlarm from "../../assets/alarms/guitar.wav"
 export default function Settings({setPomodoroConfigOpened}) {
     const [selectedTimer, setSelectedTimer] = useState("pomodoro")
     const [showDropDownMenu, setShowDropDownMenu] = useState(false)
+    const [rangeInputValue, setRangeInputValue] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.volume ? JSON.parse(localStorage.getItem("alarm_settings")).volume : .5)
 
-    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes, alarm, alarmVolume, setAlarmVolume, setAlarm } = useTimerContext()
+    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes } = useTimerContext()
 
     const handleAlarmClick = (selectedAlarm) => {
         setShowDropDownMenu(false)
-
+        
+        let alarmVolume = JSON.parse(localStorage.getItem("alarm_settings"))?.volume ? JSON.parse(localStorage.getItem("alarm_settings")).volume : .5
+        let alarm;
+        
         switch (selectedAlarm) {
             case "cartoon":
-                setAlarm("cartoon")
-                let cartoon = new Audio(cartoonAlarm)
-                cartoon.volume = alarmVolume
-                cartoon.play()
+                addAlarmSoundToLocalStorage("cartoon")
+
+                // play cartoon audio
+                alarm = new Audio(cartoonAlarm)
+                alarm.volume = alarmVolume
+                alarm.play()
+                return;
+                
+            case "arcade":
+                addAlarmSoundToLocalStorage("arcade")
+
+                // play cartoon audio
+                alarm = new Audio(arcadeAlarm)
+                alarm.volume = alarmVolume
+                alarm.play()
                 return;
             
-            case "arcade":
-                setAlarm("arcade")
-                let arcade = new Audio(arcadeAlarm)
-                arcade.volume = alarmVolume
-                arcade.play()
-                return;
-
             case "guitar":
-                setAlarm("guitar")
-                let guitar = new Audio(guitarAlarm)
-                guitar.volume = alarmVolume
-                guitar.play()
+                addAlarmSoundToLocalStorage("guitar")
+
+                // play cartoon audio
+                alarm = new Audio(guitarAlarm)
+                alarm.volume = alarmVolume
+                alarm.play()
                 return;
         }
+    }
+
+    const addAlarmSoundToLocalStorage = (alarm) => {
+        let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
+        newAlarmSettings.alarmSound = alarm
+        localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
+    }
+
+    const addAlarmVolumeToLocalStorage = (event) => {
+        let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
+        newAlarmSettings.volume = event.target.value
+        localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
     }
 
     return (
@@ -76,7 +98,7 @@ export default function Settings({setPomodoroConfigOpened}) {
                 <p className="self-center">Alarm Sound:</p>
                 <div className="mx-2 flex-col relative">
                     <button onClick={() => setShowDropDownMenu(!showDropDownMenu)} className={`flex items-center justify-between py-1 px-2 ${showDropDownMenu ? "rounded-tl-[0.3rem] rounded-tr-[0.3rem]" : "rounded-[0.3rem]"} overflow-hidden text-white bg-black bg-opacity-30`} type="button">
-                        <p className="capitalize">{alarm}</p>
+                        <p className="capitalize">{JSON.parse(localStorage.getItem("alarm_settings"))?.alarmSound ? JSON.parse(localStorage.getItem("alarm_settings"))?.alarmSound : "Arcade"}</p>
                         {showDropDownMenu ? <BsCaretUpFill className="pl-1" /> : <BsFillCaretDownFill className="pl-1" />}
                     </button>
 
@@ -110,10 +132,11 @@ export default function Settings({setPomodoroConfigOpened}) {
                                 </button>
                                 <div className="bg-black bg-opacity-30 px-1 rounded-bl-[0.3rem] rounded-br-[0.3rem]">
                                     <input onChange={(event) => {
-                                        setAlarmVolume(event.target.value);
-                                    }} value={alarmVolume} min="0" max="1" step=".1" type="range" className="range accent-white w-full mt-1" /> 
+                                        addAlarmVolumeToLocalStorage(event)
+                                        setRangeInputValue(event.target.value)
+                                    }} value={rangeInputValue} min="0" max="1" step=".1" type="range" className="range accent-white w-full mt-1" /> 
                                 </div>
-                            </motion.div> ) : null}    
+                            </motion.div> ) : null}
                     </AnimatePresence>
                 </div>
                 <motion.button

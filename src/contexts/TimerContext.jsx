@@ -10,8 +10,6 @@ export default function TimerContext({ children }) {
     const [longBreakMinutes, setLongBreakMinutes] = useState(15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(5)
     const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
-    const [alarm, setAlarm] = useState("arcade")
-    const [alarmVolume, setAlarmVolume] = useState(.5)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
@@ -30,23 +28,31 @@ export default function TimerContext({ children }) {
     }, [seconds])
     
     const playAlarm = () => {
-        switch (alarm) {
+        let alarmSettings = JSON.parse(localStorage.getItem("alarm_settings"))
+
+        switch (alarmSettings?.alarmSound) {
             case "arcade":
                 let arcade = new Audio(arcadeAlarm)
-                arcade.volume = alarmVolume
+                arcade.volume = alarmSettings?.volume ? alarmSettings.volume : .5
                 arcade.play()
                 return;
         
             case "cartoon":
                 let cartoon = new Audio(cartoonAlarm)
-                cartoon.volume = alarmVolume
+                cartoon.volume = alarmSettings?.volume ? alarmSettings.volume : .5
                 cartoon.play()
                 return;
 
             case "guitar":
                 let guitar = new Audio(guitarAlarm)
-                guitar.volume = alarmVolume
+                guitar.volume = alarmSettings?.volume ? alarmSettings.volume : .5
                 guitar.play()
+                return;
+
+            default:
+                let defaultAlarm = new Audio(arcadeAlarm)
+                defaultAlarm.volume = alarmSettings?.volume ? alarmSettings.volume : .5
+                defaultAlarm.play()
                 return;
         }
     }
@@ -206,11 +212,7 @@ export default function TimerContext({ children }) {
         pomodoroMinutes,
         longBreakMinutes,
         shortBreakMinutes,
-        alarm,
-        alarmVolume,
-        setAlarmVolume,
         playAlarm,
-        setAlarm
     }
 
     return (
