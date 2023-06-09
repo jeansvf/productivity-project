@@ -6,6 +6,19 @@
   font-family: 'Inter', sans-serif;
 }
 
+#goal-tasks-window {
+  overflow-y: scroll;
+}
+
+#goal-tasks-window::-webkit-scrollbar {
+  display: none
+}
+
+#goal-tasks-window {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

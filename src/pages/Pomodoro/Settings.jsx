@@ -62,6 +62,27 @@ export default function Settings({setPomodoroConfigOpened}) {
         localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
     }
 
+    const addAlarmMinutesToLocalStorage = (timerType, newTime) => {
+        let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
+        
+        switch (timerType) {
+            case "pomodoro":
+                newAlarmSettings.pomodoroMinutes = newTime
+                break;
+            
+            case "long_break":
+                newAlarmSettings.longBreakMinutes = newTime
+                break;
+            
+            case "short_break":
+                newAlarmSettings.shortBreakMinutes = newTime
+                break;
+        }
+
+        localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
+        customizeTimer(timerType, newTime)
+    }
+
     return (
         <motion.div
         initial={{
@@ -91,7 +112,13 @@ export default function Settings({setPomodoroConfigOpened}) {
                 <button onClick={() => setSelectedTimer("short_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "short_break" ? "bg-[#84FF82]" : "text-white"}`} type="button">Short Break</button>
             </div>
             <div className="flex flex-col relative items-center mt-5 mb-4">
-                <input onChange={(event) => event.target.value < 100 ? customizeTimer(selectedTimer, event.target.value) : null} value={selectedTimer == "pomodoro" ? pomodoroMinutes : selectedTimer == "long_break" ? longBreakMinutes : selectedTimer == "short_break" ? shortBreakMinutes : ""} type="text" className="flex w-24 text-center bg-black text-6xl bg-opacity-30 rounded-lg px-2" />
+                <input onChange={(event) => {
+                    if (event.target.value < 100 && event.target.value.toString().length < 3) {
+                        addAlarmMinutesToLocalStorage(selectedTimer, event.target.value)
+                        customizeTimer(selectedTimer, event.target.value)
+                    }
+                }} value={selectedTimer == "pomodoro" ? pomodoroMinutes : selectedTimer == "long_break" ? longBreakMinutes : selectedTimer == "short_break" ? shortBreakMinutes : ""}
+                type="text" className="flex w-24 text-center bg-black text-6xl bg-opacity-30 rounded-lg px-2" />
                 <p>minutes</p>
             </div>
             <div className="flex text-xl">

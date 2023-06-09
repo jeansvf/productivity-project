@@ -6,9 +6,9 @@ import guitarAlarm from "../assets/alarms/guitar.wav"
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
-    const [pomodoroMinutes, setPomodoroMinutes] = useState(25)
-    const [longBreakMinutes, setLongBreakMinutes] = useState(15)
-    const [shortBreakMinutes, setShortBreakMinutes] = useState(5)
+    const [pomodoroMinutes, setPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes : 25)
+    const [longBreakMinutes, setLongBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes : 15)
+    const [shortBreakMinutes, setShortBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes : 5)
     const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
@@ -22,10 +22,18 @@ export default function TimerContext({ children }) {
 
     const timeoutId = useRef()
 
-    // every second decrease minutes and check if timer ended
     useEffect(() => {
         decreaseMinutes()
     }, [seconds])
+    
+    /*TODO:
+    useEffect(() => {
+        if (isPaused) {
+            return
+        } else {
+            timeout 1 min then add 1 min to server
+        }
+    }, [isPaused])*/
     
     const playAlarm = () => {
         let alarmSettings = JSON.parse(localStorage.getItem("alarm_settings"))
@@ -151,7 +159,7 @@ export default function TimerContext({ children }) {
         setIsPaused(false)
         timeoutId.current = setInterval(() => {
             setSeconds(prev => prev - 1)
-        }, 1)
+        }, 1000)
     }
 
     const pauseTimer = () => {
@@ -210,6 +218,7 @@ export default function TimerContext({ children }) {
         skipTimer,
         customizeTimer,
         pomodoroMinutes,
+        setPomodoroMinutes,
         longBreakMinutes,
         shortBreakMinutes,
         playAlarm,

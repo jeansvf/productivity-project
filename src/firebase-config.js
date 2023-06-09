@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
+import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth"
+import { addDoc, collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,16 +16,10 @@ const app = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider()
 
 export const continueWithGoogle = () => {
-  // sign in with google
-  signInWithPopup(auth, provider)
-
-  .then((result) => {
-    // TODO: save user info in database
-    console.log(result.user.email);
-    console.log(result.user.displayName);
-    console.log(result.user.photoURL);
-    console.log(result.user.uid);
+  signInWithPopup(auth, provider).then((userCred) => {
+    setDoc(doc(db, "users", userCred.user.uid), JSON.parse(JSON.stringify(userCred.user)))
   })
 }
 
 export const auth = getAuth(app)
+export const db = getFirestore(app)

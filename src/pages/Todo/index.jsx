@@ -1,59 +1,62 @@
-import { IoIosAdd } from "react-icons/io";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import Item from './Item';
+import { IoIosAdd } from 'react-icons/io';
+import Column from './Column';
+import { useState } from 'react';
 
 export default function Todo() {
-    return (
-        <main className="flex text-white pt-[4.5rem] pl-4">
-            <div className="flex flex-col items-center w-80 h-fit bg-[#2E2E2E] rounded-[.4rem] mr-5">
-                <h2 className="w-[90%] py-4 font-semibold text-[17px]">Todo</h2>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#F478FF]"></div>
-                    <p className="pl-1">fix login screen appearance on re...</p>
-                </div>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#78D7FF]"></div>
-                    <p className="pl-1">add profile picture changing</p>
-                </div>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#FFA978]"></div>
-                    <p className="pl-1">add forgot password</p>
-                </div>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#78FF9E]"></div>
-                    <p className="pl-1">add quiz title changing</p>
-                </div>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#78D7FF]"></div>
-                    <p className="pl-1">add answers score explanation</p>
-                </div>
-                <button className="flex w-[92%] pt-1 pb-3 items-center"><IoIosAdd className="text-2xl" /> Add Task</button>
-            </div>
-            
-            <div className="flex flex-col items-center w-80 h-fit bg-[#2E2E2E] rounded-[.4rem] mr-5">
-                <h2 className="w-[90%] py-4 font-semibold text-[17px]">Doing</h2>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#78FF9E]"></div>
-                    <p className="pl-1">add answers color</p>
-                </div>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#78D7FF]"></div>
-                    <p className="pl-1">add forgot password</p>
-                </div>
-                <button className="flex w-[92%] pt-1 pb-3 items-center"><IoIosAdd className="text-2xl" /> Add Task</button>
-            </div>
-            
-            <div className="flex flex-col items-center w-80 h-fit bg-[#2E2E2E] rounded-[.4rem] mr-5">
-                <h2 className="w-[90%] py-4 font-semibold text-[17px]">Done</h2>
-                <div className="flex items-center cursor-pointer bg-[#4F4F4F] w-[92%] h-10 mb-2 rounded-[.25rem]">
-                    <div className="w-2 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#F478FF]"></div>
-                    <p className="pl-1">add answers score</p>
-                </div>
-                <button className="flex w-[92%] pt-1 pb-3 items-center"><IoIosAdd className="text-2xl" /> Add Task</button>
-            </div>
+    // const [columns, setColumns] = useState([
+    //   { id: '1', title: 'Todo', key: 11},
+    //   { id: '2', title: 'Doing', key: 22},
+    //   { id: '3', title: 'Done', key: 33},
+    // ])
+        
+    // const handleOnDragEnd = (result) => {
+    //   let columnSource = structuredClone(columns)
+    //   let draggedItem = {}
 
-            <div className="flex items-center cursor-pointer pl-4 w-56 h-12 text-lg border-[1px] rounded-[.4rem]">
-                <IoIosAdd className="text-[1.75rem] text-start" />
-                Add Another List
-            </div>
-        </main>
+    //   for (let i in columnSource) {
+    //     if(columnSource[i].id == result.draggableId) {
+    //       draggedItem = columnSource[i]
+    //     }
+    //   }
+
+    //   if (result.type == "column") {
+
+    //     console.log("dragged item: ", draggedItem);
+    //     console.log("source :", result.source);
+    //     console.log("destination :", result.destination);
+    //     console.log("result :", result);
+
+    //     const newColumns = structuredClone(columns)
+    //     newColumns.splice(result.source.index, 1)
+    //     newColumns.splice(result.destination.index, 0, draggedItem)
+        
+    //     setColumns(newColumns)
+    //     console.log(columns);
+    //     return
+    //   }
+    // }
+
+    return (
+      <main className='flex w-full h-screen items-center justify-center'>
+        not finished yet
+      </main>
+    //   <DragDropContext onDragEnd={handleOnDragEnd}>
+    //     <Droppable type="column" droppableId='all-columns' direction='horizontal'>
+    //       {(provided) => (
+    //         <main 
+    //           {...provided.droppableProps}
+    //           ref={provided.innerRef}
+    //           className='flex w-full h-screen items-center justify-center'
+    //         >
+    //           {columns.map((column, index) => (
+    //             <Column columnId={column.id} index={index} title={column.title} key={crypto.randomUUID()} />
+    //             ))}
+    //           {provided.placeholder}
+    //         </main>
+    //       )}
+    //     </Droppable>
+    //   </DragDropContext>
     )
 }

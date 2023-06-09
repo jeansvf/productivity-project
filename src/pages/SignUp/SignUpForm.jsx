@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth"
-import { auth, continueWithGoogle } from "../../firebase-config"
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup } from "firebase/auth"
+import { auth, db, continueWithGoogle } from "../../firebase-config"
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 
 export default function SignUpForm() {
     const [signUpCredentials, setSignUpCredentials] = useState({
@@ -41,9 +42,14 @@ export default function SignUpForm() {
         }
 
         // sign up user
-        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
-
-        // TODO: CREATE USER'S DATABASE COLLECTION
+        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password).then(() => {
+            // TODO: SEARCH FOR ANOTHER WAY TO DO THIS
+            onAuthStateChanged(auth, user => {
+                if(user) {
+                    setDoc(doc(db, "users", user.uid), JSON.parse(JSON.stringify(user)))
+                }
+            })
+        })
     }
 
     return (

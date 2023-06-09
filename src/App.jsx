@@ -9,6 +9,7 @@ import WithoutNav from "./components/WithoutNav"
 import LoginRoutes from "./components/LoginRoutes"
 import ProtectedRoutes from "./components/ProtectedRoutes"
 import Todo from "./pages/Todo"
+import Goals from "./pages/Goals"
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/pomodoro" element={<Pomodoro />} />
               <Route path="/todo" element={<Todo />} />
+              <Route path="/goals" element={<Goals />} />
             </Route>
           </Route>
       </Routes>

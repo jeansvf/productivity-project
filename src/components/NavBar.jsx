@@ -13,9 +13,9 @@ export default function NavBar() {
             <Link to={"/pomodoro"} className="flex items-center w-[9.3rem] h-10 pt-[.4rem] mr-1 p-1 bg-[#FF7373] hover:opacity-80">
                 <GiTomato className="ml-1 mr-[.4rem] mb-[.2rem] text-[2rem]" /> Pomodoro
             </Link>
-            <Link to={"/music"} className="flex items-center w-[9.3rem] h-10 pt-[.4rem] mr-1 p-1 bg-[#FF71CE] hover:opacity-80">
+            {/* <Link to={"/music"} className="flex items-center w-[9.3rem] h-10 pt-[.4rem] mr-1 p-1 bg-[#FF71CE] hover:opacity-80">
                 <GiMusicalNotes className="ml-1 mr-2 mb-[.2rem] text-[1.9rem]" /> Music
-            </Link>
+            </Link> */}
             <Link to={"/todo"} className="flex items-center w-[9.3rem] h-10 pt-[.4rem] mr-1 p-1 bg-[#71EEFF] hover:opacity-80">
                 <IoMdCheckboxOutline className="ml-1 mr-1 mb-[.2rem] text-[2rem]" /> Todo
             </Link>
