@@ -6,12 +6,12 @@ import Goal from "./Goal";
 import TemporaryGoal from "./TemporaryGoal";
 
 export default function Goals() {
+    const [goals, setGoals] = useState()
+    const [creatingTemporaryGoal, setCreatingTemporaryGoal] = useState(false)
+    
     useEffect(() => {
         getUserGoals()
     }, [])
-    
-    const [goals, setGoals] = useState()
-    const [creatingTemporaryGoal, setCreatingTemporaryGoal] = useState(false)
 
     const getUserGoals = async () => {
         let goalsDocs = await getDocs(query(collection(db, "goals"), where("goalOwnerUid", "==", auth.currentUser.uid)))
@@ -20,9 +20,9 @@ export default function Goals() {
     }
 
     return (
-        <main className="flex w-full pt-20 text-white">
-            {goals ? goals?.map((goal, index) => (
-                <Goal goal={goal} key={index} />
+        <main className="flex w-full pl-2 pt-20 text-white">
+            {goals ? goals?.map((goal, goalIndex) => (
+                <Goal goals={goals} goal={goal} goalIndex={goalIndex} setGoals={setGoals} key={goalIndex} />
             )) : null}
 
             {creatingTemporaryGoal ? (

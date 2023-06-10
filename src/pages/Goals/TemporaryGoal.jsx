@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 import TemporaryTask from "./TemporaryTask";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 
 export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }) {
@@ -35,10 +35,14 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
         }
 
         setIsLoading(true)
+        let goalIdRef = doc(collection(db, "goals")).id
+
         let newGoal = structuredClone(temporaryGoal)
         newGoal.goalOwnerUid = auth.currentUser.uid
         newGoal.isGoalComplete = false
-        addDoc(collection(db, "goals"), newGoal).then(() => setIsLoading(false)).then(() => {
+        newGoal.goalId = goalIdRef
+
+        setDoc(doc(db, "goals", goalIdRef), newGoal).then(() => setIsLoading(false)).then(() => {
             getUserGoals()
             setCreatingTemporaryGoal(false)
             setIsLoading(false)
@@ -52,7 +56,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
             }} autoFocus className="font-bold pl-2 pt-[.3rem] bg-transparent outline-none" placeholder={"Type Goal Title"} />
             
             <div id="goal-tasks-window">
-                {temporaryGoal?.tasks?.map((task, index) => <TemporaryTask temporaryGoal={temporaryGoal} setTemporaryGoal={setTemporaryGoal} task={task} index={index} key={index} />)}
+                {temporaryGoal?.tasks?.map((task, taskIndex) => <TemporaryTask temporaryGoal={temporaryGoal} setTemporaryGoal={setTemporaryGoal} task={task} taskIndex={taskIndex} key={taskIndex} />)}
             </div>
 
             <div className="mt-auto">

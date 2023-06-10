@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Task from "./Task";
 import { IoIosAdd } from "react-icons/io";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase-config";
 
-export default function Goal({ goal }) {
+export default function Goal({ goals, goal, goalIndex, setGoals }) {
     useEffect(() => {
         getGoalProgress()
-    }, [])
+    }, [goal])
     
     const [goalProgress, setGoalProgress] = useState()
+    
+    const writingTimeout = useRef()
     
     const getGoalProgress = () => {
         let doneTasks = 0;
@@ -20,18 +24,40 @@ export default function Goal({ goal }) {
         setGoalProgress(Math.floor((doneTasks / (doneTasks + notDoneTasks)) * 100));
     }
 
+    const changeGoalTitle = (event) => {
+        clearTimeout(writingTimeout.current)
+
+        // change goal title from state
+        let newGoals = structuredClone(goals)
+        newGoals[goalIndex].title = event.target.value
+        setGoals(newGoals)
+
+        // after 500ms change goal title from database
+        writingTimeout.current = setTimeout(() => {
+            setDoc(doc(db, "goals", newGoals[goalIndex].goalId), newGoals[goalIndex])
+        }, 500)
+    }
+
+    const addNewTask = () => {
+        let newGoals = structuredClone(goals)
+        newGoals[goalIndex].tasks.push({
+            taskContent: "New Task"
+        })
+        setGoals(newGoals)
+    }
+
     return (
         <div className="flex flex-col w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
-            <p className="font-bold pl-2 pt-[.3rem]">{goal.title}</p>
+            <input onChange={(event) => changeGoalTitle(event)} className="font-bold mx-2 mt-[.3rem] bg-transparent" value={goal.title} />
 
             <div id="goal-tasks-window">
-                {goal?.tasks?.map((task, index) => (
-                    <Task task={task} key={index} />
+                {goal?.tasks?.map((task, taskIndex) => (
+                    <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} key={taskIndex} />
                 ))}
             </div>
 
             <div className="mt-auto">
-                <button type="button" className="flex items-center text-sm opacity-60 cursor-pointer pl-3 pb-[.6rem] pt-[.12rem]">
+                <button onClick={() => addNewTask()} type="button" className="flex items-center text-sm opacity-60 cursor-pointer pl-3 pb-[.6rem] pt-[.12rem]">
                     <IoIosAdd className="w-5 h-5" />
                     <p>Add Task</p>
                 </button>
@@ -46,8 +72,6 @@ export default function Goal({ goal }) {
                     </div>
                 </div>
             </div>
-
-            
         </div>
     )
 }
