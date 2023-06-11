@@ -17,7 +17,7 @@ export default function TemporaryTask({ task, taskIndex, setTemporaryGoal, tempo
                     taskContent: event.target.value,
                 }
                 setTemporaryGoal(newTask)
-            }} className="bg-transparent" placeholder="Type a task" />
+            }} className="bg-transparent" placeholder="Type task..." />
             
             <FaTrash onClick={() => {
                 let newTask = structuredClone(temporaryGoal)

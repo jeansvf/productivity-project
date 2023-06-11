@@ -3,6 +3,7 @@ import { IoIosAdd } from "react-icons/io";
 import TemporaryTask from "./TemporaryTask";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
+import { motion } from "framer-motion";
 
 export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }) {
     const [isLoading, setIsLoading] = useState()
@@ -53,13 +54,13 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
         <div className="flex flex-col w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
             <input type="text" onChange={(event) => {
                 setTemporaryGoal({...temporaryGoal, title: event.target.value})
-            }} autoFocus className="font-bold pl-2 pt-[.3rem] bg-transparent outline-none" placeholder={"Type Goal Title"} />
+            }} autoFocus className="font-bold pl-2 pt-[.3rem] bg-transparent outline-none" placeholder={"Type the goal title..."} />
             
             <div id="goal-tasks-window">
                 {temporaryGoal?.tasks?.map((task, taskIndex) => <TemporaryTask temporaryGoal={temporaryGoal} setTemporaryGoal={setTemporaryGoal} task={task} taskIndex={taskIndex} key={taskIndex} />)}
             </div>
 
-            <div className="mt-auto">
+            <div className="mt-auto relative">
                 <button onClick={() => {
                     setTemporaryGoal({...temporaryGoal, tasks: [...temporaryGoal?.tasks, {
                         taskContent: ""
@@ -75,7 +76,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
                             <div className="inline-block h-5 w-5 animate-spin rounded-full border-[3px] border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
                                 <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
-                        ) : "Create Goal"} 
+                        ) : "Create Goal"}
                     </button>
                 </div>
             </div>
