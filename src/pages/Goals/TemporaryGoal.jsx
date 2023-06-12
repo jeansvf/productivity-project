@@ -52,9 +52,12 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
 
     return (
         <div className="flex flex-col w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
-            <input type="text" onChange={(event) => {
-                setTemporaryGoal({...temporaryGoal, title: event.target.value})
-            }} autoFocus className="font-bold pl-2 pt-[.3rem] bg-transparent outline-none" placeholder={"Type the goal title..."} />
+            <div className="flex">
+                <input onChange={(event) => {
+                    setTemporaryGoal({...temporaryGoal, title: event.target.value})
+                }} autoFocus className="w-[60%] font-bold ml-2 mt-[.3rem] bg-transparent outline-none" placeholder={"Type the goal title..."} type="text" />
+                <input onChange={(event) => setTemporaryGoal({...temporaryGoal, goalDate: event.target.value})} className="w-[40%] font-bold mr-1 mt-[.3rem] bg-transparent opacity-70" type="date" />
+            </div>
             
             <div id="goal-tasks-window">
                 {temporaryGoal?.tasks?.map((task, taskIndex) => <TemporaryTask temporaryGoal={temporaryGoal} setTemporaryGoal={setTemporaryGoal} task={task} taskIndex={taskIndex} key={taskIndex} />)}

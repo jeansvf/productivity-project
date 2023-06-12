@@ -6,7 +6,7 @@ import profilePic from "../assets/profile-pic.jpg"
 
 export default function NavBar() {
     return (
-        <nav className="flex fixed items-center font-bold w-full h-[3.05rem] border-b-[1px] border-white text-lg pl-[.4rem]">
+        <nav className="flex z-50 fixed items-center font-bold w-full h-[3.05rem] border-b-[1px] bg-[#3C3C3C] border-white text-lg pl-[.4rem]">
             <Link to={"/home"} className="flex items-center w-[9.3rem] h-10 pt-[.4rem] mr-1 p-1 bg-white hover:opacity-80">
                 <HiHome className="ml-1 mr-2 mb-[.2rem] text-[2rem]" /> Home
             </Link>

@@ -25,10 +25,10 @@ export default function LoginForm() {
                 <p className='text-[1.2rem] leading-8 font-medium'>Continue with Google</p>
             </button>
             <div className='flex items-center justify-center w-full opacity-40 my-5'>
-                    <hr className='w-[39.2%]'/>
-                    <p className='text-white px-3'>or</p>
-                    <hr className='w-[39.2%]'/>
-                </div>
+                <hr className='w-[39.2%]'/>
+                <p className='text-white px-3'>or</p>
+                <hr className='w-[39.2%]'/>
+            </div>
             <input onChange={(e) => setLoginCredentials({...loginCredentials, email: e.target.value})} className='mb-[.9rem] text-lg font-medium text-white pl-2 h-[3.3rem] outline-white w-[88%] rounded-[.3rem] bg-[#393939] border-2 border-white placeholder:text-white' placeholder='E-mail' type="email" />
             <input onChange={(e) => setLoginCredentials({...loginCredentials, password: e.target.value})} className='text-lg font-medium text-white pl-2 h-[3.3rem] w-[88%] rounded-[.3rem] bg-[#393939] outline-white border-2 border-white placeholder:text-white' placeholder='Password' type="password" />
             <button type='button' className='underline text-[#42A4FF] underline-offset-2 mt-3 text-[1.05rem]'>Reset Password</button>
