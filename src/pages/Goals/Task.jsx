@@ -47,7 +47,7 @@ export default function Task({ task, setGoals, goals, taskIndex, goalIndex }) {
     return (
         <div onMouseOver={() => setIsHovering(true)} onMouseOut={() => setIsHovering(false)} className="flex items-center">
             <button type="button" onClick={() => markTaskAsDone()}>
-                <BsCheck className={`w-7 h-7 m-2 text-black ${task.isComplete ? "bg-[#73FFA3]" : "bg-white"} cursor-pointer rounded-full`} />
+                <BsCheck className={`w-7 h-7 mr-2 mt-2 mb-2 text-black ${task.isComplete ? "bg-[#73FFA3]" : "bg-white"} cursor-pointer rounded-full`} />
             </button>
 
             <input onChange={(event) => editTaskContent(event)} placeholder="Type task..." className="bg-transparent" type="text" value={task.taskContent} />

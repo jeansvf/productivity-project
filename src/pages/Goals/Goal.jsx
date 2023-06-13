@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import Task from "./Task";
 import { IoIosAdd } from "react-icons/io";
-import { doc, setDoc } from "firebase/firestore";
+import { SlOptions } from "react-icons/sl";
+import { AiOutlineEdit } from "react-icons/ai";
+import { BiTrashAlt } from "react-icons/bi";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, stagger } from "framer-motion";
 
-export default function Goal({ goals, goal, goalIndex, setGoals }) {
+export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals }) {
     
     const [goalProgress, setGoalProgress] = useState(0)
+    const [showGoalEditModal, setShowGoalEditModal] = useState(false)
     const [isComplete, setIsComplete] = useState(false)
     
     const writingTimeout = useRef()
+    const goalEditModalRef = useRef()
+    const optionsButtonRef = useRef()
     
     useEffect(() => {
         getGoalProgress()
@@ -19,6 +25,11 @@ export default function Goal({ goals, goal, goalIndex, setGoals }) {
     useEffect(() => {
         goalProgress == 100 ? setIsComplete(true) : setIsComplete(false)
     }, [goalProgress])
+
+    const deleteGoal = () => {;
+        deleteDoc(doc(db, "goals", goal.goalId))
+        getUserGoals()
+    }
 
     const getGoalProgress = () => {
         let doneTasks = 0;
@@ -51,6 +62,8 @@ export default function Goal({ goals, goal, goalIndex, setGoals }) {
             taskContent: "New Task"
         })
         setGoals(newGoals)
+        
+        setDoc(doc(db, "goals", newGoals[goalIndex].goalId), newGoals[goalIndex])
     }
 
     const setGoalComplete = () => {
@@ -62,10 +75,46 @@ export default function Goal({ goals, goal, goalIndex, setGoals }) {
     }
 
     return (
-        <div className="flex flex-col relative w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
-            <input onChange={(event) => changeGoalTitle(event)} className="font-bold mx-2 my-[.3rem] bg-transparent" placeholder="Type the goal title..." value={goal.title} />
+        <div onClick={(event) => event.target != goalEditModalRef.current && event.target != optionsButtonRef.current ? setShowGoalEditModal(false) : null} className="flex flex-col relative w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
+            
+            <AnimatePresence>
+                {showGoalEditModal ? (
+                    <motion.div
+                    initial={{
+                        scale: 0,
+                    }}
+                    animate={{
+                        scale: 1,
+                    }}
+                    exit={{
+                        scale: 0,
+                    }}
+                    transition={{
+                        type: "spring",
+                        damping: 50,
+                        stiffness: 600
+                    }}
+                    ref={goalEditModalRef} className="flex flex-col justify-center absolute origin-top-right rounded-lg p-1 top-0 right-0 m-[.4rem] bg-[#171717]">
+                        <button onClick={() => deleteGoal()} className="flex items-center text-lg rounded-md mb-1 hover:bg-red-400 hover:text-black">
+                            <BiTrashAlt className="w-5 h-5 m-1" />
+                            <p className="mr-2">Delete Goal</p>
+                        </button>
+                        <button className="flex items-center text-lg rounded-md hover:bg-blue-300 hover:text-black">
+                            <AiOutlineEdit className="w-5 h-5 m-1" />
+                            <p className="mr-2">Edit Date</p>
+                        </button>
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
 
-            <div id="goal-tasks-window" className="pb-24">
+            <div className="w-full justify-between flex items-center px-3">
+                <input onChange={(event) => changeGoalTitle(event)} className="font-bold my-[.3rem] bg-transparent" placeholder="Type the goal title..." value={goal.title} />
+                <button ref={optionsButtonRef} onClick={() => setShowGoalEditModal(true)}>
+                    <SlOptions className="w-5 h-5 pointer-events-none" />
+                </button>
+            </div>
+
+            <div id="goal-tasks-window" className="pb-24 px-3">
                 {goal?.tasks?.map((task, taskIndex) => (
                     <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} key={taskIndex} />
                 ))}
@@ -77,7 +126,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals }) {
                         <div className="absolute overflow-hidden bottom-0 flex flex-col items-center mt-auto w-full h-[6.25rem] rounded-bl-lg rounded-br-lg">    
                             <motion.button exit={{opacity: 0}} onClick={() => addNewTask()} type="button" className="select-none flex items-center text-sm cursor-pointer mr-auto bg-[#2D2D2D] w-full pl-3 pb-[.3rem] pt-[.15rem]">
                                 <IoIosAdd className="opacity-60 w-5 h-5" />
-                                <p className="opacity-60" >Add Task</p>
+                                <p className="opacity-60">Add Task</p>
                             </motion.button>
 
                             <div className="flex flex-col items-center w-full h-full bg-[#1E1E1E]">
@@ -99,17 +148,17 @@ export default function Goal({ goals, goal, goalIndex, setGoals }) {
                                 </div>
                                 
                                 <motion.div
-                                    initial={{
-                                        opacity: 0,
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                        paddingLeft: goalProgress <= 50 ? `${goalProgress - 6}%` : `${goalProgress - 10}%`
-                                    }}
-                                    exit={{
-                                        paddingLeft: "88%"
-                                    }}
-                                    className="w-[94%] text-[.92rem]">
+                                initial={{
+                                    opacity: 0,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    paddingLeft: goalProgress <= 50 ? `${goalProgress - 6}%` : `${goalProgress - 10}%`
+                                }}
+                                exit={{
+                                    paddingLeft: "88%"
+                                }}
+                                className="w-[94%] text-[.92rem]">
                                     <p>{goalProgress}%</p>
                                 </motion.div>
                             </div>

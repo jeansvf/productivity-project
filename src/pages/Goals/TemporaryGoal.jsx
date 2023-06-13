@@ -3,7 +3,7 @@ import { IoIosAdd } from "react-icons/io";
 import TemporaryTask from "./TemporaryTask";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
-import { motion } from "framer-motion";
+import LoadingAnimation from "../../components/LoadingAnimation.jsx";
 
 export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }) {
     const [isLoading, setIsLoading] = useState()
@@ -76,9 +76,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
                 <div className="flex flex-col items-center justify-center w-full h-[4.6rem] rounded-bl-lg rounded-br-lg bg-[#1E1E1E]">    
                     <button onClick={() => addGoalToDatabase()} type="button" className="flex bg-white w-[94%] h-9 rounded-md text-black font-bold items-center justify-center text-lg hover:bg-opacity-80">
                         {isLoading ? (
-                            <div className="inline-block h-5 w-5 animate-spin rounded-full border-[3px] border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
-                                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                            </div>
+                            <LoadingAnimation width={5} height={5} />
                         ) : "Create Goal"}
                     </button>
                 </div>
