@@ -4,7 +4,7 @@ import { IoIosAdd } from "react-icons/io";
 import { SlOptions } from "react-icons/sl";
 import { AiOutlineEdit } from "react-icons/ai";
 import { BiTrashAlt } from "react-icons/bi";
-import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import { AnimatePresence, motion, stagger } from "framer-motion";
 
