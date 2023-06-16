@@ -6,6 +6,13 @@
   font-family: 'Inter', sans-serif;
 }
 
+::-webkit-calendar-picker-indicator {
+  background-color: #595959;
+  border-radius: .3rem;
+  cursor: pointer;
+  padding: .4rem;
+}
+
 #goal-tasks-window {
   overflow-y: scroll;
 }

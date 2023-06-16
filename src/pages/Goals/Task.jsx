@@ -5,7 +5,7 @@ import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useRef } from "react";
 
-export default function Task({ task, setGoals, goals, taskIndex, goalIndex }) {
+export default function Task({ task, setGoals, goals, taskIndex, goalIndex, setGoalError }) {
     const [isHovering, setIsHovering] = useState(false)
 
     const writingTimeout = useRef();
@@ -32,6 +32,16 @@ export default function Task({ task, setGoals, goals, taskIndex, goalIndex }) {
 
     const editTaskContent = (event) => {
         clearTimeout(writingTimeout.current)
+        setGoalError("")
+
+        if(event.target.value == "") {
+            setGoalError("Invalid Task")
+
+            let newGoals = structuredClone(goals)
+            newGoals[goalIndex].tasks[taskIndex].taskContent = event.target.value
+            setGoals(newGoals)
+            return
+        }
         
         // change task content from state
         let newGoals = structuredClone(goals)

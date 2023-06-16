@@ -1,35 +1,36 @@
 import { useEffect, useRef, useState } from "react";
 import Task from "./Task";
-import { IoIosAdd } from "react-icons/io";
-import { SlOptions } from "react-icons/sl";
+import { IoIosAdd, IoIosClose, IoMdClose } from "react-icons/io";
+import { SlCheck, SlClose, SlOptions } from "react-icons/sl";
 import { AiOutlineEdit } from "react-icons/ai";
-import { BiTrashAlt } from "react-icons/bi";
+import { BiCheck, BiTrashAlt } from "react-icons/bi";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
-import { AnimatePresence, motion, stagger } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { BsCheck, BsCheck2 } from "react-icons/bs";
+import { GrClose } from "react-icons/gr";
 
 export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals }) {
     
     const [goalProgress, setGoalProgress] = useState(0)
     const [showGoalEditModal, setShowGoalEditModal] = useState(false)
     const [isComplete, setIsComplete] = useState(false)
+    const [showDateEditing, setShowDateEditing] = useState(false)
+    const [goalError, setGoalError] = useState("")
+    const [newGoalDate, setNewGoalDate] = useState("")
     
     const writingTimeout = useRef()
     const goalEditModalRef = useRef()
     const optionsButtonRef = useRef()
     
     useEffect(() => {
+        goal.tasks.length == 0 ? deleteGoal() : null
         getGoalProgress()
     }, [goal])
 
     useEffect(() => {
         goalProgress == 100 ? setIsComplete(true) : setIsComplete(false)
     }, [goalProgress])
-
-    const deleteGoal = () => {;
-        deleteDoc(doc(db, "goals", goal.goalId))
-        getUserGoals()
-    }
 
     const getGoalProgress = () => {
         let doneTasks = 0;
@@ -42,8 +43,22 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
         setGoalProgress(Math.floor((doneTasks / (doneTasks + notDoneTasks)) * 100));
     }
 
+    const deleteGoal = () => {;
+        deleteDoc(doc(db, "goals", goal.goalId)).then(() => getUserGoals())
+    }
+
     const changeGoalTitle = (event) => {
         clearTimeout(writingTimeout.current)
+        setGoalError("")
+
+        if(event.target.value == "") {
+            setGoalError("Invalid Title")
+
+            let newGoals = structuredClone(goals)
+            newGoals[goalIndex].title = event.target.value
+            setGoals(newGoals)
+            return
+        }
 
         // change goal title from state
         let newGoals = structuredClone(goals)
@@ -74,9 +89,36 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
         setDoc(doc(db, "goals", newGoals[goalIndex].goalId), newGoals[goalIndex])
     }
 
+    const changeGoalDate = () => {
+        setGoalError("")
+        
+        if (newGoalDate.length > 7 || newGoalDate == "") {
+            setGoalError("Invalid date")
+            return
+        }
+
+        if (newGoalDate.length <= 7) {
+            let newGoals = structuredClone(goals)
+            newGoals[goalIndex].goalDate = newGoalDate
+            setGoals(newGoals)
+
+            setDoc(doc(db, "goals", newGoals[goalIndex].goalId), newGoals[goalIndex])
+        }
+    }
+
     return (
-        <div onClick={(event) => event.target != goalEditModalRef.current && event.target != optionsButtonRef.current ? setShowGoalEditModal(false) : null} className="flex flex-col relative w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
-            
+        <motion.div
+        initial={{
+            opacity: "0%"
+        }}
+        animate={{
+            opacity: "100%"
+        }}
+        exit={{
+            opacity: "0%"
+        }}
+        onClick={(event) => event.target != goalEditModalRef.current && event.target != optionsButtonRef.current ? setShowGoalEditModal(false) : null} className="flex flex-col relative w-80 h-[19rem] mx-3 my-2 bg-[#2D2D2D] rounded-lg">
+
             <AnimatePresence>
                 {showGoalEditModal ? (
                     <motion.div
@@ -92,14 +134,14 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                     transition={{
                         type: "spring",
                         damping: 50,
-                        stiffness: 600
+                        stiffness: 800
                     }}
                     ref={goalEditModalRef} className="flex flex-col justify-center absolute origin-top-right rounded-lg p-1 top-0 right-0 m-[.4rem] bg-[#171717]">
                         <button onClick={() => deleteGoal()} className="flex items-center text-lg rounded-md mb-1 hover:bg-red-400 hover:text-black">
                             <BiTrashAlt className="w-5 h-5 m-1" />
                             <p className="mr-2">Delete Goal</p>
                         </button>
-                        <button className="flex items-center text-lg rounded-md hover:bg-blue-300 hover:text-black">
+                        <button onClick={() => setShowDateEditing(true)} className="flex items-center text-lg rounded-md hover:bg-blue-300 hover:text-black">
                             <AiOutlineEdit className="w-5 h-5 m-1" />
                             <p className="mr-2">Edit Date</p>
                         </button>
@@ -114,9 +156,39 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                 </button>
             </div>
 
+            <AnimatePresence>
+                {showDateEditing ? (
+                    <motion.div
+                    initial={{
+                        opacity: "0%"
+                    }}
+                    animate={{
+                        opacity: "100%"
+                    }}
+                    exit={{
+                        transition: {
+                            duration: .2
+                        },
+                        opacity: "0%"
+                    }}
+                    className="flex items-center text-slate-300 px-3">
+                        <input onChange={(event) => {
+                            setGoalError("")
+                            setNewGoalDate(event.target.value)
+                        }} className="w-[11.3rem] bg-[#1c1c1c] font-bold mt-[.3rem] bg-opacity-70 rounded-md p-0.5 outline-none" type="month" />
+                        <button onClick={() => changeGoalDate()} className="flex items-center justify-center w-7 h-7 p-0.5 ml-1 mt-[.3rem] rounded-md bg-blue-300 bg-opacity-0 hover:bg-opacity-100 hover:text-black">
+                            <BsCheck className="w-7 h-7" />
+                        </button>
+                        <button onClick={() => setShowDateEditing(false)} className="flex items-center justify-center w-7 h-7 p-0.5 ml-1 mt-[.3rem] rounded-md bg-red-300 bg-opacity-0 hover:bg-opacity-100 hover:text-black">
+                            <IoMdClose className="w-5 h-5" />
+                        </button>
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
+
             <div id="goal-tasks-window" className="pb-24 px-3">
                 {goal?.tasks?.map((task, taskIndex) => (
-                    <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} key={taskIndex} />
+                    <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} setGoalError={setGoalError} key={taskIndex} />
                 ))}
             </div>
 
@@ -124,9 +196,12 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                 <AnimatePresence>
                     {!isComplete && (
                         <div className="absolute overflow-hidden bottom-0 flex flex-col items-center mt-auto w-full h-[6.25rem] rounded-bl-lg rounded-br-lg">    
-                            <motion.button exit={{opacity: 0}} onClick={() => addNewTask()} type="button" className="select-none flex items-center text-sm cursor-pointer mr-auto bg-[#2D2D2D] w-full pl-3 pb-[.3rem] pt-[.15rem]">
+                            <motion.button onClick={() => addNewTask()} type="button" className="select-none flex items-center text-sm cursor-pointer mr-auto bg-[#2D2D2D] w-full pl-3 pb-[.3rem] pt-[.15rem]">
                                 <IoIosAdd className="opacity-60 w-5 h-5" />
-                                <p className="opacity-60">Add Task</p>
+                                <div className="flex items-center">
+                                    <p className="opacity-60">Add Task</p>
+                                    <p className="absolute right-3 top-0 pt-[.15rem] text-red-500">{goalError}</p>
+                                </div>
                             </motion.button>
 
                             <div className="flex flex-col items-center w-full h-full bg-[#1E1E1E]">
@@ -200,6 +275,6 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                 </AnimatePresence>
                 
             </div>
-        </div>
+        </motion.div>
     )
 }

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoIosAdd, IoMdClose } from "react-icons/io";
 import TemporaryTask from "./TemporaryTask";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 import LoadingAnimation from "../../components/LoadingAnimation.jsx";
+import { motion } from "framer-motion";
 
 export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }) {
     const [isLoading, setIsLoading] = useState()
@@ -22,6 +23,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
         let allTasksTextIsFilled;
         temporaryGoal.tasks.map(task => task.taskContent != "" ? allTasksTextIsFilled = true : allTasksTextIsFilled = false)
 
+        // check for invalid input
         switch (true) {
             case (temporaryGoal.title == ""):
                 setGoalError("Insert a title");
@@ -55,18 +57,44 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
         })
     }
 
+    const handleMonthInput = (e) => {
+        setGoalError("")
+
+        const inputValue = e.target.value
+
+        if (inputValue.length <= 7) {
+            setTemporaryGoal({...temporaryGoal, goalDate: inputValue})
+        } else {
+            setGoalError("Invalid date")
+        }
+    }
+
     return (
-        <div className="flex flex-col w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
-            <div className="flex mx-2 items-center">
-                <input onChange={(event) => {
-                    setTemporaryGoal({...temporaryGoal, title: event.target.value})
-                }} autoFocus className="font-bold w-40 mt-[.3rem] bg-transparent outline-none" placeholder={"Type the goal title..."} type="text" />
-                
-                <input onChange={(event) => setTemporaryGoal({...temporaryGoal, goalDate: event.target.value})} className=" font-bold mt-[.3rem] bg-transparent outline-none opacity-70" type="date" />
-                
-                <button onClick={() => setCreatingTemporaryGoal(false)} className="flex items-center w-6 h-6 mt-[.3rem] text-white opacity-70">
-                    <IoMdClose className="w-full h-full" />
-                </button>
+        <motion.div
+        initial={{
+            opacity: "0%"
+        }}
+        animate={{
+            opacity: "100%"
+        }}
+        exit={{
+            opacity: "0%"
+        }}
+        className="flex flex-col w-80 h-[19rem] mx-3 bg-[#2D2D2D] rounded-lg">
+            <div className="mx-2">
+                <div className="flex items-center justify-between">
+                    <input onChange={(event) => {
+                        setTemporaryGoal({...temporaryGoal, title: event.target.value})
+                    }} autoFocus className="font-bold mt-[.3rem] bg-transparent outline-none" placeholder={"Type the goal title..."} type="text" />
+                    
+                    <button onClick={() => setCreatingTemporaryGoal(false)} className="flex items-center h-6 mt-[.3rem] text-white opacity-70">
+                        <IoMdClose className="w-6 h-6" />
+                    </button>
+                </div>
+                <div className="flex items-center justify-between text-slate-300 mt-2">
+                    <p className="select-none">Goal Deadline:</p>
+                    <input onChange={(event) => handleMonthInput(event)} className="w-[11.5rem] bg-[#1c1c1c] font-bold mt-[.3rem] bg-opacity-70 rounded-md p-0.5 outline-none" type="month" />
+                </div>
             </div>
             
             <div id="goal-tasks-window">
@@ -96,6 +124,6 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
