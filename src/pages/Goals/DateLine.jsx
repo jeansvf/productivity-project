@@ -26,12 +26,12 @@ export default function DateLine({ date }) {
             width: "40%",
             opacity: 0
         }}
-        className={`flex items-center justify-center w-[90%] ${date ? "my-2" : "my-4"} opacity-70 select-none`}>
-            <hr className={`${date == undefined ? "w-[8%]" : "w-[5%]"}`} />
+        className={`relative items-center justify-center w-[94%] ${date ? "py-2" : "py-4"} py-5 opacity-70 select-none`}>
 
-            {date == "placeholder" ? <p className='text-white w-[4%] mx-2 text-center'>mm/yyyy</p> : null}
+            {date == "placeholder" ? <p className='absolute left-20 top-1/2 -translate-y-1/2 px-3 bg-[#393939]'>mm/yyyy</p> : null}
+            {date == "completed" ? <p className='absolute left-20 top-1/2 -translate-y-1/2 px-3 bg-[#393939]'>Completed</p> : null}
             {date == undefined ? null : null}
-            {date !== "placeholder" && date !== undefined ? <p className='text-white w-[4%] mx-2 text-center'>{month}/{year}</p> : null}
+            {date !== "placeholder" && date !== undefined && date !== "completed" ? <p className='absolute left-20 top-1/2 -translate-y-1/2 px-3 bg-[#393939]'>{month}/{year}</p> : null}
             
             <hr className='w-[92%]' />
         </motion.div>

@@ -7,6 +7,7 @@ import TemporaryGoal from "./TemporaryGoal";
 import DateLine from "./DateLine";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
+import CompletedGoal from "./CompletedGoal";
 
 export default function Goals() {
     const [goals, setGoals] = useState()
@@ -19,7 +20,9 @@ export default function Goals() {
     
     useEffect(() => {
         // when goals change, change dates
-        goals ? getDates() : null
+        goals ? (
+            getDates()
+        ) : null
     }, [goals])
 
     const getUserGoals = async () => {
@@ -28,12 +31,13 @@ export default function Goals() {
         setGoals(goalsSnapshot)
     }
 
+    // removes date duplicates and convert into month and year
     const getDates = () => {
-        // removes date duplicates and convert into month and year
         let newDates = []
         goals ? goals?.map((goal) => {
-            newDates.push(getMonthAndYear(goal.goalDate))
+            !goal.isGoalComplete ? newDates.push(getMonthAndYear(goal.goalDate)) : null
         }) : null
+
         setDates(removeDuplicates(newDates))
     }
 
@@ -56,19 +60,22 @@ export default function Goals() {
 
     return (
         <main className="w-full pl-2 pt-14 text-white">
-
             <AnimatePresence>
+
+                {/* incomplete goals */}
                 {goals ? dates?.map((date, dateIndex) => (
                     <div key={dateIndex}>
                         <DateLine date={date} />
                         <div className="flex flex-wrap w-full">
                             <AnimatePresence>
                                 {
-                                    goals?.map((goal, goalIndex) => (
-                                        getMonthAndYear(goal.goalDate) == getMonthAndYear(date) ? (
-                                            <Goal goals={goals} goal={goal} goalIndex={goalIndex} setGoals={setGoals} getUserGoals={getUserGoals} key={goalIndex} />
+                                    goals?.map((goal, goalIndex) => {
+                                        return getMonthAndYear(goal.goalDate) == getMonthAndYear(date) ? (
+                                            !goal.isGoalComplete ? (
+                                                <Goal goals={goals} goal={goal} goalIndex={goalIndex} setGoals={setGoals} getUserGoals={getUserGoals} key={goalIndex} />
+                                            ) : null
                                         ) : null
-                                    ))
+                                    })
                                 }
                             </AnimatePresence>
                         </div>
@@ -79,6 +86,8 @@ export default function Goals() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* creating goal */}
             
             <div className="flex">
                 <AnimatePresence>
@@ -93,7 +102,28 @@ export default function Goals() {
                 </AnimatePresence>
             </div>
 
+            {/* completed goals */}
+            <AnimatePresence>
+                <div>
+                    {/* if any completed goal exists, render dateline */}
+                    {goals?.map(goal => goal?.isGoalComplete)[0] ? <DateLine date={"completed"} /> : null}
+                    <div className="flex flex-wrap w-full">
+                        {
+                            goals?.map((goal, goalIndex) => {
+                                return goal.isGoalComplete ? (
+                                    <CompletedGoal goal={goal} key={goalIndex} />
+                                ) : null
+                            })
+                        }
+                    </div>
+                </div>
+            </AnimatePresence>
+
+            {/* goals bottom line */}
+
             {goals ? goals?.length !== 0 ? <DateLine /> : null : null}
+
+            {/* add goal button */}
 
             <motion.button
             initial={{
