@@ -11,6 +11,7 @@ import ProtectedRoutes from "./components/ProtectedRoutes"
 import Todo from "./pages/Todo"
 import Goals from "./pages/Goals"
 import Profile from "./pages/Profile"
+import Music from "./pages/Music"
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
             <Route element={<WithNav />}>
               <Route path="/home" element={<Home />} />
               <Route path="/pomodoro" element={<Pomodoro />} />
+              <Route path="/music" element={<Music />} />
               <Route path="/todo" element={<Todo />} />
               <Route path="/goals" element={<Goals />} />
               <Route path="/profile" element={<Profile />} />

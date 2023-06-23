@@ -9,7 +9,8 @@ export default {
       fontFamily : {
         "rubik" : ['Rubik', "sans-serif"],
         "ubuntu" : ['Ubuntu', "sans-serif"],
-      }
+      },
+      
     },
   },
   plugins: [],
