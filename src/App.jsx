@@ -10,6 +10,7 @@ import LoginRoutes from "./components/LoginRoutes"
 import ProtectedRoutes from "./components/ProtectedRoutes"
 import Todo from "./pages/Todo"
 import Goals from "./pages/Goals"
+import Profile from "./pages/Profile"
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
               <Route path="/pomodoro" element={<Pomodoro />} />
               <Route path="/todo" element={<Todo />} />
               <Route path="/goals" element={<Goals />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
       </Routes>

@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import Task from "./Task";
-import { IoIosAdd, IoIosClose, IoMdClose } from "react-icons/io";
-import { SlCheck, SlClose, SlOptions } from "react-icons/sl";
+import { IoIosAdd, IoMdClose } from "react-icons/io";
+import { SlOptions } from "react-icons/sl";
 import { AiOutlineEdit } from "react-icons/ai";
-import { BiCheck, BiTrashAlt } from "react-icons/bi";
+import { BiTrashAlt } from "react-icons/bi";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
-import { AnimatePresence, easeInOut, motion } from "framer-motion";
-import { BsCheck, BsCheck2 } from "react-icons/bs";
+import { AnimatePresence, motion } from "framer-motion";
+import { BsCheck } from "react-icons/bs";
+import LoadingAnimation from "../../components/LoadingAnimation"
 
 export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals }) {
     
     const [goalProgress, setGoalProgress] = useState(0)
+    const [deleteLoading, setDeleteLoading] = useState(false)
     const [showGoalEditModal, setShowGoalEditModal] = useState(false)
     const [completeGoalAnimation, setCompleteGoalAnimation] = useState(false)
     const [isAllTasksDone, setIsAllTasksDone] = useState(false)
@@ -43,12 +45,6 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
         goalProgress == 100 ? setIsAllTasksDone(true) : setIsAllTasksDone(false)
     }, [goalProgress])
 
-    useEffect(() => {
-        completeGoalAnimation ? setTimeout(() => {
-            setCompleteGoalAnimation(false)
-        }, 300) : null
-    }, [completeGoalAnimation])
-
     const getGoalProgress = () => {
         let doneTasks = 0;
         let notDoneTasks = 0;
@@ -60,8 +56,12 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
         setGoalProgress(Math.floor((doneTasks / (doneTasks + notDoneTasks)) * 100));
     }
 
-    const deleteGoal = () => {;
-        deleteDoc(doc(db, "goals", goal.goalId)).then(() => getUserGoals())
+    const deleteGoal = () => {
+        setDeleteLoading(true)
+        deleteDoc(doc(db, "goals", goal.goalId)).then(() => {
+            getUserGoals()
+            setDeleteLoading(false)
+        })
     }
 
     const changeGoalTitle = (event) => {
@@ -130,23 +130,32 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
             opacity: "0%"
         }}
         animate={{
-            opacity: "100%"
+            opacity: deleteLoading ? "40%" : "100%"
         }}
         exit={{
             opacity: "0%"
         }} className="flex flex-col relative w-80 h-[19rem] mx-3 my-2 bg-[#2D2D2D] rounded-lg">
 
+            {deleteLoading ? (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <LoadingAnimation width={8} height={8} />
+                </div>
+            ) : null}
+
             <AnimatePresence>
                 {showGoalEditModal ? (
                     <motion.div
                     initial={{
-                        scale: 0,
+                        opacity: 0,
+                        y: -10,
                     }}
                     animate={{
-                        scale: 1,
+                        opacity: 1,
+                        y: 0,
                     }}
                     exit={{
-                        scale: 0,
+                        opacity: 0,
+                        y: -10,
                     }}
                     transition={{
                         type: "spring",
@@ -176,6 +185,18 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
             <AnimatePresence>
                 {showDateEditing ? (
                     <motion.div
+                    initial={{
+                        opacity: 0
+                    }}
+                    animate={{
+                        opacity: 1
+                    }}
+                    exit={{
+                        opacity: 0
+                    }}
+                    transition={{
+                        duration: .2
+                    }}
                     className="flex items-center text-slate-300 px-3">
                         <input onChange={(event) => {
                             setGoalError("")

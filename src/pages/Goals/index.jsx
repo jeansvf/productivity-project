@@ -18,8 +18,8 @@ export default function Goals() {
         getUserGoals()
     }, [])
     
+    // when goals change, change dates
     useEffect(() => {
-        // when goals change, change dates
         goals ? (
             getDates()
         ) : null

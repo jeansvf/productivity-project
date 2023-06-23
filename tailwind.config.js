@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily : {
         "rubik" : ['Rubik', "sans-serif"],
+        "ubuntu" : ['Ubuntu', "sans-serif"],
       }
     },
   },

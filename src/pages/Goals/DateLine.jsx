@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function DateLine({ date }) {
     var month = [];
@@ -33,7 +33,7 @@ export default function DateLine({ date }) {
             {date == undefined ? null : null}
             {date !== "placeholder" && date !== undefined && date !== "completed" ? <p className='absolute left-20 top-1/2 -translate-y-1/2 px-3 bg-[#393939]'>{month}/{year}</p> : null}
             
-            <hr className='w-[92%]' />
+            <hr className='w-full' />
         </motion.div>
     )
 }
