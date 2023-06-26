@@ -7,7 +7,7 @@ export default function Pomodoro() {
     const [pomodoroConfigOpened, setPomodoroConfigOpened] = useState(false)
 
     return (
-        <main className="flex items-center justify-center w-full h-screen text-white font-rubik font-medium">
+        <main className="flex items-center justify-center w-full h-screen bg-[#393939] z-10 text-white font-rubik font-medium">
             <AnimatePresence>
                 {!pomodoroConfigOpened && (
                     <PomodoroTimer setPomodoroConfigOpened={setPomodoroConfigOpened} />

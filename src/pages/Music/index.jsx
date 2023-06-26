@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ReactPlayer from 'react-player'
 import PlayerControls from './PlayerControls'
 import { backgrounds } from './backgrounds'
+import { useMusicContext } from '../../contexts/MusicContext'
 
 export default function Music() {
-    const [isVideoPlaying, setIsVideoPlaying] = useState(false)
-    const [volume, setVolume] = useState(.5)
     const [background, setBackground] = useState('https://i.giphy.com/media/798oH0WDEQnicM4857/giphy.webp')
 
-    useEffect(() => {
-        console.log(background);
-    }, [background])
-    
+    const { isVideoPlaying, setIsVideoPlaying, volume, setVolume } = useMusicContext()
+
     const changeBackground = () => {
         let newBackground = backgrounds[Math.floor(Math.random()*7)]
         if (newBackground == background) {
@@ -31,13 +28,7 @@ export default function Music() {
             </div>
             
             <PlayerControls isVideoPlaying={isVideoPlaying} setIsVideoPlaying={setIsVideoPlaying} volume={volume} setVolume={setVolume} changeBackground={changeBackground} />
-
-            <div className='-z-10'>
-                <ReactPlayer
-                playing={isVideoPlaying}
-                volume={volume}
-                url='https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl' />
-            </div>
+            
         </main>
     )
 }

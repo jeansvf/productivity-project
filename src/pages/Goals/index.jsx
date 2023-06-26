@@ -59,7 +59,7 @@ export default function Goals() {
     }
 
     return (
-        <main className="w-full pl-2 pt-14 text-white">
+        <main className="w-full h-screen pl-2 pt-14 text-white bg-[#393939] z-10">
             <AnimatePresence>
 
                 {/* incomplete goals */}

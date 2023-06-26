@@ -39,7 +39,7 @@ export default function Todo() {
     // }
 
     return (
-      <main className='flex w-full h-screen items-center justify-center'>
+      <main className='flex w-full h-screen items-center justify-center bg-[#393939] z-10'>
         not finished yet
       </main>
     //   <DragDropContext onDragEnd={handleOnDragEnd}>
