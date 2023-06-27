@@ -1,12 +1,25 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { HiForward, HiPause, HiPhoto, HiPlay } from "react-icons/hi2";
+import { HiForward, HiPause, HiPlay } from "react-icons/hi2";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 import { useState } from "react";
-import { BsCardImage } from "react-icons/bs";
-import { BiDice3, BiDice5, BiDice6, BiImageAlt } from "react-icons/bi";
+import { BiDice3 } from "react-icons/bi";
+import { useMusicContext } from "../../contexts/MusicContext";
 
-export default function PlayerControls({ isVideoPlaying, setIsVideoPlaying, volume, setVolume, changeBackground }) {
+export default function PlayerControls() {
     const [isVolumeInputShowing, setIsVolumeInputShowing] = useState(false)
+
+    const { isVideoPlaying, setIsVideoPlaying, volume, setVolume, changeBackground } = useMusicContext()
+
+    const changeVolume = (volume) => {
+        // change volume in localStorage
+        let newMusicSettings = localStorage.getItem("music_settings") ? JSON.parse(localStorage.getItem("music_settings")) : {}
+        newMusicSettings.volume = parseFloat(volume)
+
+        localStorage.setItem("music_settings", JSON.stringify(newMusicSettings))
+        
+        // change volume in state
+        setVolume(parseFloat(volume))
+    }
 
     return (
         <div className='absolute bottom-10 flex items-center justify-center p-1 rounded-md bg-opacity-30'>
@@ -27,7 +40,7 @@ export default function PlayerControls({ isVideoPlaying, setIsVideoPlaying, volu
                     {volume == 0 ? <HiVolumeOff onClick={() => setVolume(.5)} className='w-full h-full stroke-1 stroke-black' /> : <HiVolumeUp onClick={() => setVolume(0)} className='w-full h-full stroke-1 stroke-black' />}
                     <AnimatePresence>
                         {isVolumeInputShowing ? (
-                            <motion.input initial={{width: 0}} animate={{width: "5rem"}} exit={{width: 0}} transition={{duration: .2}} onChange={(e) => setVolume(e.target.value)} value={volume} min="0" max="1" step=".1" type="range" className="ml-2 cursor-pointer origin-left accent-white w-20" />
+                            <motion.input onChange={(e) => changeVolume(e.target.value)} initial={{width: 0}} animate={{width: "5rem"}} exit={{width: 0}} transition={{duration: .2}} value={volume} min="0" max="1" step=".1" type="range" className="ml-2 cursor-pointer origin-left accent-white w-20" />
                         ) : null}
                     </AnimatePresence>
                 </button>

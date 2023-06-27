@@ -3,7 +3,7 @@ import { TbPlayerSkipForwardFilled } from "react-icons/tb"
 import { IoSettingsSharp } from "react-icons/io5"
 import { motion } from "framer-motion"
 
-export default function PomodoroTimer({setPomodoroConfigOpened}) {
+export default function PomodoroTimer({ setPomodoroConfigOpened }) {
     const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer } = useTimerContext()
 
     return (

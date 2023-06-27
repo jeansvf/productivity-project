@@ -1,22 +1,8 @@
-import { useState } from 'react'
-import ReactPlayer from 'react-player'
 import PlayerControls from './PlayerControls'
-import { backgrounds } from './backgrounds'
 import { useMusicContext } from '../../contexts/MusicContext'
 
 export default function Music() {
-    const [background, setBackground] = useState('https://i.giphy.com/media/798oH0WDEQnicM4857/giphy.webp')
-
-    const { isVideoPlaying, setIsVideoPlaying, volume, setVolume } = useMusicContext()
-
-    const changeBackground = () => {
-        let newBackground = backgrounds[Math.floor(Math.random()*7)]
-        if (newBackground == background) {
-            changeBackground()
-            return
-        }
-        setBackground(newBackground)
-    }
+    const { background } = useMusicContext()
 
     return (
         <main
@@ -27,7 +13,8 @@ export default function Music() {
                 <h2 style={{textShadow: "-1px -1px 0 #000, 0   -1px 0 #000, 1px -1px 0 #000, 1px  0   0 #000, 1px  1px 0 #000, 0    1px 0 #000, -1px  1px 0 #000, -1px  0   0 #000"}} className='text-xl font-bold mt-3'>lofi hip hop radio 📚 - beats to relax/study to</h2>
             </div>
             
-            <PlayerControls isVideoPlaying={isVideoPlaying} setIsVideoPlaying={setIsVideoPlaying} volume={volume} setVolume={setVolume} changeBackground={changeBackground} />
+            {/* fix this */}
+            <PlayerControls />
             
         </main>
     )

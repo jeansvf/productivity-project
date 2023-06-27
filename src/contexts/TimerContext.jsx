@@ -6,9 +6,11 @@ import guitarAlarm from "../assets/alarms/guitar.wav"
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
+    // set timer minutes to localStorage minutes, if undefined set to default value ("25", "15", "5")
     const [pomodoroMinutes, setPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes : 25)
     const [longBreakMinutes, setLongBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes : 15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes : 5)
+    
     const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
