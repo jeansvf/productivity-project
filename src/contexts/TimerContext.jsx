@@ -2,7 +2,9 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import arcadeAlarm from "../assets/alarms/arcade.wav"
 import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
-
+import { Timestamp, addDoc, collection, doc, increment, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { auth, db } from "../firebase-config"
+import { getDate } from "date-fns";
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
@@ -22,20 +24,34 @@ export default function TimerContext({ children }) {
         timerType: "pomodoro",
     })
 
+    
     const timeoutId = useRef()
+    
+    const databaseMinutesInterval = useRef()
 
     useEffect(() => {
         decreaseMinutes()
     }, [seconds])
-    
-    /*TODO:
+
     useEffect(() => {
         if (isPaused) {
+            clearInterval(databaseMinutesInterval.current)
             return
-        } else {
-            timeout 1 min then add 1 min to server
         }
-    }, [isPaused])*/
+
+        databaseMinutesInterval.current = setInterval(() => {
+            !isPaused ? addPomodoroMinuteToDatabase() : null
+        }, 1000)
+    }, [isPaused])
+
+    console.log(getDate());
+
+    const addPomodoroMinuteToDatabase = () => {
+        setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoroStudy`, Date.getMonth()), {
+            minutes: increment(1)
+        })
+        //updateDoc(doc(db, "users", auth.currentUser.uid), collection(db, "pomodoroStudy"))
+    }
     
     const playAlarm = () => {
         let alarmSettings = JSON.parse(localStorage.getItem("alarm_settings"))

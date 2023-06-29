@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth"
-import { addDoc, collection, doc, getFirestore, setDoc } from "firebase/firestore";
+import { Timestamp, addDoc, collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,7 +17,16 @@ const provider = new GoogleAuthProvider()
 
 export const continueWithGoogle = () => {
   signInWithPopup(auth, provider).then((userCred) => {
-    setDoc(doc(db, "users", userCred.user.uid), JSON.parse(JSON.stringify(userCred.user)))
+    setDoc(doc(db, "users", userCred.user.uid), {
+      uid: userCred.user.uid,
+      userName: userCred.user.displayName,
+      email: userCred.user.email,
+      provider: userCred.providerId,
+      photoUrl: userCred.user.photoURL,
+      pomodoroMinutes: 0,
+      createdAt: Timestamp.now(),
+      // emailVerified: ?
+    })
   })
 }
 

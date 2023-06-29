@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup } from "firebase/auth"
 import { auth, db, continueWithGoogle } from "../../firebase-config"
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, Timestamp } from "firebase/firestore";
 
 export default function SignUpForm() {
     const [signUpCredentials, setSignUpCredentials] = useState({
@@ -46,7 +46,16 @@ export default function SignUpForm() {
             // TODO: SEARCH FOR ANOTHER WAY TO DO THIS
             onAuthStateChanged(auth, user => {
                 if(user) {
-                    setDoc(doc(db, "users", user.uid), JSON.parse(JSON.stringify(user)))
+                    setDoc(doc(db, "users", user.uid), {
+                        uid: user.uid,
+                        userName: signUpCredentials.name,
+                        email: signUpCredentials.email,
+                        provider: user.providerId,
+                        photoUrl: user.photoURL,
+                        pomodoroMinutes: 0,
+                        createdAt: Timestamp.now(),
+                        // emailVerified: ?
+                    })
                 }
             })
         })
