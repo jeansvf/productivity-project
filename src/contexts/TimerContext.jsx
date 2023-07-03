@@ -44,8 +44,6 @@ export default function TimerContext({ children }) {
         }, 1000)
     }, [isPaused])
 
-    console.log(getDate());
-
     const addPomodoroMinuteToDatabase = () => {
         setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoroStudy`, Date.getMonth()), {
             minutes: increment(1)

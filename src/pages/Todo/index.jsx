@@ -5,58 +5,88 @@ import Column from './Column';
 import { useState } from 'react';
 
 export default function Todo() {
-    // const [columns, setColumns] = useState([
-    //   { id: '1', title: 'Todo', key: 11},
-    //   { id: '2', title: 'Doing', key: 22},
-    //   { id: '3', title: 'Done', key: 33},
-    // ])
+    const [columns, setColumns] = useState([
+        { id: '1', droppableColumnId: 'droppableColumn-1', title: 'Todo', tasks: [
+            { id: '4', text: '1' },
+            { id: '5', text: '2' },
+            { id: '6', text: '3' },
+        ] },
+        { id: '2', droppableColumnId: 'droppableColumn-2', title: 'Doing', tasks: [] },
+        { id: '3', droppableColumnId: 'droppableColumn-3', title: 'Done', tasks: [] },
+    ])
         
-    // const handleOnDragEnd = (result) => {
-    //   let columnSource = structuredClone(columns)
-    //   let draggedItem = {}
+    const handleOnDragEnd = (result) => {
+        if (result.destination == null) {
+            return
+        }
 
-    //   for (let i in columnSource) {
-    //     if(columnSource[i].id == result.draggableId) {
-    //       draggedItem = columnSource[i]
-    //     }
-    //   }
+        if (result.type == 'column') {
+            // clone columns state
+            let newColumns = structuredClone(columns)
+            
+            let selectedColumn = newColumns[result.source?.index]
+            
+            // update newColumns
+            newColumns.splice(result.source.index, 1)
+            newColumns.splice(result.destination.index, 0, selectedColumn)
+            
+            // update columns state with newColumns
+            setColumns(newColumns)
 
-    //   if (result.type == "column") {
+            return
+        }
 
-    //     console.log("dragged item: ", draggedItem);
-    //     console.log("source :", result.source);
-    //     console.log("destination :", result.destination);
-    //     console.log("result :", result);
+        if (result.type == 'task') {
 
-    //     const newColumns = structuredClone(columns)
-    //     newColumns.splice(result.source.index, 1)
-    //     newColumns.splice(result.destination.index, 0, draggedItem)
-        
-    //     setColumns(newColumns)
-    //     console.log(columns);
-    //     return
-    //   }
-    // }
+            // clone columns state
+            let newColumns = structuredClone(columns)
+            
+            let sourceColumnIndex
+            columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? sourceColumnIndex = columnIndex : null)
+            
+            let destinationColumnIndex
+            columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? destinationColumnIndex = columnIndex : null)
+            
+            let selectedTask = newColumns[sourceColumnIndex].tasks[result.source?.index]
+                
+            // delete task that was moved
+            if (newColumns[sourceColumnIndex].droppableColumnId == result.source.droppableId) {
+                newColumns[sourceColumnIndex].tasks.splice(result.source.index, 1)
+            }
+            
+            // add task to new position
+            if (newColumns[destinationColumnIndex].droppableColumnId == result.destination.droppableId) {
+                newColumns[destinationColumnIndex].tasks.splice(result.destination.index, 0, selectedTask)
+            }
+    
+            // update columns state with newColumns
+            setColumns(newColumns)
+
+            return
+        }
+    }
 
     return (
-      <main className='flex w-full h-screen items-center justify-center bg-[#393939] z-10'>
-        not finished yet
+      <main className='flex pl-2 pt-20 w-full h-screen bg-[#393939] text-white z-10'>
+            <div>
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                    <Droppable droppableId='main' direction='horizontal' type='column'>
+                        {(provided) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className='flex flex-wrap'
+                            >
+                                {columns.map((column, columnIndex) => (
+                                    <Column columnId={column.id} columnIndex={columnIndex} droppableColumnId={column.droppableColumnId} tasks={column.tasks} title={column.title} key={column.id} />
+                                ))}
+
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </div>
       </main>
-    //   <DragDropContext onDragEnd={handleOnDragEnd}>
-    //     <Droppable type="column" droppableId='all-columns' direction='horizontal'>
-    //       {(provided) => (
-    //         <main 
-    //           {...provided.droppableProps}
-    //           ref={provided.innerRef}
-    //           className='flex w-full h-screen items-center justify-center'
-    //         >
-    //           {columns.map((column, index) => (
-    //             <Column columnId={column.id} index={index} title={column.title} key={crypto.randomUUID()} />
-    //             ))}
-    //           {provided.placeholder}
-    //         </main>
-    //       )}
-    //     </Droppable>
-    //   </DragDropContext>
     )
 }
