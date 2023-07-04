@@ -14,8 +14,16 @@ export default function Goals() {
     const [creatingTemporaryGoal, setCreatingTemporaryGoal] = useState(false)
     const [dates, setDates] = useState([])
     
+    const effectRan = useRef(false)
+    
     useEffect(() => {
+        if (effectRan.current) {
+            return
+        }
+
         getUserGoals()
+        
+        return () => effectRan.current = false
     }, [])
     
     // when goals change, change dates
@@ -88,7 +96,6 @@ export default function Goals() {
             </AnimatePresence>
 
             {/* creating goal */}
-            
             <div className="flex">
                 <AnimatePresence>
                     {

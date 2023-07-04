@@ -1,64 +1,128 @@
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import Item from './Item';
-import { IoIosAdd } from 'react-icons/io';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
 import { useState } from 'react';
+import AddListButton from './AddListButton';
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { auth, db } from "../../firebase-config";
+import { useEffect } from 'react';
+import { useRef } from 'react';
 
 export default function Todo() {
-    const [columns, setColumns] = useState([
-        { id: '1', droppableColumnId: 'droppableColumn-1', title: 'Todo', tasks: [
-            { id: '4', text: '1' },
-            { id: '5', text: '2' },
-            { id: '6', text: '3' },
-        ] },
-        { id: '2', droppableColumnId: 'droppableColumn-2', title: 'Doing', tasks: [] },
-        { id: '3', droppableColumnId: 'droppableColumn-3', title: 'Done', tasks: [] },
-    ])
+    const [columns, setColumns] = useState([])
+    const [cards, setCards] = useState([])
+    const [columnsOrder, setColumnsOrder] = useState([])
+
+    // useEffect(() => {
+    //     console.log("columns: ", columns);
+    // }, [columns])
+    
+    // useEffect(() => {
+    //     console.log("cards: ", cards);
+    // }, [cards])
+    
+    // useEffect(() => {
+    //     console.log("columnsOrder: ", columnsOrder);
+    // }, [columnsOrder])
+
+    const effectRan = useRef(false)
+    
+    useEffect(() => {
+        if (effectRan.current) {
+            return
+        }
+
+        // get data for all todo page
+        const getTodoData = async () => {
+            let columnsDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/columns`))
+            let columnsSnapshot = columnsDocs.docs.map((doc) => ({ ...doc.data() }))
+
+            let cardsDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/cards`))
+            let cardsSnapshot = cardsDocs.docs.map((doc) => ({ ...doc.data() }))
+
+            let columnsOrderDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/columnsOrder`))
+            let columnsOrderSnapshot = columnsOrderDocs.docs.map((doc) => ({ ...doc.data() }))
+
+            setColumns(columnsSnapshot)
+            setCards(cardsSnapshot)
+            
+            setColumnsOrder(columnsOrderSnapshot[0]?.order ? columnsOrderSnapshot[0]?.order : [])
+        }
+
+        getTodoData()
         
+        return () => effectRan.current = true
+    }, [])
+
+    const addNewColumn = async () => {
+        let newColumnId = crypto.randomUUID()
+
+        let newColumn = { id: newColumnId, droppableColumnId: 'droppableColumn-4', title: '5345234523452345', cards: [] }
+        setDoc(doc(db, `users/${auth.currentUser.uid}/columns`, newColumnId), newColumn)
+
+        // add column to order in client
+        setColumns(prev => [...prev, newColumn])
+        setColumnsOrder(prev => [...prev, newColumnId])
+
+        console.log("columns: ", columns);
+        console.log("columnsOrder: ", columnsOrder);
+
+        // add column to order in database
+        changeColumnsOrder(newColumnId)
+    }
+
+    const changeColumnsOrder = (newOrder) => {
+        let newDocs = {
+            order: arrayUnion(newOrder)
+        }
+
+        // if a column exists update columnsOrder, else create columnsOrder
+        if (columns.length >= 1) {
+            updateDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs)
+        } else {
+            setDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs)
+        }
+    }
+
     const handleOnDragEnd = (result) => {
         if (result.destination == null) {
             return
         }
 
         if (result.type == 'column') {
-            // clone columns state
-            let newColumns = structuredClone(columns)
-            
-            let selectedColumn = newColumns[result.source?.index]
-            
-            // update newColumns
-            newColumns.splice(result.source.index, 1)
-            newColumns.splice(result.destination.index, 0, selectedColumn)
-            
-            // update columns state with newColumns
-            setColumns(newColumns)
+            // clone columnsOrder state
+            let newColumnsOrder = structuredClone(columnsOrder)
+
+            let selectedColumn = newColumnsOrder[result.source.index]
+
+            // remove column and add it to new position
+            newColumnsOrder.splice(result.source.index, 1)
+            newColumnsOrder.splice(result.destination.index, 0, selectedColumn)
+
+            // update columns order on client
+            setColumnsOrder(newColumnsOrder)
+    
+            // update columns order on database
+            changeColumnsOrder(newColumnsOrder)
 
             return
         }
 
-        if (result.type == 'task') {
-
+        if (result.type == 'card') {
             // clone columns state
             let newColumns = structuredClone(columns)
             
-            let sourceColumnIndex
-            columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? sourceColumnIndex = columnIndex : null)
+            let cardColumnSource
+            columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? cardColumnSource = columnIndex : null)
+
+            let cardColumnDestination
+            columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? cardColumnDestination = columnIndex : null)
+
+            let selectedCard = columns[cardColumnSource].cards[result.source.index]
+
+            // remove card and add it to new position
+            newColumns[cardColumnSource].cards.splice(result.source.index, 1)
+            newColumns[cardColumnDestination].cards.splice(result.destination.index, 0, selectedCard)
             
-            let destinationColumnIndex
-            columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? destinationColumnIndex = columnIndex : null)
-            
-            let selectedTask = newColumns[sourceColumnIndex].tasks[result.source?.index]
-                
-            // delete task that was moved
-            if (newColumns[sourceColumnIndex].droppableColumnId == result.source.droppableId) {
-                newColumns[sourceColumnIndex].tasks.splice(result.source.index, 1)
-            }
-            
-            // add task to new position
-            if (newColumns[destinationColumnIndex].droppableColumnId == result.destination.droppableId) {
-                newColumns[destinationColumnIndex].tasks.splice(result.destination.index, 0, selectedTask)
-            }
-    
             // update columns state with newColumns
             setColumns(newColumns)
 
@@ -67,7 +131,7 @@ export default function Todo() {
     }
 
     return (
-      <main className='flex pl-2 pt-20 w-full h-screen bg-[#393939] text-white z-10'>
+        <main className='flex pl-2 pt-20 w-full h-screen overflow-x-scroll bg-[#393939] text-white z-10'>
             <div>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId='main' direction='horizontal' type='column'>
@@ -75,10 +139,14 @@ export default function Todo() {
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                className='flex flex-wrap'
+                                className='flex'
                             >
-                                {columns.map((column, columnIndex) => (
-                                    <Column columnId={column.id} columnIndex={columnIndex} droppableColumnId={column.droppableColumnId} tasks={column.tasks} title={column.title} key={column.id} />
+                                {columnsOrder?.map((order, orderIndex) => (
+                                    columns?.map((column, columnIndex) => (
+                                        order == column.id ? (
+                                            <Column setColumns={setColumns} columns={columns} setCards={setCards} cards={cards} columnId={column.id} columnIndex={columnIndex} orderIndex={orderIndex} droppableColumnId={column.droppableColumnId} title={column.title} key={column.id} />
+                                        ) : null
+                                    ))
                                 ))}
 
                                 {provided.placeholder}
@@ -87,6 +155,7 @@ export default function Todo() {
                     </Droppable>
                 </DragDropContext>
             </div>
-      </main>
+            <AddListButton addNewColumn={addNewColumn} />
+        </main>
     )
 }
