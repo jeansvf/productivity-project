@@ -3,7 +3,7 @@ import Column from './Column';
 import { useState } from 'react';
 import AddListButton from './AddListButton';
 import LoadingAnimation from '../../components/LoadingAnimation';
-import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from "../../firebase-config";
 import { useEffect } from 'react';
 import { useRef } from 'react';
@@ -87,6 +87,7 @@ export default function Todo() {
     }
 
     const handleOnDragEnd = (result) => {
+        // TODO: prevent destination of being the same as the source
         if (result.destination == null) {
             return
         }
@@ -112,14 +113,19 @@ export default function Todo() {
         if (result.type == 'card') {
             // clone columns state
             let newColumns = structuredClone(columns)
-            
+
             let cardColumnSourceId
             columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? cardColumnSourceId = columnIndex : null)
-
+            
             let cardColumnDestinationId
             columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? cardColumnDestinationId = columnIndex : null)
 
             let selectedCard = columns[cardColumnSourceId].cards[result.source.index]
+            
+            // undefined card bug fix
+            if (selectedCard == undefined) {
+                return
+            }
 
             // remove card and add it to new position
             newColumns[cardColumnSourceId].cards.splice(result.source.index, 1)
@@ -133,6 +139,9 @@ export default function Todo() {
                 cards: newColumns[cardColumnSourceId].cards
             })
             
+            // FIXME: if any of this items is undefined, return (I THINK THE ERROR IS HERE)
+            // FIXME: check the moment that the card is added to not add nothing undefined
+
             // add card to destination colum
             updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
                 cards: newColumns[cardColumnDestinationId].cards

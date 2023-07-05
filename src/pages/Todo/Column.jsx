@@ -1,12 +1,20 @@
 import { IoIosAdd } from "react-icons/io";
-import Item from "./Item";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
+import Item from "./Item";
+import { useState } from "react";
+import TemporaryCard from "./TemporaryCard";
+import { AnimatePresence } from "framer-motion";
 
 export default function Column({ setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
-    const addNewCard = async () => {
-        let newCard = { id: crypto.randomUUID(), text: 'bababbab' }
+
+    const [showTemporaryCard, setShowTemporaryCard] = useState(false)
+
+    const addNewCard = async (card) => {
+        setShowTemporaryCard(false)
+        
+        let newCard = { id: crypto.randomUUID(), text: card.text, color: card.color }
         
         // create card id in the column cards order
         let newColumns = structuredClone(columns)
@@ -32,11 +40,9 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                 <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className="flex flex-col items-center w-80 h-max my-3 mx-2 bg-[#2E2E2E] rounded-[.4rem]"
+                    className="flex flex-col items-center w-80 h-max mx-2 bg-[#2E2E2E] rounded-[.4rem]"
                 >
-                    <h2
-                    {...provided.dragHandleProps}
-                    className="w-[90%] py-4 font-semibold text-[17px]">{title}</h2>
+                    <h2 {...provided.dragHandleProps} className="w-[90%] py-4 font-semibold text-[17px]">{title}</h2>
 
                     <Droppable droppableId={droppableColumnId} /* CHECK THIS */ type="card" >
                         {(provided) => (
@@ -47,18 +53,24 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                             >
                                 {columns[columnIndex].cards.map((order, orderIndex) => (
                                     cards.map((card) => (
-                                        card.id == order.id ? (
-                                            <Item text={card.text} id={card.id} draggableIndex={orderIndex} key={card.id} />
+                                        card?.id == order?.id ? (
+                                            card == undefined ? null : <Item text={card.text} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
                                         ) : null
                                     ))
                                 ))}
+
+                                <AnimatePresence>
+                                    {showTemporaryCard ? (
+                                        <TemporaryCard addNewCard={addNewCard} setShowTemporaryCard={setShowTemporaryCard} />
+                                    ) : null}
+                                </AnimatePresence>
 
                                 {provided.placeholder}
                             </div>
                         )}
                     </Droppable>
 
-                    <button onClick={addNewCard} className="flex w-[92%] pt-1 pb-3 items-center select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
+                    <button onClick={() => setShowTemporaryCard(true)} className="flex w-[92%] pt-1 pb-3 items-center select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
                 </div>
             )}
         </Draggable>
