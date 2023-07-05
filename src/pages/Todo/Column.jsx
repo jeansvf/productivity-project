@@ -1,23 +1,21 @@
 import { IoIosAdd } from "react-icons/io";
 import Item from "./Item";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { addDoc, arrayUnion, collection, doc, getDocs, increment, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 
 export default function Column({ setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
-
     const addNewCard = async () => {
-        let newCard = { id: crypto.randomUUID(), text: 'testing new structure' }
+        let newCard = { id: crypto.randomUUID(), text: 'bababbab' }
         
         // create card id in the column cards order
         let newColumns = structuredClone(columns)
-        newColumns[columnIndex].cards.push(newCard.id)
-        
+
+        newColumns[columnIndex].cards.push(newCard)
+
         // create card in the client
         setColumns(newColumns)
         setCards(prev => [...prev, newCard])
-
-        // CHECKING WHY CARD ISNT BEING ADDED
 
         // add new card to "cards" subcollection
         setDoc(doc(db, `users/${auth.currentUser.uid}/cards`, newCard.id), newCard)

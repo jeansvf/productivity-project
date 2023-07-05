@@ -2,6 +2,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
 import { useState } from 'react';
 import AddListButton from './AddListButton';
+import LoadingAnimation from '../../components/LoadingAnimation';
 import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from "../../firebase-config";
 import { useEffect } from 'react';
@@ -11,18 +12,7 @@ export default function Todo() {
     const [columns, setColumns] = useState([])
     const [cards, setCards] = useState([])
     const [columnsOrder, setColumnsOrder] = useState([])
-
-    // useEffect(() => {
-    //     console.log("columns: ", columns);
-    // }, [columns])
-    
-    // useEffect(() => {
-    //     console.log("cards: ", cards);
-    // }, [cards])
-    
-    // useEffect(() => {
-    //     console.log("columnsOrder: ", columnsOrder);
-    // }, [columnsOrder])
+    const [isDataRetrieved, setIsDataRetrieved] = useState(false)
 
     const effectRan = useRef(false)
     
@@ -46,33 +36,46 @@ export default function Todo() {
             setCards(cardsSnapshot)
             
             setColumnsOrder(columnsOrderSnapshot[0]?.order ? columnsOrderSnapshot[0]?.order : [])
+            setIsDataRetrieved(true)
         }
 
         getTodoData()
-        
+
         return () => effectRan.current = true
     }, [])
 
     const addNewColumn = async () => {
         let newColumnId = crypto.randomUUID()
 
-        let newColumn = { id: newColumnId, droppableColumnId: 'droppableColumn-4', title: '5345234523452345', cards: [] }
+        let newColumn = { id: newColumnId, droppableColumnId: crypto.randomUUID(), title: '5345234523452345', cards: [] }
         setDoc(doc(db, `users/${auth.currentUser.uid}/columns`, newColumnId), newColumn)
 
         // add column to order in client
         setColumns(prev => [...prev, newColumn])
         setColumnsOrder(prev => [...prev, newColumnId])
 
-        console.log("columns: ", columns);
-        console.log("columnsOrder: ", columnsOrder);
-
         // add column to order in database
-        changeColumnsOrder(newColumnId)
+        changeColumnsOrder("add", newColumnId)
     }
 
-    const changeColumnsOrder = (newOrder) => {
-        let newDocs = {
-            order: arrayUnion(newOrder)
+    const changeColumnsOrder = (method, newOrder) => {
+        let newDocs
+
+        switch (method) {
+            case "add":
+                newDocs = {
+                    order: arrayUnion(newOrder)
+                }
+                break;
+            
+            case "replace":
+                newDocs = {
+                    order: newOrder
+                }
+                break;
+
+            default:
+                return
         }
 
         // if a column exists update columnsOrder, else create columnsOrder
@@ -102,8 +105,7 @@ export default function Todo() {
             setColumnsOrder(newColumnsOrder)
     
             // update columns order on database
-            changeColumnsOrder(newColumnsOrder)
-
+            changeColumnsOrder("replace" , newColumnsOrder)
             return
         }
 
@@ -111,51 +113,69 @@ export default function Todo() {
             // clone columns state
             let newColumns = structuredClone(columns)
             
-            let cardColumnSource
-            columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? cardColumnSource = columnIndex : null)
+            let cardColumnSourceId
+            columns.map((column, columnIndex) => column.droppableColumnId == result.source.droppableId ? cardColumnSourceId = columnIndex : null)
 
-            let cardColumnDestination
-            columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? cardColumnDestination = columnIndex : null)
+            let cardColumnDestinationId
+            columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? cardColumnDestinationId = columnIndex : null)
 
-            let selectedCard = columns[cardColumnSource].cards[result.source.index]
+            let selectedCard = columns[cardColumnSourceId].cards[result.source.index]
 
             // remove card and add it to new position
-            newColumns[cardColumnSource].cards.splice(result.source.index, 1)
-            newColumns[cardColumnDestination].cards.splice(result.destination.index, 0, selectedCard)
-            
+            newColumns[cardColumnSourceId].cards.splice(result.source.index, 1)
+            newColumns[cardColumnDestinationId].cards.splice(result.destination.index, 0, selectedCard)
+
             // update columns state with newColumns
             setColumns(newColumns)
 
+            // remove card from source column
+            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnSourceId].id}`), {
+                cards: newColumns[cardColumnSourceId].cards
+            })
+            
+            // add card to destination colum
+            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
+                cards: newColumns[cardColumnDestinationId].cards
+            })
+            
             return
         }
     }
 
     return (
         <main className='flex pl-2 pt-20 w-full h-screen overflow-x-scroll bg-[#393939] text-white z-10'>
-            <div>
-                <DragDropContext onDragEnd={handleOnDragEnd}>
-                    <Droppable droppableId='main' direction='horizontal' type='column'>
-                        {(provided) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className='flex'
-                            >
-                                {columnsOrder?.map((order, orderIndex) => (
-                                    columns?.map((column, columnIndex) => (
-                                        order == column.id ? (
-                                            <Column setColumns={setColumns} columns={columns} setCards={setCards} cards={cards} columnId={column.id} columnIndex={columnIndex} orderIndex={orderIndex} droppableColumnId={column.droppableColumnId} title={column.title} key={column.id} />
-                                        ) : null
-                                    ))
-                                ))}
-
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-            </div>
-            <AddListButton addNewColumn={addNewColumn} />
+            {isDataRetrieved ? (
+                <>
+                    <div>
+                        <DragDropContext onDragEnd={handleOnDragEnd}>
+                            <Droppable droppableId='main' direction='horizontal' type='column'>
+                                {(provided) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        className='flex'
+                                    >
+                                        {columnsOrder?.map((order, orderIndex) => (
+                                            columns?.map((column, columnIndex) => (
+                                                order == column.id ? (
+                                                    <Column setColumns={setColumns} columns={columns} setCards={setCards} cards={cards} columnId={column.id} columnIndex={columnIndex} orderIndex={orderIndex} droppableColumnId={column.droppableColumnId} title={column.title} key={column.id} />
+                                                ) : null
+                                            ))
+                                        ))}
+        
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
+                    </div>
+                    <AddListButton addNewColumn={addNewColumn} />
+                </>
+                ) : (
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <LoadingAnimation width="7" height="7" />
+                </div>
+                )}
         </main>
     )
 }

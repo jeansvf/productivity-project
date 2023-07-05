@@ -8,6 +8,7 @@ import DateLine from "./DateLine";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import CompletedGoal from "./CompletedGoal";
+import { useRef } from "react";
 
 export default function Goals() {
     const [goals, setGoals] = useState()
