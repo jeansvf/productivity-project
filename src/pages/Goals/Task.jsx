@@ -42,7 +42,7 @@ export default function Task({ task, setGoals, goals, taskIndex, goalIndex, setG
             setGoals(newGoals)
             return
         }
-        
+
         // change task content from state
         let newGoals = structuredClone(goals)
         newGoals[goalIndex].tasks[taskIndex].taskContent = event.target.value

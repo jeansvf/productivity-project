@@ -3,13 +3,17 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 import Item from "./Item";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TemporaryCard from "./TemporaryCard";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { RxDragHandleDots2 } from "react-icons/rx";
 
 export default function Column({ setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
 
     const [showTemporaryCard, setShowTemporaryCard] = useState(false)
+    const [isHoveringTitle, setIsHoveringTitle] = useState(false)
+
+    const writingTimeout = useRef()
 
     const addNewCard = async (card) => {
         setShowTemporaryCard(false)
@@ -34,6 +38,26 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
         })
     }
 
+    const changeTitle = (title) => {
+        clearTimeout(writingTimeout.current)
+        
+        let newColumns = structuredClone(columns)
+        newColumns[columnIndex].title = title
+        
+        setColumns(newColumns)
+        
+        if (title == "") {
+            return
+        }
+
+        writingTimeout.current = setTimeout(() => {
+            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${columnId}`), {
+                title: title
+            })
+            console.log("updated");
+        }, 600);
+    }
+
     return (
         <Draggable draggableId={columnId} index={orderIndex}>
             {(provided) => (
@@ -42,7 +66,23 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                     {...provided.draggableProps}
                     className="flex flex-col items-center w-80 h-max mx-2 bg-[#2E2E2E] rounded-[.4rem]"
                 >
-                    <h2 {...provided.dragHandleProps} className="w-[90%] py-4 font-semibold text-[17px]">{title}</h2>
+                    <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[90%] my-4">
+                        <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px]" type="text" value={title} />
+                        <div {...provided.dragHandleProps} className="absolute right-0 text-2xl">
+                            <AnimatePresence>
+                                {isHoveringTitle ? (
+                                    <motion.div
+                                        initial={{opacity: 0}}
+                                        animate={{opacity: 1}}
+                                        exit={{opacity: 0}}
+                                        className="flex items-center h-7 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20"
+                                    >
+                                        <RxDragHandleDots2 />
+                                    </motion.div>
+                                ) : null}
+                            </AnimatePresence>
+                        </div>
+                    </div>
 
                     <Droppable droppableId={droppableColumnId} /* CHECK THIS */ type="card" >
                         {(provided) => (
@@ -70,7 +110,7 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                         )}
                     </Droppable>
 
-                    <button onClick={() => setShowTemporaryCard(true)} className="flex w-[92%] pt-1 pb-3 items-center select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
+                    <button onClick={() => setShowTemporaryCard(true)} className="flex self-start mt-1 mb-3 ml-3 pr-1 items-center select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
                 </div>
             )}
         </Draggable>

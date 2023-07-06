@@ -11,7 +11,6 @@ import { BsCheck } from "react-icons/bs";
 import LoadingAnimation from "../../components/LoadingAnimation"
 
 export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals }) {
-    
     const [goalProgress, setGoalProgress] = useState(0)
     const [deleteLoading, setDeleteLoading] = useState(false)
     const [showGoalEditModal, setShowGoalEditModal] = useState(false)
@@ -85,7 +84,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
         // after 500ms change goal title from database
         writingTimeout.current = setTimeout(() => {
             setDoc(doc(db, "goals", newGoals[goalIndex].goalId), newGoals[goalIndex])
-        }, 500)
+        }, 600)
     }
 
     const addNewTask = () => {

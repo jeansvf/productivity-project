@@ -47,7 +47,7 @@ export default function Todo() {
     const addNewColumn = async () => {
         let newColumnId = crypto.randomUUID()
 
-        let newColumn = { id: newColumnId, droppableColumnId: crypto.randomUUID(), title: '5345234523452345', cards: [] }
+        let newColumn = { id: newColumnId, droppableColumnId: crypto.randomUUID(), title: 'New Column', cards: [] }
         setDoc(doc(db, `users/${auth.currentUser.uid}/columns`, newColumnId), newColumn)
 
         // add column to order in client
@@ -106,7 +106,7 @@ export default function Todo() {
             setColumnsOrder(newColumnsOrder)
     
             // update columns order on database
-            changeColumnsOrder("replace" , newColumnsOrder)
+            changeColumnsOrder("replace", newColumnsOrder)
             return
         }
 
@@ -138,9 +138,6 @@ export default function Todo() {
             updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnSourceId].id}`), {
                 cards: newColumns[cardColumnSourceId].cards
             })
-            
-            // FIXME: if any of this items is undefined, return (I THINK THE ERROR IS HERE)
-            // FIXME: check the moment that the card is added to not add nothing undefined
 
             // add card to destination colum
             updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
