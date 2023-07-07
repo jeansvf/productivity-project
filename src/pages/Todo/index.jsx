@@ -3,7 +3,7 @@ import Column from './Column';
 import { useState } from 'react';
 import AddListButton from './AddListButton';
 import LoadingAnimation from '../../components/LoadingAnimation';
-import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from "../../firebase-config";
 import { useEffect } from 'react';
 import { useRef } from 'react';
@@ -86,6 +86,23 @@ export default function Todo() {
         }
     }
 
+    const deleteColumn = (columnIndex) => { 
+        let newColumns = structuredClone(columns)
+        let newColumnsOrder = structuredClone(columnsOrder)
+
+        let selectedColumnId = newColumns[columnIndex].id
+
+        newColumns.splice(columnIndex, 1)
+        newColumnsOrder.map((column, index) => column == selectedColumnId ? newColumnsOrder.splice(index, 1) : null)
+
+        setColumns(newColumns)
+        setColumnsOrder(newColumnsOrder)
+
+        deleteDoc(doc(db, `users/${auth.currentUser.uid}/columns/${selectedColumnId}`))
+
+        changeColumnsOrder("replace", newColumnsOrder)
+    }
+
     const handleOnDragEnd = (result) => {
         // TODO: prevent destination of being the same as the source
         if (result.destination == null) {
@@ -149,7 +166,7 @@ export default function Todo() {
     }
 
     return (
-        <main className='flex pl-2 pt-20 w-full h-screen overflow-x-scroll bg-[#393939] text-white z-10'>
+        <main className='relative flex pl-2 pt-20 h-screen overflow-x-scroll bg-[#393939] text-white z-10'>
             {isDataRetrieved ? (
                 <>
                     <div>
@@ -164,7 +181,7 @@ export default function Todo() {
                                         {columnsOrder?.map((order, orderIndex) => (
                                             columns?.map((column, columnIndex) => (
                                                 order == column.id ? (
-                                                    <Column setColumns={setColumns} columns={columns} setCards={setCards} cards={cards} columnId={column.id} columnIndex={columnIndex} orderIndex={orderIndex} droppableColumnId={column.droppableColumnId} title={column.title} key={column.id} />
+                                                    <Column deleteColumn={deleteColumn} setColumns={setColumns} columns={columns} setCards={setCards} cards={cards} columnId={column.id} columnIndex={columnIndex} orderIndex={orderIndex} droppableColumnId={column.droppableColumnId} title={column.title} key={column.id} />
                                                 ) : null
                                             ))
                                         ))}

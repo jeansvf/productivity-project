@@ -19,7 +19,7 @@ export default function TemporaryCard({ addNewCard, setShowTemporaryCard }) {
         }}
         exit={{
             opacity: 0,
-            height: "2.5rem",
+            height: 0,
         }}
         className="flex bg-[#4F4F4F] w-full h-56 rounded-[.25rem]">
             <div className={`w-1.5 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#${temporaryCardValues.color}]`}></div>

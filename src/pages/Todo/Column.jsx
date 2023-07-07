@@ -3,22 +3,23 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 import Item from "./Item";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import TemporaryCard from "./TemporaryCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { RxDragHandleDots2 } from "react-icons/rx";
+import { FaTrash, FaTrashAlt } from "react-icons/fa";
 
-export default function Column({ setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
+export default function Column({ deleteColumn, setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
 
     const [showTemporaryCard, setShowTemporaryCard] = useState(false)
     const [isHoveringTitle, setIsHoveringTitle] = useState(false)
 
     const writingTimeout = useRef()
 
-    const addNewCard = async (card) => {
+    const addNewCard = (card) => {
         setShowTemporaryCard(false)
         
-        let newCard = { id: crypto.randomUUID(), text: card.text, color: card.color }
+        let newCard = { id: crypto.randomUUID(), text: card.text, color: card.color, description: card.description }
         
         // create card id in the column cards order
         let newColumns = structuredClone(columns)
@@ -54,7 +55,6 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
             updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${columnId}`), {
                 title: title
             })
-            console.log("updated");
         }, 600);
     }
 
@@ -66,21 +66,38 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                     {...provided.draggableProps}
                     className="flex flex-col items-center w-80 h-max mx-2 bg-[#2E2E2E] rounded-[.4rem]"
                 >
-                    <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[90%] my-4">
-                        <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px]" type="text" value={title} />
-                        <div {...provided.dragHandleProps} className="absolute right-0 text-2xl">
-                            <AnimatePresence>
-                                {isHoveringTitle ? (
-                                    <motion.div
-                                        initial={{opacity: 0}}
-                                        animate={{opacity: 1}}
-                                        exit={{opacity: 0}}
-                                        className="flex items-center h-7 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20"
-                                    >
-                                        <RxDragHandleDots2 />
-                                    </motion.div>
-                                ) : null}
-                            </AnimatePresence>
+                    <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[92%] my-4">
+                        <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px] w-2/3" type="text" value={title} />
+                        <div className="flex absolute justify-end right-0 w-20">
+                                <AnimatePresence>
+                                    {isHoveringTitle ? (
+                                        <motion.button
+                                            initial={{opacity: 0}}
+                                            animate={{opacity: 1}}
+                                            exit={{opacity: 0}}
+                                            type="button"
+                                            onClick={() => deleteColumn(columnIndex)}
+                                            className="flex justify-center items-center h-7 px-1 mr-1 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20 text-lg hover:text-red-400"
+                                        >
+                                            <FaTrash />
+                                        </motion.button>
+                                    ) : null}
+                                </AnimatePresence>
+                                
+                                <div {...provided.dragHandleProps} className="text-2xl">
+                                    <AnimatePresence>
+                                        {isHoveringTitle ? (
+                                            <motion.div
+                                                initial={{opacity: 0}}
+                                                animate={{opacity: 1}}
+                                                exit={{opacity: 0}}
+                                                className="flex items-center h-7 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20"
+                                            >
+                                                <RxDragHandleDots2 />
+                                            </motion.div>
+                                        ) : null}
+                                    </AnimatePresence>
+                                </div>
                         </div>
                     </div>
 
@@ -89,12 +106,12 @@ export default function Column({ setColumns, columns, columnId, columnIndex, ord
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                className="flex flex-col items-center w-[92%] h-full min-h-[1rem]"
+                                className="flex flex-col items-center w-[92%] h-full min-h-[.8rem]"
                             >
                                 {columns[columnIndex].cards.map((order, orderIndex) => (
                                     cards.map((card) => (
                                         card?.id == order?.id ? (
-                                            card == undefined ? null : <Item text={card.text} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
+                                            card == undefined ? null : <Item text={card.text} description={card.description} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
                                         ) : null
                                     ))
                                 ))}
