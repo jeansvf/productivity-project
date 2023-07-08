@@ -26,7 +26,7 @@ export default function TemporaryCard({ addNewCard, setShowTemporaryCard }) {
             <div className="flex flex-col w-full h-full">
                 <div className="flex items-center h-14">
                     <input autoFocus onChange={(event) => setTemporaryCardValues({ ...temporaryCardValues, text: event.target.value })} className="w-full h-full bg-transparent pl-1.5 outline-none" placeholder="Card Text..." type="text" />
-                    <button onClick={() => setShowTemporaryCard(false)} className="pr-2.5 text-sm">
+                    <button onClick={() => setShowTemporaryCard(false)} className="mr-2.5 text-sm">
                         <TfiClose />
                     </button>
                 </div>

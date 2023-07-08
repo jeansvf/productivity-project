@@ -7,10 +7,9 @@ import { useRef, useState } from "react";
 import TemporaryCard from "./TemporaryCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { RxDragHandleDots2 } from "react-icons/rx";
-import { FaTrash, FaTrashAlt } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 
 export default function Column({ deleteColumn, setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
-
     const [showTemporaryCard, setShowTemporaryCard] = useState(false)
     const [isHoveringTitle, setIsHoveringTitle] = useState(false)
 
@@ -55,7 +54,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
             updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${columnId}`), {
                 title: title
             })
-        }, 600);
+        }, 600)
     }
 
     return (
@@ -69,39 +68,39 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                     <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[92%] my-4">
                         <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px] w-2/3" type="text" value={title} />
                         <div className="flex absolute justify-end right-0 w-20">
+                            <AnimatePresence>
+                                {isHoveringTitle ? (
+                                    <motion.button
+                                        initial={{opacity: 0}}
+                                        animate={{opacity: 1}}
+                                        exit={{opacity: 0}}
+                                        type="button"
+                                        onClick={() => deleteColumn(columnIndex)}
+                                        className="flex justify-center items-center h-7 px-1 mr-1 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20 text-lg hover:text-red-400"
+                                    >
+                                        <FaTrash />
+                                    </motion.button>
+                                ) : null}
+                            </AnimatePresence>
+                            
+                            <div {...provided.dragHandleProps} className="text-2xl">
                                 <AnimatePresence>
                                     {isHoveringTitle ? (
-                                        <motion.button
+                                        <motion.div
                                             initial={{opacity: 0}}
                                             animate={{opacity: 1}}
                                             exit={{opacity: 0}}
-                                            type="button"
-                                            onClick={() => deleteColumn(columnIndex)}
-                                            className="flex justify-center items-center h-7 px-1 mr-1 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20 text-lg hover:text-red-400"
+                                            className="flex items-center h-7 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20"
                                         >
-                                            <FaTrash />
-                                        </motion.button>
+                                            <RxDragHandleDots2 />
+                                        </motion.div>
                                     ) : null}
                                 </AnimatePresence>
-                                
-                                <div {...provided.dragHandleProps} className="text-2xl">
-                                    <AnimatePresence>
-                                        {isHoveringTitle ? (
-                                            <motion.div
-                                                initial={{opacity: 0}}
-                                                animate={{opacity: 1}}
-                                                exit={{opacity: 0}}
-                                                className="flex items-center h-7 rounded-sm bg-white bg-opacity-0 hover:bg-opacity-20"
-                                            >
-                                                <RxDragHandleDots2 />
-                                            </motion.div>
-                                        ) : null}
-                                    </AnimatePresence>
-                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <Droppable droppableId={droppableColumnId} /* CHECK THIS */ type="card" >
+                    <Droppable droppableId={droppableColumnId} type="card" >
                         {(provided) => (
                             <div
                                 ref={provided.innerRef}
@@ -109,9 +108,9 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                                 className="flex flex-col items-center w-[92%] h-full min-h-[.8rem]"
                             >
                                 {columns[columnIndex].cards.map((order, orderIndex) => (
-                                    cards.map((card) => (
+                                    cards.map((card, cardIndex) => (
                                         card?.id == order?.id ? (
-                                            card == undefined ? null : <Item text={card.text} description={card.description} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
+                                            card == undefined ? null : <Item setCards={setCards} cards={cards} cardIndex={cardIndex} text={card.text} description={card.description} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
                                         ) : null
                                     ))
                                 ))}

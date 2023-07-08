@@ -4,7 +4,7 @@ import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
 import { Timestamp, addDoc, collection, doc, increment, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
-import { getDate } from "date-fns";
+import { getMonth } from "date-fns";
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
@@ -24,7 +24,6 @@ export default function TimerContext({ children }) {
         timerType: "pomodoro",
     })
 
-    
     const timeoutId = useRef()
     
     const databaseMinutesInterval = useRef()
@@ -45,9 +44,11 @@ export default function TimerContext({ children }) {
     }, [isPaused])
 
     const addPomodoroMinuteToDatabase = () => {
-        setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoroStudy`, Date.getMonth()), {
-            minutes: increment(1)
-        })
+        // TODO: add minutes to database
+        
+        // setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoroStudy`, ), {
+        //     minutes: increment(1)
+        // })
         //updateDoc(doc(db, "users", auth.currentUser.uid), collection(db, "pomodoroStudy"))
     }
     
