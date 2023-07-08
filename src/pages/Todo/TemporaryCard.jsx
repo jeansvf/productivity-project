@@ -4,7 +4,9 @@ import { TfiClose } from "react-icons/tfi";
 
 export default function TemporaryCard({ addNewCard, setShowTemporaryCard }) {
     const [temporaryCardValues, setTemporaryCardValues] = useState({
-        color: "78D7FF"
+        color: "78D7FF",
+        text: "",
+        description: ""
     })
 
     return (

@@ -4,7 +4,6 @@ import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
 import { Timestamp, addDoc, collection, doc, increment, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
-import { getMonth } from "date-fns";
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
@@ -38,20 +37,26 @@ export default function TimerContext({ children }) {
             return
         }
 
-        databaseMinutesInterval.current = setInterval(() => {
-            !isPaused ? addPomodoroMinuteToDatabase() : null
-        }, 1000)
-    }, [isPaused])
-
-    const addPomodoroMinuteToDatabase = () => {
-        // TODO: add minutes to database
+        // TODO: change firebase minutes structure
         
-        // setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoroStudy`, ), {
+        databaseMinutesInterval.current = setInterval(() => {
+            !isPaused ? incrementPomodoroMinutes() : null
+        }, 2000)
+    }, [isPaused])
+    
+    const incrementPomodoroMinutes = () => {
+        const d = new Date()
+        const docId = `${(d.getMonth() + 1).toString().length < 2 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1}-${d.getFullYear()}`
+
+        // updateDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
         //     minutes: increment(1)
         // })
-        //updateDoc(doc(db, "users", auth.currentUser.uid), collection(db, "pomodoroStudy"))
+
+        setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
+            minutes: increment(1)
+        }, { merge: true })
     }
-    
+
     const playAlarm = () => {
         let alarmSettings = JSON.parse(localStorage.getItem("alarm_settings"))
 

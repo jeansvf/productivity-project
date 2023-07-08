@@ -79,11 +79,7 @@ export default function Todo() {
         }
 
         // if a column exists update columnsOrder, else create columnsOrder
-        if (columns.length >= 1) {
-            updateDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs)
-        } else {
-            setDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs)
-        }
+        setDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs, { merge: true })
     }
 
     const deleteColumn = (columnIndex) => { 
@@ -166,7 +162,7 @@ export default function Todo() {
     }
 
     return (
-        <main className='relative flex pl-2 pt-20 h-screen overflow-x-scroll bg-[#393939] text-white z-10'>
+        <main className='relative flex pl-2 pt-20 h-screen overflow-x-auto bg-[#393939] text-white z-10'>
             {isDataRetrieved ? (
                 <>
                     <div>

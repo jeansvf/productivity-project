@@ -14,10 +14,6 @@
   padding: .4rem;
 }
 
-#goal-tasks-window {
-  overflow-y: scroll;
-}
-
 #goal-tasks-window::-webkit-scrollbar {
   display: none
 }
