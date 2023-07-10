@@ -7,6 +7,7 @@ export default function LofiPlayer() {
     return (
         // add div to hide player
         <div className='absolute -z-50'>
+            <div className="absolute bg-[#393939] w-full h-full"></div>
             <ReactPlayer
             playing={isVideoPlaying}
             volume={volume}

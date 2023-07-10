@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import arcadeAlarm from "../assets/alarms/arcade.wav"
 import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
-import { Timestamp, addDoc, collection, doc, increment, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, increment, setDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
 const TimerContextProvider = createContext()
 
@@ -36,25 +36,29 @@ export default function TimerContext({ children }) {
             clearInterval(databaseMinutesInterval.current)
             return
         }
-
-        // TODO: change firebase minutes structure
         
         databaseMinutesInterval.current = setInterval(() => {
             !isPaused ? incrementPomodoroMinutes() : null
         }, 2000)
     }, [isPaused])
     
-    const incrementPomodoroMinutes = () => {
+    const incrementPomodoroMinutes = async () => {
         const d = new Date()
         const docId = `${(d.getMonth() + 1).toString().length < 2 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1}-${d.getFullYear()}`
 
-        // updateDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
-        //     minutes: increment(1)
-        // })
+        let currentDoc = await getDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro/${docId}`))
 
-        setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
-            minutes: increment(1)
-        }, { merge: true })
+        if (currentDoc.data()) {
+            setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
+                minutes: increment(1)
+            }, { merge: true })
+        } else {
+            setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
+                minutes: increment(1),
+                date: docId
+            }, { merge: true })
+        }
+
     }
 
     const playAlarm = () => {

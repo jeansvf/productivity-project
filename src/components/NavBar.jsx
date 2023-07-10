@@ -2,12 +2,17 @@ import { Link, useLocation } from "react-router-dom";
 import { HiHome } from "react-icons/hi2";
 import { GiArcheryTarget, GiMusicalNotes, GiTomato } from "react-icons/gi";
 import { IoMdCheckboxOutline } from "react-icons/io";
-import profilePic from "../assets/profile-pic.jpg"
 import { AnimatePresence, motion } from "framer-motion";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase-config";
+import LoadingAnimation from "../components/LoadingAnimation";
 import { useEffect, useState } from "react";
+import { useProfileContext } from "../contexts/ProfileContext";
 
 export default function NavBar() {
     const [isHovering, setIsHovering] = useState("")
+    
+    const { profilePic } = useProfileContext()
 
     const location = useLocation()
 
@@ -68,9 +73,12 @@ export default function NavBar() {
                 <p className="ml-2">Goals</p>
             </Link>
             
-            <Link to={"/profile"} className="absolute right-[.4rem] border-[1px] cursor-pointer rounded-full hover:">
-                <img className="w-10 h-10 rounded-full" src={profilePic} alt="" />
-            </Link>
+            {profilePic ?
+            <motion.div className="absolute right-[.4rem] border-[1px] cursor-pointer rounded-full w-10" initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
+                <Link to={"/profile"}>
+                    <img className="w-10 h-10 rounded-full" src={profilePic} alt="" />
+                </Link>
+            </motion.div> : null }
         </nav>
     )
 }

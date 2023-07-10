@@ -27,9 +27,9 @@ export default function PlayerControls() {
                 {isVideoPlaying ? <HiPause className='w-full h-full stroke-1 stroke-black' /> : <HiPlay className='w-full h-full stroke-1 stroke-black' />}
             </button>
 
-            <button type='button' className='w-8 h-8 mx-1'>
+            {/* <button type='button' className='w-8 h-8 mx-1'>
                 <HiForward stroke='2' className='w-full h-full stroke-1 stroke-black' />
-            </button>
+            </button> */}
 
             <button type="button" className='w-8 h-8 mx-1'>
                 <BiDice3 onClick={() => changeBackground()} stroke="2" className='w-full h-full stroke-1 stroke-black' />

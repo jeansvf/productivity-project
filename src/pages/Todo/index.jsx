@@ -78,7 +78,6 @@ export default function Todo() {
                 return
         }
 
-        // if a column exists update columnsOrder, else create columnsOrder
         setDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs, { merge: true })
     }
 
@@ -100,8 +99,8 @@ export default function Todo() {
     }
 
     const handleOnDragEnd = (result) => {
-        // TODO: prevent destination of being the same as the source
-        if (result.destination == null) {
+        // if source and destination are the same return
+        if (result.source?.droppableId == result.destination?.droppableId && result.source?.index == result.destination?.index) {
             return
         }
 
