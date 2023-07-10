@@ -39,7 +39,7 @@ export default function TimerContext({ children }) {
         
         databaseMinutesInterval.current = setInterval(() => {
             !isPaused ? incrementPomodoroMinutes() : null
-        }, 2000)
+        }, 1000)
     }, [isPaused])
     
     const incrementPomodoroMinutes = async () => {
