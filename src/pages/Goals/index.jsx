@@ -14,6 +14,7 @@ export default function Goals() {
     const [goals, setGoals] = useState()
     const [creatingTemporaryGoal, setCreatingTemporaryGoal] = useState(false)
     const [dates, setDates] = useState([])
+    const [showCompletedGoalsLine, setShowCompletedGoalsLine] = useState(false)
     
     const effectRan = useRef(false)
     
@@ -29,9 +30,12 @@ export default function Goals() {
     
     // when goals change, change dates
     useEffect(() => {
-        goals ? (
-            getDates()
-        ) : null
+        if (!goals) {
+            return
+        }
+        getDates()
+        
+        goals.map(goal => goal.isGoalComplete ? setShowCompletedGoalsLine(true) : null)
     }, [goals])
 
     const getUserGoals = async () => {
@@ -114,7 +118,7 @@ export default function Goals() {
             <AnimatePresence>
                 <div>
                     {/* if any completed goal exists, render dateline */}
-                    {goals?.map(goal => goal?.isGoalComplete)[0] ? <DateLine date={"completed"} /> : null}
+                    {showCompletedGoalsLine ? <DateLine date={"completed"} /> : null}
                     <div className="flex flex-wrap w-full">
                         {
                             goals?.map((goal, goalIndex) => {

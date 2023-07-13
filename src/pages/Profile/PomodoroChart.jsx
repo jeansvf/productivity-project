@@ -1,12 +1,11 @@
 import { useProfileContext } from "../../contexts/ProfileContext"
 import Month from "./Month"
-import LoadingAnimation from "../../components/LoadingAnimation"
 
 export default function PomodoroChart() {
     const { userPomodoros, dates } = useProfileContext()
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
+
     const capitalize = (text) => {
         return `${text[0].toUpperCase()}${text.slice(1)}`
     }
@@ -17,9 +16,7 @@ export default function PomodoroChart() {
 
             <div className="flex h-36 pt-2 pb-1 rounded-md border-[1px] px-1 border-white">
                 {dates.map((date, index) => <Month month={capitalize(date)} completion={"0"} key={index} />)}
-                {userPomodoros ? userPomodoros.map((pomodoro, index) => <Month month={monthNames[new Date(pomodoro.date).getMonth()]} completion={`${pomodoro.minutes}%`} key={index} />) : (
-                    <div className="w-full h-full bg-yellow-300"><LoadingAnimation width={9} height={9} /></div>
-                )}
+                {userPomodoros ? userPomodoros.map((pomodoro, index) => <Month month={monthNames[new Date(pomodoro.date).getMonth()]} completion={`${pomodoro.minutes * 14}%`} key={index} />) : null}
             </div>
         </div>
     )

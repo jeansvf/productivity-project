@@ -38,6 +38,18 @@ export default function profileContext({ children }) {
                         
                         finalPomodoros.push(modifiedPomodoro);
                     })
+
+                    // organize pomodoros in order by month and year
+                    finalPomodoros.sort((a, b) => {
+                        let [yearA, monthA] = a.date.split(', ')
+                        let [yearB, monthB] = b.date.split(', ')
+                
+                        if (yearA != yearB) {
+                            return yearA - yearB
+                        }
+                
+                        return monthA - monthB
+                    })
                     
                     setUserPomodoros(finalPomodoros)
                     

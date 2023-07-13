@@ -3,10 +3,7 @@ import { HiHome } from "react-icons/hi2";
 import { GiArcheryTarget, GiMusicalNotes, GiTomato } from "react-icons/gi";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { AnimatePresence, motion } from "framer-motion";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase-config";
-import LoadingAnimation from "../components/LoadingAnimation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProfileContext } from "../contexts/ProfileContext";
 
 export default function NavBar() {

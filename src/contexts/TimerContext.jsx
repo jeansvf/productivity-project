@@ -58,7 +58,6 @@ export default function TimerContext({ children }) {
                 date: docId
             }, { merge: true })
         }
-
     }
 
     const playAlarm = () => {
