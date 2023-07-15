@@ -8,14 +8,14 @@ export default function TabGoal({ goal }) {
     useEffect(() => getGoalProgress(), [])
 
     const getGoalProgress = () => {
-        let doneTasks = 0;
-        let notDoneTasks = 0;
+        let doneTasks = 0
+        let notDoneTasks = 0
 
         goal?.tasks?.map(task => {
             task.isComplete ? doneTasks++ : notDoneTasks++
         })
         
-        setGoalProgress(Math.floor((doneTasks / (doneTasks + notDoneTasks)) * 100));
+        setGoalProgress(Math.floor((doneTasks / (doneTasks + notDoneTasks)) * 100))
     }
 
     return (
@@ -24,7 +24,7 @@ export default function TabGoal({ goal }) {
 
             {/* TODO: remove this id */}
             <div id="goal-tasks-window" className="overflow-y-auto">
-                <TabGoalTask />
+                {goal.tasks.map((task) => <TabGoalTask taskContent={task.taskContent} isComplete={task.isComplete} />)}
             </div>
 
             <TabGoalProgress goalProgress={goalProgress} />

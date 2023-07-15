@@ -25,7 +25,6 @@ export default function Home() {
         <div className="flex w-full h-screen justify-center pt-52 bg-[#393939] z-10 text-white">
             <div>
                 <MonthPomodoroStatus />
-                <YesterdayPomodoroStatus />
             </div>
 
             <div className="mx-24 pt-8">
