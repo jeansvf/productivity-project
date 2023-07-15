@@ -27,6 +27,8 @@ export default function LandingPage() {
                 <Link to={"/signup"} className="flex items-center justify-center w-[17rem] h-11 text-white bg-[#404040] rounded-full text-lg mr-6">Start with email</Link>
                 <Link to={"/signup"} className="flex items-center justify-center w-[17rem] h-11 bg-white rounded-full text-lg"><FcGoogle className="w-9 h-9 m-2" /> Start with Google</Link>
             </div>
+
+            {/* TODO: add a go to top button */}
         
             <div className="flex justify-center w-full mt-28 mb-40">
                 <img src={pomodoroImage} alt="pomodoro-img" className="w-[72rem] border-[1px] border-white rounded-xl" />

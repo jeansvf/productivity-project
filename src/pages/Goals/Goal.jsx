@@ -232,7 +232,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                             <div className="flex flex-col items-center w-full h-full bg-[#1E1E1E]">
                                 <p className="font-semibold text-[.92rem] mt-0.5">Progress</p>
     
-                                <div className="flex bg-white w-[94%]  h-6 rounded-md">
+                                <div className="flex bg-white w-[94%] h-6 rounded-md">
                                     <motion.span
                                     initial={{
                                         width: 0,
