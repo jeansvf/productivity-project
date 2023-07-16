@@ -24,7 +24,7 @@ export default function Home() {
     return (
         <div className="flex w-full h-screen justify-center pt-52 bg-[#393939] z-10 text-white">
             <div>
-                <MonthPomodoroStatus />
+                <MonthPomodoroStatus months={months} />
             </div>
 
             <div className="mx-24 pt-8">

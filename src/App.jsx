@@ -12,9 +12,9 @@ import Todo from "./pages/Todo"
 import Goals from "./pages/Goals"
 import Profile from "./pages/Profile"
 import Music from "./pages/Music"
+import Settings from "./pages/Settings"
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
@@ -34,6 +34,7 @@ function App() {
               <Route path="/goals" element={<Goals />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
+              <Route path="/settings" element={<Settings />} />
           </Route>
       </Routes>
     </BrowserRouter>
