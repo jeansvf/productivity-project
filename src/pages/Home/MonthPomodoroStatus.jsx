@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react"
-import { collection, getDocs, query, where } from "firebase/firestore"
-import { auth, db } from "../../firebase-config"
+import { useProfileContext } from "../../contexts/ProfileContext"
 
 export default function MonthPomodoroStatus({ months }) {
     const [currentMonthPomodoroMinutes, setCurrentMonthPomodoroMinutes] = useState(0)
 
-    // TODO: check if it is possible to get pomodoro from timer context
+    const { userPomodoros, userInfo } = useProfileContext()
+
     useEffect(() => {
-        getDocs(query(collection(db, `users/${auth.currentUser.uid}/pomodoro`), where("date", "==", getDate()))).then((response) => {
-            response.docs.map((data) => setCurrentMonthPomodoroMinutes(data.data().minutes))
-        })
-    }, [])
+        userPomodoros.map((pomodoro => {
+            pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
+        }))
+    }, [userPomodoros])
 
     const getDate = () => {
         let today = new Date()
-        return `${(today.getMonth() + 1) < 10 ? "0" + (today.getMonth() + 1) : (today.getMonth() + 1)}-${today.getFullYear()}`
+        return `${today.getFullYear()}, ${today.getMonth() + 1}`
     }
 
     const getCurrentMonth = () => {
@@ -25,6 +25,11 @@ export default function MonthPomodoroStatus({ months }) {
     const getFormattedMinutes = () => {
         return currentMonthPomodoroMinutes < 60 ? `${currentMonthPomodoroMinutes} minutes` : `${(currentMonthPomodoroMinutes / 60).toFixed(1)} hours`
     }
+    
+    const getMonthCompletion = (minutes) => {
+        let hours = minutes / 60
+        return (hours / (userInfo.plannedHours * 30)) * 100
+    }
 
     return (
         <div className="w-72 px-3.5 py-3 rounded-md bg-[#2E2E2E] font-bold">
@@ -34,7 +39,7 @@ export default function MonthPomodoroStatus({ months }) {
             </div>
             <div className="h-10 w-full mt-1.5 mb-1 bg-[#3D3C3C]">
                 {/* TODO: add width based on user preference */}
-                <div style={{ width: `${currentMonthPomodoroMinutes}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
+                <div style={{ width: `${getMonthCompletion(currentMonthPomodoroMinutes)}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
             </div>
             <p className="text-[1.1rem]">{getFormattedMinutes()}</p>
         </div>

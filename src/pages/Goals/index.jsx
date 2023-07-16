@@ -9,26 +9,29 @@ import LoadingAnimation from "../../components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import CompletedGoal from "./CompletedGoal";
 import { useRef } from "react";
+import { useGoalsContext } from "../../contexts/GoalsContext";
 
 export default function Goals() {
-    const [goals, setGoals] = useState()
     const [creatingTemporaryGoal, setCreatingTemporaryGoal] = useState(false)
     const [dates, setDates] = useState([])
     const [showCompletedGoalsLine, setShowCompletedGoalsLine] = useState(false)
     
-    const effectRan = useRef(false)
+    const { goals, setGoals, getUserGoals } = useGoalsContext()
     
-    useEffect(() => {
-        if (effectRan.current) {
-            return
-        }
+    // const effectRan = useRef(false)
+    
+    // useEffect(() => {
+    //     if (effectRan.current) {
+    //         return
+    //     }
 
-        getUserGoals()
+    //     getUserGoals()
         
-        return () => effectRan.current = false
-    }, [])
+    //     return () => effectRan.current = false
+    // }, [])
     
     // when goals change, change dates
+
     useEffect(() => {
         if (!goals) {
             return
@@ -38,13 +41,14 @@ export default function Goals() {
         goals.map(goal => goal.isGoalComplete ? setShowCompletedGoalsLine(true) : null)
     }, [goals])
 
-    const getUserGoals = async () => {
-        let goalsDocs = await getDocs(query(collection(db, "goals"), where("goalOwnerUid", "==", auth.currentUser.uid)))
-        let goalsSnapshot = goalsDocs.docs.map((doc) => ({ ...doc.data() }))
-        setGoals(goalsSnapshot)
-    }
+    // const getUserGoals = async () => {
+    //     let goalsDocs = await getDocs(query(collection(db, "goals"), where("goalOwnerUid", "==", auth.currentUser.uid)))
+    //     let goalsSnapshot = goalsDocs.docs.map((doc) => ({ ...doc.data() }))
+    //     setGoals(goalsSnapshot)
+    // }
 
     // removes date duplicates and convert into month and year
+
     const getDates = () => {
         let newDates = []
         goals ? goals?.map((goal) => {

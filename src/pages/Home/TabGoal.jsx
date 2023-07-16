@@ -24,7 +24,7 @@ export default function TabGoal({ goal }) {
 
             {/* TODO: remove this id */}
             <div id="goal-tasks-window" className="overflow-y-auto">
-                {goal.tasks.map((task) => <TabGoalTask taskContent={task.taskContent} isComplete={task.isComplete} />)}
+                {goal.tasks.map((task, taskIndex) => <TabGoalTask taskContent={task.taskContent} isComplete={task.isComplete} key={taskIndex} />)}
             </div>
 
             <TabGoalProgress goalProgress={goalProgress} />

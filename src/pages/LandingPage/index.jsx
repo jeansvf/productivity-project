@@ -1,13 +1,13 @@
 import { FcGoogle } from "react-icons/fc"
 import { BsGithub, BsLinkedin } from "react-icons/bs"
-import { AiOutlineRight } from "react-icons/ai"
+import { IoIosArrowUp } from "react-icons/io"
 import { Link } from "react-router-dom"
 import pomodoroImage from "../../assets/images/pomodoro-page.png"
 import goalsImage from "../../assets/images/goals-page.png"
 import musicImage from "../../assets/images/music-page.png"
 import todoImage from "../../assets/images/todo-page.png"
-import { useState } from "react"
-import { AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import ContactForm from "./ContactForm"
 import FeedbackForm from "./FeedbackForm"
 import FeedbackSection from "./FeedbackSection"
@@ -16,6 +16,13 @@ import ContactSection from "./ContactSection"
 export default function LandingPage() {
     const [showContactForm, setShowContactForm] = useState(false)
     const [showFeedbackForm, setShowFeedbackForm] = useState(false)
+    const [showBackToTopButton, setShowBackToTopButton] = useState(false)
+
+    useEffect(() => {
+        window.addEventListener("scroll", () => {
+            window.scrollY > 300 ? setShowBackToTopButton(true) : setShowBackToTopButton(false)
+        })
+    }, [])
 
     return (
         <main className="flex flex-col w-full h-full bg-gradient-to-tr from-[#323232] to-[#131313] overflow-x-clip overflow-y-clip">
@@ -28,10 +35,16 @@ export default function LandingPage() {
                 <Link to={"/signup"} className="flex items-center justify-center w-[17rem] h-11 bg-white rounded-full text-lg"><FcGoogle className="w-9 h-9 m-2" /> Start with Google</Link>
             </div>
 
-            {/* TODO: add a go to top button */}
+            <AnimatePresence>
+                {showBackToTopButton ? (
+                    <motion.span initial={{ y: 70, rotate: 180 }} animate={{ y: 0, rotate: 0 }} exit={{ y: 90, rotate: 180 }} onClick={() => window.scrollTo({ top: 0 , behavior: "smooth"})} className="flex justify-center items-center fixed w-12 h-12 max-w-12 max-h-12 bottom-8 right-8 z-20 cursor-pointer bg-white rounded-full text-black text-4xl">
+                        <IoIosArrowUp className="mb-0.5" />
+                    </motion.span>
+                ) : null}
+            </AnimatePresence>
         
-            <div className="flex justify-center w-full mt-28 mb-40">
-                <img src={pomodoroImage} alt="pomodoro-img" className="w-[72rem] border-[1px] border-white rounded-xl" />
+            <div className="self-center w-[72rem] min-h-[30rem] border-[1px] border-white rounded-xl mt-28 mb-40">
+                <img src={pomodoroImage} alt="pomodoro-img" className="w-full rounded-xl" />
             </div>
 
             <h2 className="mt-20 mb-5 text-center text-[#FF7373] drop-shadow-red-title text-[3.5rem] text-6xl font-semibold">The Pomodoro Technique</h2>
