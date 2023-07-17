@@ -38,7 +38,7 @@ export default function MonthPomodoroStatus({ months }) {
                 <p className="text-[#FF7373]">Pomodoro</p>
             </div>
             <div className="h-10 w-full mt-1.5 mb-1 bg-[#3D3C3C]">
-                {/* TODO: add width based on user preference */}
+
                 <div style={{ width: `${getMonthCompletion(currentMonthPomodoroMinutes)}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
             </div>
             <p className="text-[1.1rem]">{getFormattedMinutes()}</p>

@@ -4,6 +4,7 @@ import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
 import { doc, getDoc, increment, setDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
+import { useAuthState } from "react-firebase-hooks/auth"
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
@@ -22,6 +23,8 @@ export default function TimerContext({ children }) {
         totalBreaks: 0,
         timerType: "pomodoro",
     })
+
+    const [user] = useAuthState(auth)
 
     const timeoutId = useRef()
     
@@ -46,14 +49,14 @@ export default function TimerContext({ children }) {
         const d = new Date()
         const docId = `${(d.getMonth() + 1).toString().length < 2 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1}-${d.getFullYear()}`
 
-        let currentDoc = await getDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro/${docId}`))
+        let currentDoc = await getDoc(doc(db, `users/${user.uid}/pomodoro/${docId}`))
 
         if (currentDoc.data()) {
-            setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
+            setDoc(doc(db, `users/${user.uid}/pomodoro`, docId), {
                 minutes: increment(1)
             }, { merge: true })
         } else {
-            setDoc(doc(db, `users/${auth.currentUser.uid}/pomodoro`, docId), {
+            setDoc(doc(db, `users/${user.uid}/pomodoro`, docId), {
                 minutes: increment(1),
                 date: docId
             }, { merge: true })

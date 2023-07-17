@@ -211,7 +211,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                 ) : null}
             </AnimatePresence>
 
-            <div className="pb-24 px-3">
+            <div id="goal-tasks-window" className="pb-24 px-3 overflow-auto">
                 {goal?.tasks?.map((task, taskIndex) => (
                     <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} setGoalError={setGoalError} key={taskIndex} />
                 ))}
@@ -231,7 +231,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
 
                             <div className="flex flex-col items-center w-full h-full bg-[#1E1E1E]">
                                 <p className="font-semibold text-[.92rem] mt-0.5">Progress</p>
-    
+
                                 <div className="flex bg-white w-[94%] h-6 rounded-md">
                                     <motion.span
                                     initial={{
@@ -243,22 +243,24 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                                     exit={{
                                         width: "100%"
                                     }}
-                                    className={`bg-[#73FFA3] rounded-md h-full`}>
+                                    className={`bg-[#73FFA3] rounded-md h-full`}
+                                >
                                     </motion.span>
                                 </div>
                                 
                                 <motion.div
-                                initial={{
-                                    opacity: 0,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    paddingLeft: goalProgress <= 50 ? `${goalProgress - 6}%` : `${goalProgress - 10}%`
-                                }}
-                                exit={{
-                                    paddingLeft: "88%"
-                                }}
-                                className="w-[94%] text-[.92rem]">
+                                    initial={{
+                                        opacity: 0,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        paddingLeft: goalProgress <= 50 ? `${goalProgress - 6}%` : `${goalProgress - 10}%`
+                                    }}
+                                    exit={{
+                                        paddingLeft: "88%"
+                                    }}
+                                    className="w-[94%] text-[.92rem]"
+                                >
                                     <p>{goalProgress}%</p>
                                 </motion.div>
                             </div>

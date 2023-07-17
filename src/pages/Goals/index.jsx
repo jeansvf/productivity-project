@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
-import { auth, db } from "../../firebase-config";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import Goal from "./Goal";
 import TemporaryGoal from "./TemporaryGoal";
 import DateLine from "./DateLine";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import CompletedGoal from "./CompletedGoal";
-import { useRef } from "react";
 import { useGoalsContext } from "../../contexts/GoalsContext";
 
 export default function Goals() {
@@ -17,20 +14,6 @@ export default function Goals() {
     const [showCompletedGoalsLine, setShowCompletedGoalsLine] = useState(false)
     
     const { goals, setGoals, getUserGoals } = useGoalsContext()
-    
-    // const effectRan = useRef(false)
-    
-    // useEffect(() => {
-    //     if (effectRan.current) {
-    //         return
-    //     }
-
-    //     getUserGoals()
-        
-    //     return () => effectRan.current = false
-    // }, [])
-    
-    // when goals change, change dates
 
     useEffect(() => {
         if (!goals) {
@@ -40,14 +23,6 @@ export default function Goals() {
         
         goals.map(goal => goal.isGoalComplete ? setShowCompletedGoalsLine(true) : null)
     }, [goals])
-
-    // const getUserGoals = async () => {
-    //     let goalsDocs = await getDocs(query(collection(db, "goals"), where("goalOwnerUid", "==", auth.currentUser.uid)))
-    //     let goalsSnapshot = goalsDocs.docs.map((doc) => ({ ...doc.data() }))
-    //     setGoals(goalsSnapshot)
-    // }
-
-    // removes date duplicates and convert into month and year
 
     const getDates = () => {
         let newDates = []
@@ -136,11 +111,9 @@ export default function Goals() {
             </AnimatePresence>
 
             {/* goals bottom line */}
-
             {goals ? goals?.length !== 0 ? <DateLine /> : null : null}
 
             {/* add goal button */}
-
             <motion.button
             initial={{
                 bottom: -30

@@ -1,85 +1,18 @@
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
-import { useState } from 'react';
 import AddListButton from './AddListButton';
 import LoadingAnimation from '../../components/LoadingAnimation';
-import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { auth, db } from "../../firebase-config";
-import { useEffect } from 'react';
-import { useRef } from 'react';
+import { useTodoContext } from '../../contexts/TodoContext';
+import { useAuthState } from "react-firebase-hooks/auth"
+
+// TODO: fix login and register errors
 
 export default function Todo() {
-    const [columns, setColumns] = useState([])
-    const [cards, setCards] = useState([])
-    const [columnsOrder, setColumnsOrder] = useState([])
-    const [isDataRetrieved, setIsDataRetrieved] = useState(false)
+    const {columns, setColumns, cards, setCards, columnsOrder, setColumnsOrder, isDataRetrieved, addNewColumn, changeColumnsOrder } = useTodoContext()
 
-    const effectRan = useRef(false)
-    
-    useEffect(() => {
-        if (effectRan.current) {
-            return
-        }
-
-        // get data for all todo page
-        const getTodoData = async () => {
-            let columnsDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/columns`))
-            let columnsSnapshot = columnsDocs.docs.map((doc) => ({ ...doc.data() }))
-
-            let cardsDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/cards`))
-            let cardsSnapshot = cardsDocs.docs.map((doc) => ({ ...doc.data() }))
-
-            let columnsOrderDocs = await getDocs(collection(db, `users/${auth.currentUser.uid}/columnsOrder`))
-            let columnsOrderSnapshot = columnsOrderDocs.docs.map((doc) => ({ ...doc.data() }))
-
-            setColumns(columnsSnapshot)
-            setCards(cardsSnapshot)
-            
-            setColumnsOrder(columnsOrderSnapshot[0]?.order ? columnsOrderSnapshot[0]?.order : [])
-            setIsDataRetrieved(true)
-        }
-
-        getTodoData()
-
-        return () => effectRan.current = true
-    }, [])
-
-    const addNewColumn = async () => {
-        let newColumnId = crypto.randomUUID()
-
-        let newColumn = { id: newColumnId, droppableColumnId: crypto.randomUUID(), title: 'New Column', cards: [] }
-        setDoc(doc(db, `users/${auth.currentUser.uid}/columns`, newColumnId), newColumn)
-
-        // add column to order in client
-        setColumns(prev => [...prev, newColumn])
-        setColumnsOrder(prev => [...prev, newColumnId])
-
-        // add column to order in database
-        changeColumnsOrder("add", newColumnId)
-    }
-
-    const changeColumnsOrder = (method, newOrder) => {
-        let newDocs
-
-        switch (method) {
-            case "add":
-                newDocs = {
-                    order: arrayUnion(newOrder)
-                }
-                break;
-            
-            case "replace":
-                newDocs = {
-                    order: newOrder
-                }
-                break;
-
-            default:
-                return
-        }
-
-        setDoc(doc(db, `users/${auth.currentUser.uid}/columnsOrder`, "order"), newDocs, { merge: true })
-    }
+    const [user] = useAuthState(auth)
 
     const deleteColumn = (columnIndex) => { 
         let newColumns = structuredClone(columns)
@@ -93,7 +26,7 @@ export default function Todo() {
         setColumns(newColumns)
         setColumnsOrder(newColumnsOrder)
 
-        deleteDoc(doc(db, `users/${auth.currentUser.uid}/columns/${selectedColumnId}`))
+        deleteDoc(doc(db, `users/${user.uid}/columns/${selectedColumnId}`))
 
         changeColumnsOrder("replace", newColumnsOrder)
     }
@@ -147,12 +80,12 @@ export default function Todo() {
             setColumns(newColumns)
 
             // remove card from source column
-            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnSourceId].id}`), {
+            updateDoc(doc(db, `users/${user.uid}/columns/${newColumns[cardColumnSourceId].id}`), {
                 cards: newColumns[cardColumnSourceId].cards
             })
 
             // add card to destination colum
-            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
+            updateDoc(doc(db, `users/${user.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
                 cards: newColumns[cardColumnDestinationId].cards
             })
             

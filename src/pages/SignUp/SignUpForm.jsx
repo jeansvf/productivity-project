@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup } from "firebase/auth"
 import { auth, db, continueWithGoogle } from "../../firebase-config"
 import { collection, addDoc, doc, setDoc, Timestamp } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function SignUpForm() {
     const [signUpCredentials, setSignUpCredentials] = useState({
@@ -12,6 +13,8 @@ export default function SignUpForm() {
         password: "",
         confirmPassword: "",
     })
+
+    const [user] = useAuthState(auth)
 
     const signUpFirebaseUser = (e) => {
         e.preventDefault()
@@ -43,22 +46,19 @@ export default function SignUpForm() {
 
         // sign up user
         createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password).then(() => {
-            // TODO: SEARCH FOR ANOTHER WAY TO DO THIS
-            onAuthStateChanged(auth, user => {
-                if(user) {
-                    setDoc(doc(db, "users", user.uid), {
-                        uid: user.uid,
-                        userName: signUpCredentials.name,
-                        email: signUpCredentials.email,
-                        provider: user.providerId,
-                        photoUrl: user.photoURL,
-                        pomodoroMinutes: 0,
-                        createdAt: Timestamp.now(),
-                        // emailVerified: ?
+            if(user) {
+                setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    userName: signUpCredentials.name,
+                    email: signUpCredentials.email,
+                    provider: user.providerId,
+                    photoUrl: user.photoURL,
+                    pomodoroMinutes: 0,
+                    createdAt: Timestamp.now(),
+                    // emailVerified: ?
                     })
                 }
             })
-        })
     }
 
     return (

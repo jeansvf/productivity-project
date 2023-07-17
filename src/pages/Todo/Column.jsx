@@ -8,12 +8,15 @@ import TemporaryCard from "./TemporaryCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { RxDragHandleDots2 } from "react-icons/rx";
 import { FaTrash } from "react-icons/fa";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Column({ deleteColumn, setColumns, columns, columnId, columnIndex, orderIndex, droppableColumnId, title, setCards, cards }) {
     const [showTemporaryCard, setShowTemporaryCard] = useState(false)
     const [isHoveringTitle, setIsHoveringTitle] = useState(false)
 
     const writingTimeout = useRef()
+
+    const [user] = useAuthState(auth)
 
     const addNewCard = (card) => {
         setShowTemporaryCard(false)
@@ -30,10 +33,10 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
         setCards(prev => [...prev, newCard])
 
         // add new card to "cards" subcollection
-        setDoc(doc(db, `users/${auth.currentUser.uid}/cards`, newCard.id), newCard)
+        setDoc(doc(db, `users/${user.uid}/cards`, newCard.id), newCard)
 
         // add new card's id to "columns[currentColumn].cards"
-        updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${columns[columnIndex].id}`), {
+        updateDoc(doc(db, `users/${user.uid}/columns/${columns[columnIndex].id}`), {
             cards: arrayUnion(newCard)
         })
     }
@@ -51,7 +54,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
         }
 
         writingTimeout.current = setTimeout(() => {
-            updateDoc(doc(db, `users/${auth.currentUser.uid}/columns/${columnId}`), {
+            updateDoc(doc(db, `users/${user.uid}/columns/${columnId}`), {
                 title: title
             })
         }, 600)
@@ -63,7 +66,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                 <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className="flex flex-col items-center w-80 h-max mx-2 bg-[#2E2E2E] rounded-[.4rem]"
+                    className="relative flex flex-col items-center w-80 h-max max-h-[90vh] mx-2 bg-[#2E2E2E] rounded-[.4rem]"
                 >
                     <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[92%] my-4">
                         <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px] w-2/3" type="text" value={title} />
@@ -105,12 +108,13 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                className="flex flex-col items-center w-[92%] h-full min-h-[.8rem]"
+                                className="relative flex flex-col items-center overflow-y-auto w-[92%] h-full min-h-[.8rem]"
+                                id="goal-tasks-window"
                             >
                                 {columns[columnIndex].cards.map((order, orderIndex) => (
                                     cards.map((card, cardIndex) => (
                                         card?.id == order?.id ? (
-                                            card == undefined ? null : <Item setCards={setCards} cards={cards} cardIndex={cardIndex} text={card.text} description={card.description} id={card.id} color={card.color} draggableIndex={orderIndex} key={card.id} />
+                                            card == undefined ? null : <Item columnIndex={columnIndex} cardIndex={cardIndex} text={card.text} description={card.description} id={card.id} color={card.color} orderIndex={orderIndex} key={card.id} />
                                         ) : null
                                     ))
                                 ))}
@@ -126,7 +130,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                         )}
                     </Droppable>
 
-                    <button onClick={() => setShowTemporaryCard(true)} className="flex self-start mt-1 mb-3 ml-3 pr-1 items-center select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
+                    <button onClick={() => setShowTemporaryCard(true)} className="flex self-start mt-auto w-full ml-3 pr-1 py-2.5 items-end select-none"><IoIosAdd className="text-2xl" /> Add Card</button>
                 </div>
             )}
         </Draggable>

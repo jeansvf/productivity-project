@@ -1,13 +1,18 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useState } from "react"
 import { Draggable } from "react-beautiful-dnd"
-import { RxDragHandleDots2 } from "react-icons/rx"
+import { RxDragHandleDots2, RxTrash } from "react-icons/rx"
 import { AiFillEdit } from "react-icons/ai"
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, query, updateDoc } from "firebase/firestore";
 import { TfiClose } from "react-icons/tfi"
+import { FaDribbble, FaTrash } from "react-icons/fa"
 import { auth, db } from "../../firebase-config"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { useTodoContext } from "../../contexts/TodoContext"
 
-export default function Item({ setCards, cards, cardIndex, text, description, id, color, draggableIndex }) {
+export default function Item({ columnIndex, cardIndex, text, description, id, color, orderIndex }) {
+    const {columns, setColumns, cards, setCards } = useTodoContext()
+
     const [isHoveringCard, setIsHoveringCard] = useState(false)
     const [isCardOpened, setIsCardOpened] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
@@ -16,6 +21,9 @@ export default function Item({ setCards, cards, cardIndex, text, description, id
         description: cards[cardIndex].description,
         color: cards[cardIndex].color,
     })
+
+    const [user] = useAuthState(auth)
+
 
     const changeCardValues = () => {
         setIsEditing(false)
@@ -27,16 +35,36 @@ export default function Item({ setCards, cards, cardIndex, text, description, id
 
         setCards(newCards)
 
-        updateDoc(doc(db, `users/${auth.currentUser.uid}/cards/${cards[cardIndex].id}`), editingValues)
+        updateDoc(doc(db, `users/${user.uid}/cards/${cards[cardIndex].id}`), editingValues)
     }
 
+    const deleteCard = async () => {
+        let newCards = structuredClone(cards)
+        let newColumns = structuredClone(columns)
+
+        newCards.splice(cardIndex, 1)
+        
+        newColumns[columnIndex].cards.splice(orderIndex, 1)
+        
+        setCards(newCards)
+        setColumns(newColumns)
+
+        deleteDoc(doc(db, `users/${user.uid}/cards/${cards[cardIndex].id}`))
+
+        updateDoc(doc(db, `users/${user.uid}/columns/${columns[columnIndex].id}`), {
+            cards: newColumns[columnIndex].cards
+        })
+    }
+
+    // console.log("card " + cardIndex, orderIndex);
+    
     return (
-        <Draggable draggableId={id} index={draggableIndex}>
+        <Draggable draggableId={id} index={orderIndex}>
             {(provided) => (
                 <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className={`relative flex items-start bg-[#4F4F4F] w-full min-h-[2.5rem] mb-2 rounded-[.25rem]`}
+                    className={`relative flex items-start bg-[#4F4F4F] w-full min-h-fit mb-2 rounded-[.25rem]`}
                     onMouseOver={() => setIsHoveringCard(true)} onMouseOut={() => setIsHoveringCard(false)}
                 >
                     <div className={`w-1.5 absolute left-0 top-0 h-full rounded-tl-[.25rem] rounded-bl-[.25rem] bg-[#${isEditing ? editingValues.color :  color}]`}></div>
@@ -48,14 +76,19 @@ export default function Item({ setCards, cards, cardIndex, text, description, id
                         ) : null}
 
                         {!isEditing ? (
-                            <button onClick={() => setIsCardOpened(!isCardOpened)} className={`flex w-[84%] mt-2 cursor-pointer`} type="button">{text}</button>
+                            <button onClick={() => setIsCardOpened(!isCardOpened)} className={`flex w-[84%] max-w-[84%] break-all text-left my-2 cursor-pointer`} type="button">{text}</button>
                         ) : null}
 
                         {/* card icon */}
                         {isCardOpened && !isEditing ? (
-                            <button onClick={() => setIsEditing(true)} className="flex absolute top-0 right-3 mt-2.5 text-[1.35rem] cursor-pointer">
-                                <AiFillEdit />
-                            </button>
+                            <div className="w-full">
+                                <button onClick={() => setIsEditing(true)} className="flex absolute top-0 right-3 mt-2.5 text-[1.35rem]">
+                                    <AiFillEdit />
+                                </button>
+                                <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .2 }} onClick={() => deleteCard()} className="flex absolute bottom-3 right-3.5 mt-2.5 hover:bg-opacity-20 text-lg hover:text-red-400">
+                                    <FaTrash />
+                                </motion.button>
+                            </div>
                         ) : null}
                         
                         {isCardOpened && isEditing ? (
@@ -67,7 +100,7 @@ export default function Item({ setCards, cards, cardIndex, text, description, id
                         <AnimatePresence>
                             {isCardOpened && !isEditing ? (
                                 <motion.div initial={{height: "0"}} animate={{height: "11rem"}} exit={{height: "0"}}>
-                                    <motion.p initial={{opacity: "0"}} animate={{opacity: "100%"}} exit={{opacity: "0"}} className="flex mt-2">{description}</motion.p>
+                                    <motion.p initial={{opacity: "0"}} animate={{opacity: "100%"}} exit={{opacity: "0"}} className="mt-2 pr-2 break-all h-[95%] overflow-auto">{description}</motion.p>
                                 </motion.div>
                             ) : null}
                             

@@ -3,6 +3,7 @@ import { IoIosAdd, IoMdClose } from "react-icons/io";
 import TemporaryTask from "./TemporaryTask";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
+import { useAuthState } from "react-firebase-hooks/auth";
 import LoadingAnimation from "../../components/LoadingAnimation.jsx";
 import { motion } from "framer-motion";
 
@@ -18,6 +19,8 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
             }
         ],
     })
+
+    const [user] = useAuthState(auth)
 
     const addGoalToDatabase = () => {
         let allTasksTextIsFilled;
@@ -46,7 +49,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
         let goalIdRef = doc(collection(db, "goals")).id
 
         let newGoal = structuredClone(temporaryGoal)
-        newGoal.goalOwnerUid = auth.currentUser.uid
+        newGoal.goalOwnerUid = user.uid
         newGoal.isGoalComplete = false
         newGoal.goalId = goalIdRef
 

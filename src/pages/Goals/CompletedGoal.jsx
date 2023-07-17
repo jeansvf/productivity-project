@@ -20,13 +20,12 @@ export default function CompletedGoal({ goal }) {
             </div>
 
             {/* TODO: remove this id */}
-            <div id="goal-tasks-window" className="pb-24 px-3">
+            <div id="goal-tasks-window" className="pb-24 px-3 overflow-auto">
                 {goal?.tasks?.map((task, taskIndex) => (
                     <CompletedTask task={task} key={taskIndex} />
                 ))}
             </div>
 
-                
             <div className="flex absolute bottom-0 flex-col justify-center items-center w-full h-[4.55rem] pt-1 rounded-bl-lg rounded-br-lg text-black bg-[#1E1E1E]">
                 <AnimatePresence>
                     <motion.div>

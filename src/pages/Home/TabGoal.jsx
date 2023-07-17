@@ -3,7 +3,7 @@ import TabGoalProgress from "./TabGoalProgress";
 import TabGoalTask from "./TabGoalTask";
 
 export default function TabGoal({ goal }) {
-    const [goalProgress, setGoalProgress] = useState()
+    const [goalProgress, setGoalProgress] = useState(0)
 
     useEffect(() => getGoalProgress(), [])
 

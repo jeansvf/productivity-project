@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom"
 import { useProfileContext } from "../../contexts/ProfileContext"
 import { motion } from "framer-motion"
 import ReactSlider from "react-slider"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 export default function Settings() {
     const { userInfo, getUserInfo } = useProfileContext()
     
     const [hours, setHours] = useState()
     const navigate = useNavigate()
+
+    const [user] = useAuthState(auth)
 
     const sliderRef = useRef()
     
@@ -39,7 +42,7 @@ export default function Settings() {
             return
         }
 
-        updateDoc(doc(db, `users/${auth.currentUser.uid}`), {
+        updateDoc(doc(db, `users/${user.uid}`), {
             plannedHours: hours
         })
         .then(() => {
