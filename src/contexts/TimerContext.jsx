@@ -212,6 +212,10 @@ export default function TimerContext({ children }) {
     }
 
     const customizeTimer = (timerType, newTime) => {
+        if (newTime == "" || newTime == 0) {
+            return
+        }
+        
         switch(timerType) {
             case "pomodoro":
             setPomodoroMinutes(newTime)

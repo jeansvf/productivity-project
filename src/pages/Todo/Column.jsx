@@ -19,9 +19,13 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
     const [user] = useAuthState(auth)
 
     const addNewCard = (card) => {
+        if (!card.text) {
+            return
+        }
+
         setShowTemporaryCard(false)
         
-        let newCard = { id: crypto.randomUUID(), text: card.text, color: card.color, description: card.description }
+        let newCard = { id: crypto.randomUUID(), text: card.text, color: card.color, description: card.description, columnOrigin: columns[columnIndex].id }
         
         // create card id in the column cards order
         let newColumns = structuredClone(columns)

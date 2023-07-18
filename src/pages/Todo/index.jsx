@@ -2,7 +2,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
 import AddListButton from './AddListButton';
 import LoadingAnimation from '../../components/LoadingAnimation';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { auth, db } from "../../firebase-config";
 import { useTodoContext } from '../../contexts/TodoContext';
 import { useAuthState } from "react-firebase-hooks/auth"
@@ -14,7 +14,7 @@ export default function Todo() {
 
     const [user] = useAuthState(auth)
 
-    const deleteColumn = (columnIndex) => { 
+    const deleteColumn = async (columnIndex) => { 
         let newColumns = structuredClone(columns)
         let newColumnsOrder = structuredClone(columnsOrder)
 
@@ -28,12 +28,15 @@ export default function Todo() {
 
         deleteDoc(doc(db, `users/${user.uid}/columns/${selectedColumnId}`))
 
+        let snapshot = await getDocs(query(collection(db, `users/${user.uid}/cards`), where("columnOrigin", "==", columns[columnIndex].id)))
+        snapshot.forEach((doc) => deleteDoc(doc.ref))
+
         changeColumnsOrder("replace", newColumnsOrder)
     }
 
     const handleOnDragEnd = (result) => {
         // if source and destination are the same return
-        if (result.source?.droppableId == result.destination?.droppableId && result.source?.index == result.destination?.index) {
+        if (result.source?.droppableId == result.destination?.droppableId && result.source?.index == result.destination?.index || !result.destination) {
             return
         }
 
@@ -66,7 +69,7 @@ export default function Todo() {
             columns.map((column, columnIndex) => column.droppableColumnId == result.destination.droppableId ? cardColumnDestinationId = columnIndex : null)
 
             let selectedCard = columns[cardColumnSourceId].cards[result.source.index]
-            
+
             // undefined card bug fix
             if (selectedCard == undefined) {
                 return
@@ -87,6 +90,10 @@ export default function Todo() {
             // add card to destination colum
             updateDoc(doc(db, `users/${user.uid}/columns/${newColumns[cardColumnDestinationId].id}`), {
                 cards: newColumns[cardColumnDestinationId].cards
+            })
+            
+            updateDoc(doc(db, `users/${user.uid}/cards/${selectedCard.id}`), {
+                columnOrigin: newColumns[cardColumnDestinationId].id
             })
             
             return

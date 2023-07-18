@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth, continueWithGoogle } from '../../firebase-config'
 
+// TODO: limit characters
+
 export default function LoginForm() {
     const [loginCredentials, setLoginCredentials] = useState({
         email: "",
@@ -16,7 +18,7 @@ export default function LoginForm() {
         // sign in user
         signInWithEmailAndPassword(auth, loginCredentials.email, loginCredentials.password)
     }
-    
+    d
     return (
         <form onSubmit={(e) => LoginFirebaseUser(e)} className="flex flex-col items-center w-full sm:w-[32rem] h-screen sm:h-[36rem] rounded-[.5rem] sm:border-2 border-white">
             <h1 className="mt-7 mb-7 text-[2.8rem] text-white font-semibold">Login</h1>

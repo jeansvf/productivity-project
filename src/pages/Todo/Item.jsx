@@ -24,17 +24,18 @@ export default function Item({ columnIndex, cardIndex, text, description, id, co
 
     const [user] = useAuthState(auth)
 
-
     const changeCardValues = () => {
+        if (!editingValues.text) {
+            return
+        }
         setIsEditing(false)
 
         let newCards = structuredClone(cards)
         newCards[cardIndex].text = editingValues.text
         newCards[cardIndex].description = editingValues.description
         newCards[cardIndex].color = editingValues.color
-
+        
         setCards(newCards)
-
         updateDoc(doc(db, `users/${user.uid}/cards/${cards[cardIndex].id}`), editingValues)
     }
 
@@ -55,8 +56,6 @@ export default function Item({ columnIndex, cardIndex, text, description, id, co
             cards: newColumns[columnIndex].cards
         })
     }
-
-    // console.log("card " + cardIndex, orderIndex);
     
     return (
         <Draggable draggableId={id} index={orderIndex}>

@@ -22,7 +22,7 @@ export default function PlayerControls() {
     }
 
     return (
-        <div className='absolute bottom-10 flex items-center justify-center p-1 rounded-md bg-opacity-30'>
+        <div className='absolute bottom-10 flex items-center justify-center p-2 rounded-md bg-opacity-50 border-[1px] border-white bg-black'>
             <button type='button' className='w-8 h-8 ml-1' onClick={() => setIsVideoPlaying(prev => !prev)}>
                 {isVideoPlaying ? <HiPause className='w-full h-full stroke-1 stroke-black' /> : <HiPlay className='w-full h-full stroke-1 stroke-black' />}
             </button>

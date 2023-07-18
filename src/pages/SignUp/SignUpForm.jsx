@@ -6,6 +6,8 @@ import { auth, db, continueWithGoogle } from "../../firebase-config"
 import { collection, addDoc, doc, setDoc, Timestamp } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+// TODO: limit characters
+
 export default function SignUpForm() {
     const [signUpCredentials, setSignUpCredentials] = useState({
         name: "",

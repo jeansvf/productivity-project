@@ -6,7 +6,7 @@ export default function Month({ month, completion }) {
             <div className="flex items-end w-full h-full">
                 <motion.div initial={{height: 0}} animate={{height: completion}} className="max-h-full w-full bg-[#FF7373]"></motion.div>
             </div>
-            <p className="block">{month}</p>
+            <p className="capitalize">{month}</p>
         </div>
     )
 }

@@ -8,11 +8,20 @@ import cartoonAlarm from "../../assets/alarms/cartoon.wav"
 import guitarAlarm from "../../assets/alarms/guitar.wav"
 
 export default function Settings({setPomodoroConfigOpened}) {
+    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes } = useTimerContext()
+    
     const [selectedTimer, setSelectedTimer] = useState("pomodoro")
     const [showDropDownMenu, setShowDropDownMenu] = useState(false)
     const [rangeInputValue, setRangeInputValue] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.volume ? JSON.parse(localStorage.getItem("alarm_settings")).volume : .5)
 
-    const { customizeTimer, pomodoroMinutes, longBreakMinutes, shortBreakMinutes } = useTimerContext()
+    const [timerInputValue, setTimerInputValue] = useState({
+        pomodoroMinutes: pomodoroMinutes,
+        longBreakMinutes: longBreakMinutes,
+        shortBreakMinutes: shortBreakMinutes,
+    })
+
+    // TODO try creating an input value state and set its initial value to the current time
+
 
     const handleAlarmClick = (selectedAlarm) => {
         setShowDropDownMenu(false)
@@ -63,6 +72,10 @@ export default function Settings({setPomodoroConfigOpened}) {
     }
 
     const addAlarmMinutesToLocalStorage = (timerType, newTime) => {
+        if (newTime == "" || newTime == 0) {
+            return
+        }
+
         let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
         
         switch (timerType) {
@@ -81,6 +94,25 @@ export default function Settings({setPomodoroConfigOpened}) {
 
         localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
         customizeTimer(timerType, newTime)
+    }
+
+    const changeTimerMinutes = (newMinutes) => {
+        switch (true) {
+            case (selectedTimer == "pomodoro"):
+                setTimerInputValue({...timerInputValue, pomodoroMinutes: newMinutes})
+                break;
+            case (selectedTimer == "long_break"):
+                setTimerInputValue({...timerInputValue, longBreakMinutes: newMinutes})
+                break;
+            case (selectedTimer == "short_break"):
+                setTimerInputValue({...timerInputValue, shortBreakMinutes: newMinutes})
+                break;
+        }
+
+        if (newMinutes < 100 && newMinutes.toString().length < 3) {
+            addAlarmMinutesToLocalStorage(selectedTimer, newMinutes)
+            customizeTimer(selectedTimer, newMinutes)
+        }
     }
 
     return (
@@ -112,12 +144,7 @@ export default function Settings({setPomodoroConfigOpened}) {
                 <button onClick={() => setSelectedTimer("short_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "short_break" ? "bg-[#84FF82]" : "text-white"}`} type="button">Short Break</button>
             </div>
             <div className="flex flex-col relative items-center mt-5 mb-4">
-                <input onChange={(event) => {
-                    if (event.target.value < 100 && event.target.value.toString().length < 3) {
-                        addAlarmMinutesToLocalStorage(selectedTimer, event.target.value)
-                        customizeTimer(selectedTimer, event.target.value)
-                    }
-                }} value={selectedTimer == "pomodoro" ? pomodoroMinutes : selectedTimer == "long_break" ? longBreakMinutes : selectedTimer == "short_break" ? shortBreakMinutes : ""}
+                <input onChange={(event) => changeTimerMinutes(event.target.value)} value={selectedTimer == "pomodoro" ? timerInputValue.pomodoroMinutes : selectedTimer == "long_break" ? timerInputValue.longBreakMinutes : selectedTimer == "short_break" ? timerInputValue.shortBreakMinutes : ""}
                 type="text" className="flex w-24 text-center bg-black text-6xl bg-opacity-30 rounded-lg px-2" />
                 <p>minutes</p>
             </div>
@@ -163,7 +190,8 @@ export default function Settings({setPomodoroConfigOpened}) {
                                         setRangeInputValue(event.target.value)
                                     }} value={rangeInputValue} min="0" max="1" step=".1" type="range" className="range accent-white w-full mt-1" /> 
                                 </div>
-                            </motion.div> ) : null}
+                            </motion.div> 
+                        ) : null}
                     </AnimatePresence>
                 </div>
                 <motion.button

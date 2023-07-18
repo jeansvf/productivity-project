@@ -6,10 +6,6 @@ export default function PomodoroChart() {
 
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    const capitalize = (text) => {
-        return `${text[0].toUpperCase()}${text.slice(1)}`
-    }
-
     const getMonthCompletion = (minutes) => {
         let hours = minutes / 60
 
@@ -21,7 +17,7 @@ export default function PomodoroChart() {
             <p className="text-lg font-medium">Pomodoro Studying</p>
 
             <div className="flex h-36 pt-2 pb-1 rounded-md border-[1px] px-1 border-white">
-                {dates.map((date, index) => <Month month={capitalize(date)} completion={"0"} key={index} />)}
+                {dates.map((date, index) => <Month month={date} completion={"0"} key={index} />)}
 
                 {userPomodoros ? userPomodoros.map((pomodoro, index) => <Month month={months[new Date(pomodoro.date).getMonth()]} completion={`${getMonthCompletion(pomodoro.minutes)}%`} key={index} />) : null}
             </div>
