@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { HiForward, HiPause, HiPlay } from "react-icons/hi2";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 import { useState } from "react";
-import { BiDice3 } from "react-icons/bi";
+import { BsDice3Fill } from "react-icons/bs";
 import { useMusicContext } from "../../contexts/MusicContext";
 
 export default function PlayerControls() {
@@ -31,8 +31,8 @@ export default function PlayerControls() {
                 <HiForward stroke='2' className='w-full h-full stroke-1 stroke-black' />
             </button> */}
 
-            <button type="button" className='w-8 h-8 mx-1'>
-                <BiDice3 onClick={() => changeBackground()} stroke="2" className='w-full h-full stroke-1 stroke-black' />
+            <button type="button" className='w-[1.45rem] h-[1.45rem] mx-1.5'>
+                <BsDice3Fill onClick={() => changeBackground()} stroke="2" className='w-full h-full stroke-1 stroke-black' />
             </button>
 
             <div>
