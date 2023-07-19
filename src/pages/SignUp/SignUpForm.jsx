@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup } from "firebase/auth"
+import { createUserWithEmailAndPassword } from "firebase/auth"
 import { auth, db, continueWithGoogle } from "../../firebase-config"
-import { collection, addDoc, doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import LoadingAnimation from "../../components/LoadingAnimation";
-
-// TODO: limit characters
 
 export default function SignUpForm() {
     const [signUpCredentials, setSignUpCredentials] = useState({
@@ -18,7 +16,7 @@ export default function SignUpForm() {
     })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
-
+    
     const [user] = useAuthState(auth)
 
     useEffect(() => setError(""), [signUpCredentials])
@@ -27,10 +25,15 @@ export default function SignUpForm() {
         e.preventDefault()
         setIsLoading(true)
 
-        // check if all fields were filled
+        // check fields
         switch (true) {
             case (signUpCredentials.name == ""):
                 setError("Name is invalid");
+                setIsLoading(false)
+                return;
+            
+            case (signUpCredentials.name.length < 4 || signUpCredentials.name.length > 12):
+                setError("Name must be between 4 and 12 characters");
                 setIsLoading(false)
                 return;
 
@@ -39,8 +42,13 @@ export default function SignUpForm() {
                 setIsLoading(false)
                 return;
 
-            case (signUpCredentials.password == ""):
+            case (signUpCredentials.password == "" || signUpCredentials.password.length > 128):
                 setError("Password is invalid");
+                setIsLoading(false)
+                return;
+
+            case (signUpCredentials.password.length < 6):
+                setError("Password must be at least 6 characters long");
                 setIsLoading(false)
                 return;
 
@@ -57,24 +65,28 @@ export default function SignUpForm() {
             return;
         }
 
-        // TODO: check if user auth state is necessary
-        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password).then(() => {
-            if(user) {
-                setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    userName: signUpCredentials.name,
-                    email: signUpCredentials.email,
-                    provider: user.providerId,
-                    photoUrl: user.photoURL,
-                    pomodoroMinutes: 0,
-                    createdAt: Timestamp.now(),
-                    // emailVerified: ?
-                    })
-                }
-        })
+        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
+        .then((userCred) => {
+            setDoc(doc(db, "users", userCred.user.uid), {
+                uid: userCred.user.uid,
+                userName: signUpCredentials.name,
+                email: signUpCredentials.email,
+                provider: userCred.user.providerId,
+                photoUrl: userCred.user.photoURL,
+                pomodoroMinutes: 0,
+                createdAt: Timestamp.now(),
+                // emailVerified: ?
+                })
+            }
+        )
         .then(() => setIsLoading(false))
-        .catch(() => setIsLoading(false))
-        // TODO: catch firebase error
+        .catch((err) => {
+            setIsLoading(false)
+
+            if(err.message == "Firebase: Error (auth/email-already-in-use).") {
+                setError("Email already in use")
+            }
+        })
     }
 
     return (
