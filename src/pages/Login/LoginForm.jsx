@@ -88,6 +88,7 @@ export default function LoginForm() {
                     <hr className='w-[39.2%]'/>
                 </div>
                 
+                {/* TODO: prevent spacebar name */}
                 <label className="w-[87%] mb-0.5 text-left text-white font-medium" htmlFor="email-input">E-mail</label>
                 <input onChange={(e) => setLoginCredentials({...loginCredentials, email: e.target.value})} className='mb-[.25rem] text-lg font-medium text-white pl-2 h-[3rem] w-[88%] rounded-[.3rem] bg-[#393939] outline-white border-[1px] border-white' type="email" id="email-input" />
                 <label className="w-[87%] mb-0.5 text-left text-white font-medium" htmlFor="password-input">Password</label>

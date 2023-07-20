@@ -69,13 +69,11 @@ export default function NavBar() {
                 </AnimatePresence>
                 <p className="ml-2">Goals</p>
             </Link>
-            
-            {profilePic ?
-            <motion.div className="absolute right-[.4rem] border-[1px] cursor-pointer rounded-full w-10" initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
-                <Link to={"/profile"}>
-                    <img className="w-10 h-10 rounded-full" src={profilePic} alt="" />
-                </Link>
-            </motion.div> : null }
+
+            {/* TODO: add pic white border */}
+            <motion.div className="absolute right-[.4rem] border-[1px] bg-cover bg-no-repeat cursor-pointer rounded-full w-10 h-10" style={{ backgroundImage: `url(${profilePic})`}} initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
+                <Link className="absolute w-10 h-10 z-10 rounded-full" to={"/profile"}></Link>
+            </motion.div>
         </nav>
     )
 }

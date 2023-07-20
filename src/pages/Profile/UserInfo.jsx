@@ -1,11 +1,73 @@
+import { useState } from "react"
 import { useProfileContext } from "../../contexts/ProfileContext"
+import { BsCameraFill } from "react-icons/bs"
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db, storage } from "../../firebase-config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import imageCompression from 'browser-image-compression'
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function UserInfo() {
-    const { profilePic, userName } = useProfileContext()
+    const { profilePic, userName, getUserProfilePicture } = useProfileContext()
+
+    const [isHovering, setIsHovering] = useState(false)
+    const [isImageUploading, setIsImageUploading] = useState(false)
+
+    const [user] = useAuthState(auth)
+
+    const uploadImage = async (file) => {
+        setIsImageUploading(true)
+
+        const options = {
+            maxSizeMB: .1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        }
+        
+        let storageRef = ref(storage, `user-profile-pictures/${user.uid}`)
+        
+        // TODO: reduce the amount of then
+        imageCompression(file, options)
+        .then((compressedPicture) => {
+            uploadBytes(storageRef, compressedPicture)
+            .then((response) => {
+                getDownloadURL(response.ref)
+                .then((url) => {
+                    updateDoc(doc(db, `users/${user.uid}`), {
+                        photoUrl: url 
+                    })
+                    .then(() => {
+                        getUserProfilePicture()
+                        setIsImageUploading(false)
+                    })
+                })
+            })
+        })
+        
+        .catch((err) => {
+            setIsImageUploading(false)
+            console.log(err)
+        })
+    }
 
     return (
         <div className="flex items-center text-white">
-            <img className="w-44 h-44 rounded-full" src={profilePic} alt="" />
+            <label onMouseOver={() => setIsHovering(true)} onMouseOut={() => setIsHovering(false)} className="relative w-44 h-44 bg-cover rounded-full bg-no-repeat cursor-pointer" style={{ backgroundImage: `url(${profilePic})`}} htmlFor="image-input">
+                {isHovering && !isImageUploading ? (
+                    <div className="absolute left-0 top-0 flex flex-col items-center justify-center w-full h-full bg-black rounded-full opacity-60">
+                        <BsCameraFill className="text-4xl" />
+                        <span className="w-[80%] text-center">Change Profile Picture</span>
+                    </div>
+                ) : null}
+                {isImageUploading ? (
+                    <div className="absolute left-0 top-0 flex flex-col items-center justify-center w-full h-full bg-black rounded-full opacity-60">
+                        <LoadingAnimation width={12} height={12} />
+                    </div>
+                ) : null}
+            </label>
+            <input onChange={(event) => uploadImage(event.target.files[0])} className="hidden" type="file" accept="image/*" id="image-input" />
+            
             <div className="ml-7">
                 <h1 className="text-6xl font-bold ml-2">{userName}</h1>
                 <div className="flex font-semibold mt-1.5 opacity-70">
