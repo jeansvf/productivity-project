@@ -71,6 +71,8 @@ export default function NavBar() {
             </Link>
 
             {/* TODO: add pic white border */}
+            {/* TODO: decrease profile picture size */}
+
             <motion.div className="absolute right-[.4rem] border-[1px] bg-cover bg-no-repeat cursor-pointer rounded-full w-10 h-10" style={{ backgroundImage: `url(${profilePic})`}} initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
                 <Link className="absolute w-10 h-10 z-10 rounded-full" to={"/profile"}></Link>
             </motion.div>

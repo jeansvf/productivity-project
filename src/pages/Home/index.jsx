@@ -27,8 +27,8 @@ export default function Home() {
                 <MonthPomodoroStatus months={months} />
             </div>
 
-            <div className="mx-24 pt-8">
-                <h1 className="text-4xl text-center">{weekDays[date.getDay()]}, {months[date.getMonth()]} {`${date.getDate()}${getNumberSuffix(date.getDate())}`}</h1>
+            <div id="testing-clip-parent" className="mx-24 pt-8">
+                <h1 id="testing-clip" className="text-4xl text-center">{weekDays[date.getDay()]}, {months[date.getMonth()]} {`${date.getDate()}${getNumberSuffix(date.getDate())}`}</h1>
                 {/* <div className="flex items-center mt-4">
                     <p className="text-[#EBFF71] text-2xl">"quote of the day"&nbsp;</p>
                     <p className="text-2xl">- author</p>
