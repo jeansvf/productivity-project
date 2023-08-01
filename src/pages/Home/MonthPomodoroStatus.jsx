@@ -1,21 +1,8 @@
-import { useEffect, useState } from "react"
 import { useProfileContext } from "../../contexts/ProfileContext"
 
 export default function MonthPomodoroStatus({ months }) {
-    const [currentMonthPomodoroMinutes, setCurrentMonthPomodoroMinutes] = useState(0)
 
-    const { userPomodoros, userInfo } = useProfileContext()
-
-    useEffect(() => {
-        userPomodoros.map((pomodoro => {
-            pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
-        }))
-    }, [userPomodoros])
-
-    const getDate = () => {
-        let today = new Date()
-        return `${today.getFullYear()}, ${today.getMonth() + 1}`
-    }
+    const { currentMonthPomodoroMinutes, userInfo } = useProfileContext()
 
     const getCurrentMonth = () => {
         let today = new Date()

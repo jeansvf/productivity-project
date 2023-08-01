@@ -1,5 +1,5 @@
 import { IoIosAdd } from "react-icons/io";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 import Item from "./Item";

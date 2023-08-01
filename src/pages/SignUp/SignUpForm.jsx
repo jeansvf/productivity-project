@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { auth, db, continueWithGoogle } from "../../firebase-config"
 import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
 import LoadingAnimation from "../../components/LoadingAnimation";
 
 export default function SignUpForm() {
@@ -16,8 +15,6 @@ export default function SignUpForm() {
     })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
-    
-    const [user] = useAuthState(auth)
 
     useEffect(() => setError(""), [signUpCredentials])
 
@@ -25,7 +22,40 @@ export default function SignUpForm() {
         e.preventDefault()
         setIsLoading(true)
 
-        // check fields
+        checkFields()
+
+        if (signUpCredentials.password !== signUpCredentials.confirmPassword) {
+            setError("Passwords do not match");
+            setIsLoading(false)
+            return;
+        }
+
+        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
+        .then((userCred) => {
+            setDoc(doc(db, "users", userCred.user.uid), {
+                uid: userCred.user.uid,
+                userName: signUpCredentials.name,
+                email: signUpCredentials.email,
+                provider: userCred.user.providerId,
+                photoUrl: userCred.user.photoURL,
+                pomodoroMinutes: 0,
+                createdAt: Timestamp.now(),
+                plannedHours: 1,
+                // emailVerified: ?
+                })
+            }
+        )
+        .then(() => setIsLoading(false))
+        .catch((err) => {
+            setIsLoading(false)
+
+            if(err.message == "Firebase: Error (auth/email-already-in-use).") {
+                setError("Email already in use")
+            }
+        })
+    }
+
+    const checkFields = () => {
         switch (true) {
             case (signUpCredentials.name == ""):
                 setError("Name is invalid");
@@ -57,36 +87,6 @@ export default function SignUpForm() {
                 setIsLoading(false)
                 return;
         }
-
-        // check if passwords match
-        if (signUpCredentials.password !== signUpCredentials.confirmPassword) {
-            setError("Passwords do not match");
-            setIsLoading(false)
-            return;
-        }
-
-        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
-        .then((userCred) => {
-            setDoc(doc(db, "users", userCred.user.uid), {
-                uid: userCred.user.uid,
-                userName: signUpCredentials.name,
-                email: signUpCredentials.email,
-                provider: userCred.user.providerId,
-                photoUrl: userCred.user.photoURL,
-                pomodoroMinutes: 0,
-                createdAt: Timestamp.now(),
-                // emailVerified: ?
-                })
-            }
-        )
-        .then(() => setIsLoading(false))
-        .catch((err) => {
-            setIsLoading(false)
-
-            if(err.message == "Firebase: Error (auth/email-already-in-use).") {
-                setError("Email already in use")
-            }
-        })
     }
 
     return (

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useState } from "react"
-import { Draggable } from "react-beautiful-dnd"
+import { Draggable } from "@hello-pangea/dnd"
 import { RxDragHandleDots2, RxTrash } from "react-icons/rx"
 import { AiFillEdit } from "react-icons/ai"
 import { collection, deleteDoc, doc, getDoc, query, updateDoc } from "firebase/firestore";

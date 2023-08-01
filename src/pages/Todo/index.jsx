@@ -1,4 +1,4 @@
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import Column from './Column';
 import AddListButton from './AddListButton';
 import LoadingAnimation from '../../components/LoadingAnimation';

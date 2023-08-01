@@ -14,7 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <MusicContext>
         <TodoContext>
           <GoalsContext>
-            <App />
+            <React.StrictMode>
+              <App />
+            </React.StrictMode>
           </GoalsContext>
         </TodoContext>
       </MusicContext>

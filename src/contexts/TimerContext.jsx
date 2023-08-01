@@ -5,6 +5,7 @@ import guitarAlarm from "../assets/alarms/guitar.wav"
 import { doc, getDoc, increment, setDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
 import { useAuthState } from "react-firebase-hooks/auth"
+import { useProfileContext } from "./ProfileContext";
 const TimerContextProvider = createContext()
 
 export default function TimerContext({ children }) {
@@ -12,8 +13,6 @@ export default function TimerContext({ children }) {
     const [pomodoroMinutes, setPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes : 25)
     const [longBreakMinutes, setLongBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes : 15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes : 5)
-    
-    const [breaksUntilLongBreak, setBreaksUntilLongBreak] = useState(3)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
@@ -23,16 +22,22 @@ export default function TimerContext({ children }) {
         totalBreaks: 0,
         timerType: "pomodoro",
     })
-
     const [user] = useAuthState(auth)
 
     const timeoutId = useRef()
-    
     const databaseMinutesInterval = useRef()
 
+    const { setCurrentMonthPomodoroMinutes } = useProfileContext()
+    
     useEffect(() => {
+        console.log(navigator.userAgent);
         decreaseMinutes()
+        !isPaused ? document.title = `${minutes < 10 && minutes.toString().length == 1 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds} - Pomodoro` : null
     }, [seconds])
+
+    useEffect(() => {
+        isPaused ? document.title = "Focusplace" : null
+    }, [isPaused])
 
     useEffect(() => {
         if (isPaused) {
@@ -41,7 +46,7 @@ export default function TimerContext({ children }) {
         }
         
         databaseMinutesInterval.current = setInterval(() => {
-            !isPaused ? incrementPomodoroMinutes() : null
+            !isPaused ? (incrementPomodoroMinutes(), setCurrentMonthPomodoroMinutes(prev => prev + 1)) : null
         }, 60000)
     }, [isPaused])
     
@@ -147,12 +152,12 @@ export default function TimerContext({ children }) {
 
                 setBreakInfo({...breakInfo,
                     isBreak: true,
-                    timerType: breakInfo.totalBreaks >= breaksUntilLongBreak ? "long_break" : "short_break",
+                    timerType: breakInfo.totalBreaks >= 3 ? "long_break" : "short_break",
                     totalBreaks: breakInfo.totalBreaks + 1
                 })
 
                 // after 3 breaks execute a long break
-                if (breakInfo.totalBreaks >= breaksUntilLongBreak) {
+                if (breakInfo.totalBreaks >= 3) {
                     setMinutes(longBreakMinutes)
                     setBreakInfo({...breakInfo,
                         isBreak: true,

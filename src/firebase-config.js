@@ -26,6 +26,7 @@ export const continueWithGoogle = () => {
       photoUrl: userCred.user.photoURL,
       pomodoroMinutes: 0,
       createdAt: Timestamp.now(),
+      plannedHours: 1,
       // emailVerified: ?
     })
   })

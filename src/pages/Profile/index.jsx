@@ -12,7 +12,7 @@ export default function Profile() {
             
             <div className="flex items-center mt-3 text-[#bfbfbf] underline">
                 <Link to="/settings" className="mr-4 cursor-pointer hover:text-white">Change Settings</Link>
-                <p onClick={() => signOut(auth).then((response) => console.log(response))} className="cursor-pointer hover:text-white">Sign Out</p>
+                <p onClick={() => signOut(auth).then(() => window.location.reload(false))} className="cursor-pointer hover:text-white">Sign Out</p>
             </div>
         </main>
     )

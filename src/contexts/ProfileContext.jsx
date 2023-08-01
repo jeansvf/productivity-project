@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react"
 import { createContext } from "react"
 import { db, auth } from "../firebase-config"
 import { useAuthState } from "react-firebase-hooks/auth"
+import baseProfilePicture from "../assets/images/base-profile-picture.png"
 
 const ProfileContextProvider = createContext()
 
@@ -10,6 +11,7 @@ export default function profileContext({ children }) {
     // TODO: turn all of these states into one user object
     const [profilePic, setProfilePic] = useState("")
     const [userName, setUserName] = useState("")
+    const [currentMonthPomodoroMinutes, setCurrentMonthPomodoroMinutes] = useState(0)
     const [userPomodoros, setUserPomodoros] = useState([])
     const [dates, setDates] = useState([])
 
@@ -23,9 +25,20 @@ export default function profileContext({ children }) {
         getUserInfo()
     }, [user])
 
+    // useEffect(() => {
+    //     userPomodoros.map((pomodoro => {
+    //         pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
+    //     }))
+    // }, [userPomodoros])
+
+    const getDate = () => {
+        let today = new Date()
+        return `${today.getFullYear()}, ${today.getMonth() + 1}`
+    }
+
     const getUserProfilePicture = async () => {
         let userDocs = await getDoc(doc(db, `users/${user.uid}`))
-        userDocs.data().photoUrl ? setProfilePic(userDocs.data().photoUrl) : null
+        userDocs.data().photoUrl ? setProfilePic(userDocs.data().photoUrl) : setProfilePic(baseProfilePicture)
         setUserName(userDocs.data().userName)
         
         // TODO: turn all the different user info states into one of these
@@ -63,6 +76,10 @@ export default function profileContext({ children }) {
         
                 return monthA - monthB
             })
+
+            finalPomodoros.map((pomodoro => {
+                pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
+            }))
             
             setUserPomodoros(finalPomodoros)
             
@@ -104,7 +121,9 @@ export default function profileContext({ children }) {
         profilePic,
         userName,
         userPomodoros,
-        dates
+        dates,
+        currentMonthPomodoroMinutes,
+        setCurrentMonthPomodoroMinutes
     }
     return (
         <ProfileContextProvider.Provider value={value}>
