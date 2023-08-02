@@ -1,12 +1,23 @@
 import MonthPomodoroStatus from "./MonthPomodoroStatus"
-import YesterdayPomodoroStatus from "./YesterdayPomodoroStatus"
 import GoalsTab from "./GoalsTab"
+import { useEffect } from "react"
+import TodayPomodoroStatus from "./TodayPomodoroStatus"
 
 export default function Home() {
     const date = new Date()
     
     const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    useEffect(() => {
+        let localDate = JSON.parse(localStorage.getItem("daily_pomodoro"))?.date
+        let currentDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`
+
+        if (currentDate != localDate || !localDate) {
+            localStorage.setItem("daily_pomodoro", JSON.stringify({ date: currentDate, minutes: 0 }))
+            return
+        }
+    }, [])
 
     const getNumberSuffix = (number) => {
         switch(true) {
@@ -25,7 +36,7 @@ export default function Home() {
         <div className="flex w-full h-screen justify-center pt-52 bg-[#393939] z-10 text-white">
             <div>
                 <MonthPomodoroStatus months={months} />
-                <YesterdayPomodoroStatus />
+                <TodayPomodoroStatus />
             </div>
 
             <div id="testing-clip-parent" className="mx-24 pt-8">

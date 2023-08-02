@@ -13,6 +13,7 @@ export default function TimerContext({ children }) {
     const [pomodoroMinutes, setPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.pomodoroMinutes : 25)
     const [longBreakMinutes, setLongBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes : 15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes : 5)
+    const [todayPomodoroMinutes, setTodayPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("daily_pomodoro"))?.minutes ? JSON.parse(localStorage.getItem("daily_pomodoro"))?.minutes : 0)
 
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
@@ -45,7 +46,11 @@ export default function TimerContext({ children }) {
         }
         
         databaseMinutesInterval.current = setInterval(() => {
-            !isPaused ? (incrementPomodoroMinutes(), setCurrentMonthPomodoroMinutes(prev => prev + 1)) : null
+            if (!isPaused) {
+                incrementPomodoroMinutes()
+                setCurrentMonthPomodoroMinutes(prev => prev + 1)
+                incrementLocalStorageMinutes()
+            }
         }, 60000)
     }, [isPaused])
     
@@ -65,6 +70,28 @@ export default function TimerContext({ children }) {
                 date: docId
             }, { merge: true })
         }
+    }
+
+    const incrementLocalStorageMinutes = () => {
+        let newDailyPomodoro = JSON.parse(localStorage.getItem("daily_pomodoro"))
+
+        let date = new Date()
+        let currentDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`
+        
+        console.log(newDailyPomodoro.date);
+        console.log(currentDate);
+
+        if (!newDailyPomodoro || newDailyPomodoro.date != currentDate) {
+            localStorage.setItem("daily_pomodoro", JSON.stringify({ date: currentDate, minutes: 0 }))
+
+            incrementLocalStorageMinutes()
+            return
+        }
+
+        newDailyPomodoro.minutes += 1
+
+        setTodayPomodoroMinutes(newDailyPomodoro.minutes)
+        localStorage.setItem("daily_pomodoro", JSON.stringify(newDailyPomodoro))
     }
 
     const playAlarm = () => {
@@ -253,6 +280,7 @@ export default function TimerContext({ children }) {
         goToBreak,
         skipTimer,
         customizeTimer,
+        todayPomodoroMinutes,
         pomodoroMinutes,
         setPomodoroMinutes,
         longBreakMinutes,

@@ -8,8 +8,8 @@ export default function MonthPomodoroStatus({ months }) {
         return months[today.getMonth()]
     }
 
-    const getFormattedMinutes = () => {
-        return currentMonthPomodoroMinutes < 60 ? `${currentMonthPomodoroMinutes} minutes` : `${(currentMonthPomodoroMinutes / 60).toFixed(1)} hours`
+    const getFormattedMinutes = (minutes) => {
+        return minutes < 60 ? `${minutes} minutes` : `${(minutes / 60).toFixed(1)} hours`
     }
     
     const getMonthCompletion = (minutes) => {
@@ -24,10 +24,9 @@ export default function MonthPomodoroStatus({ months }) {
                 <p className="text-[#FF7373]">Pomodoro</p>
             </div>
             <div className="h-10 w-full mt-1.5 mb-1 bg-[#3D3C3C]">
-
                 <div style={{ width: `${currentMonthPomodoroMinutes !== 0 ? getMonthCompletion(currentMonthPomodoroMinutes) : 0}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
             </div>
-            <p className="text-[1.1rem]">{getFormattedMinutes()}</p>
+            <p className="text-[1.1rem]">{getFormattedMinutes(currentMonthPomodoroMinutes)}</p>
         </div>
     )
 }
