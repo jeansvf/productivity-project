@@ -50,7 +50,6 @@ export default function LoginForm() {
                 return;
         }
 
-        // sign in user
         signInWithEmailAndPassword(auth, loginCredentials.email, loginCredentials.password)
         .then(() => setIsLoading(false))
         .catch((err) => {
@@ -77,7 +76,7 @@ export default function LoginForm() {
             </AnimatePresence>
 
             <form onSubmit={(event) => LoginFirebaseUser(event)} className="flex flex-col items-center w-[36rem]">
-                <h1 className="flex items-center mt-7 mb-7 text-3xl text-white font-semibold">Welcome back to&nbsp;<p className="text-[#FF7373]">Placeholder!</p></h1>
+                <h1 className="flex items-center mt-7 mb-7 text-3xl text-white font-semibold">Welcome back to&nbsp;<p className="text-[#FF7373]">Focusplace!</p></h1>
                 <button onClick={() => continueWithGoogle()} type='button' className='flex items-center bg-white px-[.6rem] py-1 rounded-full'>
                     <FcGoogle className='mr-2 text-3xl' />
                     <p className='text-[1.2rem] leading-8 font-medium'>Continue with Google</p>

@@ -53,7 +53,7 @@ export default function Settings() {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-white text-center font-semibold pt-40">
-            <h1 className="text-5xl flex justify-center items-center">Hey! Welcome to&nbsp;<p className="text-[#FF7373]">Placeholder</p>.</h1>
+            <h1 className="text-5xl flex justify-center items-center">Hey! Welcome to&nbsp;<p className="text-[#FF7373]">Focusplace</p>.</h1>
             <h2 className="text-[2rem] mt-6">Lets do some initial configuration</h2>
             <div className="flex flex-col items-center mt-44">
                 <p className="text-[1.9rem]">How much time do you plan to study per day?</p>

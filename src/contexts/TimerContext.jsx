@@ -30,7 +30,6 @@ export default function TimerContext({ children }) {
     const { setCurrentMonthPomodoroMinutes } = useProfileContext()
     
     useEffect(() => {
-        console.log(navigator.userAgent);
         decreaseMinutes()
         !isPaused ? document.title = `${minutes < 10 && minutes.toString().length == 1 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds} - Pomodoro` : null
     }, [seconds])

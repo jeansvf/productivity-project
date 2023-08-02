@@ -14,6 +14,7 @@ export default function profileContext({ children }) {
     const [currentMonthPomodoroMinutes, setCurrentMonthPomodoroMinutes] = useState(0)
     const [userPomodoros, setUserPomodoros] = useState([])
     const [dates, setDates] = useState([])
+    const [studiedTime, setStudiedTime] = useState(0)
 
     const [userInfo, setUserInfo] = useState({})
     
@@ -25,14 +26,9 @@ export default function profileContext({ children }) {
         getUserInfo()
     }, [user])
 
-    // useEffect(() => {
-    //     userPomodoros.map((pomodoro => {
-    //         pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
-    //     }))
-    // }, [userPomodoros])
-
     const getDate = () => {
         let today = new Date()
+
         return `${today.getFullYear()}, ${today.getMonth() + 1}`
     }
 
@@ -77,8 +73,12 @@ export default function profileContext({ children }) {
                 return monthA - monthB
             })
 
+            let totalPomodoroMinutes = 0
+
             finalPomodoros.map((pomodoro => {
                 pomodoro.date == getDate() ? setCurrentMonthPomodoroMinutes(pomodoro.minutes) : null
+                totalPomodoroMinutes += pomodoro.minutes
+                setStudiedTime(totalPomodoroMinutes);
             }))
             
             setUserPomodoros(finalPomodoros)
@@ -121,6 +121,7 @@ export default function profileContext({ children }) {
         profilePic,
         userName,
         userPomodoros,
+        studiedTime,
         dates,
         currentMonthPomodoroMinutes,
         setCurrentMonthPomodoroMinutes

@@ -9,7 +9,7 @@ import imageCompression from 'browser-image-compression'
 import { doc, updateDoc } from "firebase/firestore";
 
 export default function UserInfo() {
-    const { profilePic, userName, getUserProfilePicture } = useProfileContext()
+    const { profilePic, userName, getUserProfilePicture, studiedTime } = useProfileContext()
 
     const [isHovering, setIsHovering] = useState(false)
     const [isImageUploading, setIsImageUploading] = useState(false)
@@ -51,6 +51,10 @@ export default function UserInfo() {
         })
     }
 
+    const getFormattedMinutes = (minutes) => {
+        return minutes < 60 ? `${minutes}min` : `${(minutes / 60).toFixed(0)}h`
+    }
+
     return (
         <div className="flex items-center text-white">
             <label onMouseOver={() => setIsHovering(true)} onMouseOut={() => setIsHovering(false)} className="relative w-44 h-44 bg-cover rounded-full bg-no-repeat cursor-pointer" style={{ backgroundImage: `url(${profilePic})`}} htmlFor="image-input">
@@ -71,8 +75,8 @@ export default function UserInfo() {
             <div className="ml-7">
                 <h1 className="text-6xl font-bold ml-2">{userName}</h1>
                 <div className="flex font-semibold mt-1.5 opacity-70">
-                    <p className="mr-4">Studied Time: 2h</p>
-                    <p>Listened Time: 3h</p>
+                    <p className="mr-4">Studied Time: {getFormattedMinutes(studiedTime)}</p>
+                    {/* <p>Listened Time: 3h</p> */}
                 </div>
             </div>
         </div>

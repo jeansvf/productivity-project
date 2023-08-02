@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
+import { GoogleAuthProvider, getAdditionalUserInfo, getAuth, signInWithPopup } from "firebase/auth"
 import { Timestamp, doc, getFirestore, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -18,6 +18,10 @@ const provider = new GoogleAuthProvider()
 
 export const continueWithGoogle = () => {
   signInWithPopup(auth, provider).then((userCred) => {
+    if (getAdditionalUserInfo(userCred).isNewUser === false) {
+      return
+    }
+
     setDoc(doc(db, "users", userCred.user.uid), {
       uid: userCred.user.uid,
       userName: userCred.user.displayName,

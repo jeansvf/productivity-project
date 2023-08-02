@@ -1,7 +1,6 @@
 import { useProfileContext } from "../../contexts/ProfileContext"
 
 export default function MonthPomodoroStatus({ months }) {
-
     const { currentMonthPomodoroMinutes, userInfo } = useProfileContext()
 
     const getCurrentMonth = () => {
@@ -26,7 +25,7 @@ export default function MonthPomodoroStatus({ months }) {
             </div>
             <div className="h-10 w-full mt-1.5 mb-1 bg-[#3D3C3C]">
 
-                <div style={{ width: `${getMonthCompletion(currentMonthPomodoroMinutes)}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
+                <div style={{ width: `${currentMonthPomodoroMinutes !== 0 ? getMonthCompletion(currentMonthPomodoroMinutes) : 0}%` }} className={`h-full max-w-full bg-[#FF7373]`}></div>
             </div>
             <p className="text-[1.1rem]">{getFormattedMinutes()}</p>
         </div>

@@ -22,40 +22,7 @@ export default function SignUpForm() {
         e.preventDefault()
         setIsLoading(true)
 
-        checkFields()
-
-        if (signUpCredentials.password !== signUpCredentials.confirmPassword) {
-            setError("Passwords do not match");
-            setIsLoading(false)
-            return;
-        }
-
-        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
-        .then((userCred) => {
-            setDoc(doc(db, "users", userCred.user.uid), {
-                uid: userCred.user.uid,
-                userName: signUpCredentials.name,
-                email: signUpCredentials.email,
-                provider: userCred.user.providerId,
-                photoUrl: userCred.user.photoURL,
-                pomodoroMinutes: 0,
-                createdAt: Timestamp.now(),
-                plannedHours: 1,
-                // emailVerified: ?
-                })
-            }
-        )
-        .then(() => setIsLoading(false))
-        .catch((err) => {
-            setIsLoading(false)
-
-            if(err.message == "Firebase: Error (auth/email-already-in-use).") {
-                setError("Email already in use")
-            }
-        })
-    }
-
-    const checkFields = () => {
+        // check fields
         switch (true) {
             case (signUpCredentials.name == ""):
                 setError("Name is invalid");
@@ -87,11 +54,41 @@ export default function SignUpForm() {
                 setIsLoading(false)
                 return;
         }
+
+        if (signUpCredentials.password !== signUpCredentials.confirmPassword) {
+            setError("Passwords do not match");
+            setIsLoading(false)
+            return;
+        }
+
+        createUserWithEmailAndPassword(auth, signUpCredentials.email, signUpCredentials.password)
+        .then((userCred) => {
+            setDoc(doc(db, "users", userCred.user.uid), {
+                uid: userCred.user.uid,
+                userName: signUpCredentials.name,
+                email: signUpCredentials.email,
+                provider: userCred.user.providerId,
+                photoUrl: userCred.user.photoURL,
+                pomodoroMinutes: 0,
+                createdAt: Timestamp.now(),
+                plannedHours: 1,
+                // emailVerified: ?
+                })
+            }
+        )
+        .then(() => setIsLoading(false))
+        .catch((err) => {
+            setIsLoading(false)
+
+            if(err.message == "Firebase: Error (auth/email-already-in-use).") {
+                setError("Email already in use")
+            } else setError("Something went wrong, try again later")
+        })
     }
 
     return (
         <form onSubmit={(e) => signUpFirebaseUser(e)} className="flex flex-col items-center w-[36rem]">
-            <h1 className="flex items-center mt-7 mb-7 text-3xl text-white font-semibold">Create your&nbsp;<p className="text-[#FF7373]">Placeholder</p>&nbsp;account</h1>
+            <h1 className="flex items-center mt-7 mb-7 text-3xl text-white font-semibold">Create your&nbsp;<p className="text-[#FF7373]">Focusplace</p>&nbsp;account</h1>
             <button onClick={() => continueWithGoogle()} type='button' className='flex items-center bg-white px-[.6rem] py-1 rounded-full'>
                 <FcGoogle className='mr-2 text-3xl' />
                 <p className='text-[1.2rem] leading-8 font-medium'>Continue with Google</p>
