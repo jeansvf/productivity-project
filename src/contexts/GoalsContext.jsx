@@ -8,6 +8,7 @@ const GoalsContextProvider = createContext()
 
 export default function GoalsContext({ children }) {
     const [goals, setGoals] = useState([])
+    const [loading, setLoading] = useState([])
 
     const effectRan = useRef(false)
 
@@ -27,17 +28,20 @@ export default function GoalsContext({ children }) {
     }, [user])
 
     const getUserGoals = async () => {
+        setLoading(true)
         if (user) {
             let goalsDocs = await getDocs(query(collection(db, "goals"), where("goalOwnerUid", "==", user.uid)))
             let goalsSnapshot = goalsDocs.docs.map((doc) => ({ ...doc.data() }))
             setGoals(goalsSnapshot)
         }
+        setLoading(false)
     }
 
     const value = {
         goals,
         setGoals,
-        getUserGoals
+        getUserGoals,
+        loading
     }
 
     return (

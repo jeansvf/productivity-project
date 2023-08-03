@@ -13,7 +13,7 @@ export default function Goals() {
     const [dates, setDates] = useState([])
     const [showCompletedGoalsLine, setShowCompletedGoalsLine] = useState(false)
     
-    const { goals, setGoals, getUserGoals } = useGoalsContext()
+    const { goals, setGoals, getUserGoals, loading } = useGoalsContext()
 
     useEffect(() => {
         if (!goals) {
@@ -53,7 +53,6 @@ export default function Goals() {
     return (
         <main className="w-full h-screen pl-2 pt-14 text-white bg-[#393939] z-10">
             <AnimatePresence>
-
                 {/* incomplete goals */}
                 {goals ? dates?.map((date, dateIndex) => (
                     <div key={dateIndex}>
@@ -79,17 +78,34 @@ export default function Goals() {
                 )}
             </AnimatePresence>
 
+            <AnimatePresence>
+                {goals?.length == 0 && !creatingTemporaryGoal && !loading ? (
+                    <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute ml-11 mt-14">
+                        <p className="text-[2.5rem] leading-10 opacity-50 font-semibold text-white">You don’t have any Goals!</p>
+                        <div className="flex items-center ml-0.5 mt-4 text-2xl opacity-50 font-semibold text-white">
+                            <p>Press the&nbsp;</p>
+                            <div className="w-7 h-7 rounded-full bg-white text-black">
+                                <IoIosAdd className="w-full h-full" />
+                            </div>
+                            <p>&nbsp;button to create a goal</p>
+                        </div>
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
+
             {/* creating goal */}
             <div className="flex">
                 <AnimatePresence>
-                    {
-                        creatingTemporaryGoal ? (
-                            <div className="w-full">
-                                <DateLine date={"placeholder"} />
-                                <TemporaryGoal getUserGoals={getUserGoals} setCreatingTemporaryGoal={setCreatingTemporaryGoal} />
-                            </div>
-                        ) : null
-                    }
+                    {creatingTemporaryGoal ? (
+                        <div className="w-full">
+                            <DateLine date={"placeholder"} />
+                            <TemporaryGoal getUserGoals={getUserGoals} setCreatingTemporaryGoal={setCreatingTemporaryGoal} />
+                        </div>
+                    ) : null}
                 </AnimatePresence>
             </div>
 
@@ -99,13 +115,11 @@ export default function Goals() {
                     {/* if any completed goal exists, render dateline */}
                     {showCompletedGoalsLine ? <DateLine date={"completed"} /> : null}
                     <div className="flex flex-wrap w-full">
-                        {
-                            goals?.map((goal, goalIndex) => {
-                                return goal.isGoalComplete ? (
-                                    <CompletedGoal goal={goal} key={goalIndex} />
-                                ) : null
-                            })
-                        }
+                        {goals?.map((goal, goalIndex) => {
+                            return goal.isGoalComplete ? (
+                                <CompletedGoal goal={goal} key={goalIndex} />
+                            ) : null
+                        })}
                     </div>
                 </div>
             </AnimatePresence>
@@ -115,18 +129,19 @@ export default function Goals() {
 
             {/* add goal button */}
             <motion.button
-            initial={{
-                bottom: -30
-            }}
-            animate={{
-                rotateZ: 90,
-                bottom: 40
-            }}
-            transition={{
-                type: "spring",
-                duration: .8
-            }}
-            onClick={() => setCreatingTemporaryGoal(true)} className="fixed right-10 bottom-10 w-12 h-12 rounded-full bg-white text-black hover:bg-opacity-60">
+                initial={{
+                    bottom: -30
+                }}
+                animate={{
+                    rotateZ: 90,
+                    bottom: 40
+                }}
+                transition={{
+                    type: "spring",
+                    duration: .8
+                }}
+                onClick={() => setCreatingTemporaryGoal(true)} className="fixed right-10 bottom-10 w-12 h-12 rounded-full bg-white text-black hover:bg-opacity-60"
+            >
                 <IoIosAdd className="w-full h-full" />
             </motion.button>
         </main>

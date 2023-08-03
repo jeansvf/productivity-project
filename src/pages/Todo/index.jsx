@@ -101,7 +101,7 @@ export default function Todo() {
     }
 
     return (
-        <main className='relative flex pl-2 pt-20 h-screen overflow-x-auto bg-[#393939] text-white z-10'>
+        <main className='relative flex pl-4 pt-20 h-screen overflow-x-auto bg-[#393939] text-white z-10'>
             {isDataRetrieved ? (
                 <>
                     <div>
@@ -127,7 +127,7 @@ export default function Todo() {
                             </Droppable>
                         </DragDropContext>
                     </div>
-                    <AddListButton addNewColumn={addNewColumn} />
+                    <AddListButton addNewColumn={addNewColumn} columns={columns} />
                 </>
                 ) : (
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">

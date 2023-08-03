@@ -10,7 +10,7 @@ import { auth, db } from "../../firebase-config"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useTodoContext } from "../../contexts/TodoContext"
 
-export default function Item({ columnIndex, cardIndex, text, description, id, color, orderIndex }) {
+export default function Card({ columnIndex, cardIndex, text, description, id, color, orderIndex }) {
     const {columns, setColumns, cards, setCards } = useTodoContext()
 
     const [isHoveringCard, setIsHoveringCard] = useState(false)

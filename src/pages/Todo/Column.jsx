@@ -2,7 +2,7 @@ import { IoIosAdd } from "react-icons/io";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
-import Item from "./Item";
+import Card from "./Card";
 import { useRef, useState } from "react";
 import TemporaryCard from "./TemporaryCard";
 import { AnimatePresence, motion } from "framer-motion";
@@ -70,7 +70,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                 <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className="relative flex flex-col items-center w-80 h-max max-h-[90vh] mx-2 bg-[#2E2E2E] rounded-[.4rem]"
+                    className="relative flex flex-col items-center w-80 h-max max-h-[90vh] mr-4 bg-[#2E2E2E] rounded-[.4rem]"
                 >
                     <div onMouseOver={() => setIsHoveringTitle(true)} onMouseOut={() => setIsHoveringTitle(false)} className="relative flex items-center w-[92%] my-4">
                         <input onChange={(event) => changeTitle(event.target.value)} className="bg-transparent font-semibold text-[17px] w-2/3" type="text" value={title} />
@@ -118,7 +118,7 @@ export default function Column({ deleteColumn, setColumns, columns, columnId, co
                                 {columns[columnIndex].cards.map((order, orderIndex) => (
                                     cards.map((card, cardIndex) => (
                                         card?.id == order?.id ? (
-                                            card == undefined ? null : <Item columnIndex={columnIndex} cardIndex={cardIndex} text={card.text} description={card.description} id={card.id} color={card.color} orderIndex={orderIndex} key={card.id} />
+                                            card == undefined ? null : <Card columnIndex={columnIndex} cardIndex={cardIndex} text={card.text} description={card.description} id={card.id} color={card.color} orderIndex={orderIndex} key={card.id} />
                                         ) : null
                                     ))
                                 ))}
