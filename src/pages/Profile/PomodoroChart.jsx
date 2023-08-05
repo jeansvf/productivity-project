@@ -13,10 +13,10 @@ export default function PomodoroChart() {
     }
 
     return (
-        <div className="text-white mt-20">
+        <div className="text-white mt-20 max-sm:w-[99%]">
             <p className="text-lg font-medium">Pomodoro Studying</p>
 
-            <div className="flex h-36 pt-2 pb-1 rounded-md border-[1px] px-1 border-white">
+            <div className="flex justify-center h-36 pt-2 pb-1 rounded-md border-[1px] px-1 border-white">
                 {dates.map((date, index) => <Month month={date} completion={"0"} key={index} />)}
 
                 {userPomodoros ? userPomodoros.map((pomodoro, index) => <Month month={months[new Date(pomodoro.date).getMonth()]} completion={`${getMonthCompletion(pomodoro.minutes)}%`} key={index} />) : null}

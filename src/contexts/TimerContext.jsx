@@ -77,9 +77,6 @@ export default function TimerContext({ children }) {
 
         let date = new Date()
         let currentDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`
-        
-        console.log(newDailyPomodoro.date);
-        console.log(currentDate);
 
         if (!newDailyPomodoro || newDailyPomodoro.date != currentDate) {
             localStorage.setItem("daily_pomodoro", JSON.stringify({ date: currentDate, minutes: 0 }))

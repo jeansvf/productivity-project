@@ -33,16 +33,16 @@ export default function Home() {
     }
 
     return (
-        <div className="flex w-full h-screen justify-center pt-52 bg-[#393939] z-10 text-white">
+        <div className="flex w-full min-h-screen justify-center pt-24 bg-[#393939] z-10 text-white max-lg:pb-12 max-lg:flex-col max-lg:items-center">
             <div>
                 <MonthPomodoroStatus months={months} />
                 <TodayPomodoroStatus />
             </div>
 
-            <div id="testing-clip-parent" className="mx-24 pt-8">
-                <h1 id="testing-clip" className="text-4xl text-center">{weekDays[date.getDay()]}, {months[date.getMonth()]} {`${date.getDate()}${getNumberSuffix(date.getDate())}`}</h1>
-                {/* 
-                TODO: quote of the day
+            <div className="mx-24 max-lg:mx-0 max-lg:my-10">
+                <h1 className="text-4xl text-center">{weekDays[date.getDay()]}, {months[date.getMonth()]} {`${date.getDate()}${getNumberSuffix(date.getDate())}`}</h1>
+                
+                {/* TODO: quote of the day
                 <div className="flex items-center mt-4">
                     <p className="text-[#EBFF71] text-2xl">"quote of the day"&nbsp;</p>
                     <p className="text-2xl">- author</p>

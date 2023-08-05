@@ -27,7 +27,6 @@ export default function UserInfo() {
         
         let storageRef = ref(storage, `user-profile-pictures/${user.uid}`)
         
-        // TODO: reduce the amount of then
         imageCompression(file, options)
         .then((compressedPicture) => {
             uploadBytes(storageRef, compressedPicture)
@@ -56,7 +55,7 @@ export default function UserInfo() {
     }
 
     return (
-        <div className="flex items-center text-white">
+        <div className="flex items-center text-white max-sm:flex-col">
             <label onMouseOver={() => setIsHovering(true)} onMouseOut={() => setIsHovering(false)} className="relative w-44 h-44 bg-cover rounded-full bg-no-repeat cursor-pointer" style={{ backgroundImage: `url(${profilePic})`}} htmlFor="image-input">
                 {isHovering && !isImageUploading ? (
                     <div className="absolute left-0 top-0 flex flex-col items-center justify-center w-full h-full bg-black rounded-full opacity-60">
@@ -72,10 +71,10 @@ export default function UserInfo() {
             </label>
             <input onChange={(event) => uploadImage(event.target.files[0])} className="hidden" type="file" accept="image/*" id="image-input" />
             
-            <div className="ml-7">
-                <h1 className="text-6xl font-bold ml-2">{userName}</h1>
+            <div className="ml-7 max-sm:ml-0">
+                <h1 className="text-6xl font-bold ml-2 max-sm:my-4 max-sm:text-center">{userName}</h1>
                 <div className="flex font-semibold mt-1.5 opacity-70">
-                    <p className="mr-4">Studied Time: {getFormattedMinutes(studiedTime)}</p>
+                    <p className="mr-4 max-sm:mr-0">Studied Time: {getFormattedMinutes(studiedTime)}</p>
                     {/* <p>Listened Time: 3h</p> */}
                 </div>
             </div>

@@ -138,7 +138,7 @@ export default function Settings({setPomodoroConfigOpened}) {
             }
         }}
         className="absolute flex flex-col items-center">
-            <div className="flex justify-between w-[24rem] text-xl">
+            <div className="flex justify-between w-[24rem] text-xl max-sm:w-[20rem] max-sm:text-base">
                 <button onClick={() => setSelectedTimer("pomodoro")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "pomodoro" ? "bg-[#FF8282]" : "text-white"}`} type="button">Pomodoro</button>
                 <button onClick={() => setSelectedTimer("long_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "long_break" ? "bg-[#fff082]" : "text-white"} `} type="button">Long Break</button>
                 <button onClick={() => setSelectedTimer("short_break")} className={`py-1 px-2 rounded-[0.3rem] text-black ${selectedTimer == "short_break" ? "bg-[#84FF82]" : "text-white"}`} type="button">Short Break</button>

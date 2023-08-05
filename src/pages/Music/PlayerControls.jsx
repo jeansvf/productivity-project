@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { HiForward, HiPause, HiPlay } from "react-icons/hi2";
-import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
+import { IoVolumeMedium, IoVolumeOff } from "react-icons/io5";
 import { useState } from "react";
-import { BsDice3Fill } from "react-icons/bs";
+import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { useMusicContext } from "../../contexts/MusicContext";
+import { FaImages } from "react-icons/fa";
 
 export default function PlayerControls() {
     const [isVolumeInputShowing, setIsVolumeInputShowing] = useState(false)
@@ -22,27 +22,23 @@ export default function PlayerControls() {
     }
 
     return (
-        <div className='absolute bottom-10 flex items-center justify-center p-2 rounded-md bg-opacity-50 border-[1px] border-white bg-black'>
-            <button type='button' className='w-8 h-8 ml-1' onClick={() => setIsVideoPlaying(prev => !prev)}>
-                {isVideoPlaying ? <HiPause className='w-full h-full stroke-1 stroke-black' /> : <HiPlay className='w-full h-full stroke-1 stroke-black' />}
+        <div className='absolute bottom-3 flex items-center justify-center w-[99%] h-12 rounded-lg border border-white border-opacity-30 bg-[#111111] bg-opacity-80 max-sm:bottom-1 max-sm:w-[97%]' style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
+            <button type="button" className="text-lg mr-3">
+                <FaImages onClick={() => changeBackground()} />
             </button>
 
-            {/* <button type='button' className='w-8 h-8 mx-1'>
-                <HiForward stroke='2' className='w-full h-full stroke-1 stroke-black' />
-            </button> */}
-
-            <button type="button" className='w-[1.45rem] h-[1.45rem] mx-1.5'>
-                <BsDice3Fill onClick={() => changeBackground()} stroke="2" className='w-full h-full stroke-1 stroke-black' />
+            <button type='button' className="text-[2.4rem]" onClick={() => setIsVideoPlaying(prev => !prev)}>
+                {isVideoPlaying ? <BsPauseFill /> : <BsPlayFill />}
             </button>
 
-            <div>
-                <button onMouseEnter={() => setIsVolumeInputShowing(true)} onMouseLeave={() => setIsVolumeInputShowing(false)} type='button' className='flex items-center mx-1 h-7'>
-                    {volume == 0 ? <HiVolumeOff onClick={() => setVolume(.5)} className='w-full h-full stroke-1 stroke-black' /> : <HiVolumeUp onClick={() => setVolume(0)} className='w-full h-full stroke-1 stroke-black' />}
-                    <AnimatePresence>
-                        {isVolumeInputShowing ? (
-                            <motion.input onChange={(e) => changeVolume(e.target.value)} initial={{width: 0}} animate={{width: "5rem"}} exit={{width: 0}} transition={{duration: .2}} value={volume} min="0" max="1" step=".1" type="range" className="ml-2 cursor-pointer origin-left accent-white w-20" />
-                        ) : null}
-                    </AnimatePresence>
+            <div className="relative min-w-6 h-6">
+                <button onMouseEnter={() => setIsVolumeInputShowing(true)} onMouseLeave={() => setIsVolumeInputShowing(false)} type='button' className='absolute left-0 top-0 flex items-center text-2xl ml-[.2rem]'>
+                    {volume == 0 ? <IoVolumeOff onClick={() => setVolume(.5)} /> : <IoVolumeMedium className="ml-[.239rem]" onClick={() => setVolume(0)} />}
+                <AnimatePresence>
+                    {isVolumeInputShowing ? (
+                        <motion.input initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onChange={(e) => changeVolume(e.target.value)} value={volume} min="0" max="1" step=".1" type="range" className="ml-2 cursor-pointer origin-left accent-white w-20" />
+                    ) : null}
+                </AnimatePresence>
                 </button>
             </div>
         </div>
