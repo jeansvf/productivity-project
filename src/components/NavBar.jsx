@@ -14,7 +14,7 @@ export default function NavBar() {
     const location = useLocation()
 
     return (
-        <nav className="flex z-50 fixed items-center w-full h-[3.05rem] bg-[#2E2E2E] text-white text-lg font-ubuntu pl-[.4rem]">
+        <nav className="flex z-50 fixed items-center w-full h-[3.05rem] bg-[#2E2E2E] text-white text-lg font-ubuntu pl-[.4rem] overflow-x-auto overflow-y-hidden max-md:pr-16">
             <Link to={"/home"} onMouseOver={() => setIsHovering("home")} onMouseOut={() => setIsHovering("")} className={`flex items-center h-10 pt-[.4rem] mr-1 py-1 px-3 ${isHovering == "home" || location.pathname == "/home" ? "text-[#EBFF71]" : null}`} >
                 <AnimatePresence>
                     {isHovering == "home" || location.pathname == "/home" ? (
@@ -70,10 +70,7 @@ export default function NavBar() {
                 <p className="ml-2">Goals</p>
             </Link>
 
-            {/* TODO: add pic white border */}
-            {/* TODO: decrease profile picture size */}
-
-            <motion.div className="absolute right-[.4rem] border-[1px] bg-cover bg-no-repeat cursor-pointer rounded-full w-10 h-10" style={{ backgroundImage: `url(${profilePic})`}} initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
+            <motion.div className="fixed right-[.4rem] border-[1px] bg-cover bg-no-repeat cursor-pointer rounded-full w-10 h-10" style={{ backgroundImage: `url(${profilePic})`}} initial={{scale: .3}} animate={{scale: 1}} transition={{ease: "backOut", duration: .5}}>
                 <Link className="absolute w-10 h-10 z-10 rounded-full" to={"/profile"}></Link>
             </motion.div>
         </nav>

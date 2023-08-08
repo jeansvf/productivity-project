@@ -14,14 +14,13 @@
   padding: .4rem;
 }
 
-/* TODO: change this */
 #goal-tasks-window::-webkit-scrollbar {
   display: none
 }
 
 #goal-tasks-window {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .settings-slider {
@@ -52,6 +51,15 @@
   border-radius: 100%;
   cursor: pointer;
   background: #FF7373
+}
+
+nav::-webkit-scrollbar {
+  display: none;
+}
+
+nav {
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
 }
 
 @tailwind base;

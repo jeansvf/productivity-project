@@ -46,11 +46,11 @@ export default function LandingPage() {
                 ) : null}
             </AnimatePresence>
 
-            <div className="self-center w-[66.5%] border-[1px] border-white rounded-xl mt-28 mb-40 max-md:w-[78%]">
-                <img src={pomodoroImage} alt="pomodoro-img" className="w-full h-full rounded-xl" />
+            <div className="self-center w-[66.5%] min-h-[44.5rem] rounded-xl mt-28 mb-40 max-md:w-[78%] max-md:mb-0">
+                <img src={pomodoroImage} alt="pomodoro-img" className="w-full h-full rounded-xl border border-white" />
             </div>
 
-            <h2 className="mt-20 mb-5 px-8 text-center text-[#FF7373] drop-shadow-red-title text-[3.5rem] text-6xl font-semibold">The Pomodoro Technique</h2>
+            <h2 className="mt-20 mb-5 px-8 text-center text-[#FF7373] drop-shadow-red-title text-[3.5rem] text-6xl font-semibold max-md:mt-0">The Pomodoro Technique</h2>
 
             <div className="flex mb-32 justify-center">
                 <p className="text-white w-[50%] leading-6 font-medium text-center text-lg max-md:w-[78%]">The Pomodoro Technique is backed by science and has proven to be a game-changer for countless individuals seeking to enhance their productivity and time management skills. By breaking your work into manageable intervals and incorporating regular breaks, you'll avoid burnout and maintain a higher level of concentration throughout the day.</p>

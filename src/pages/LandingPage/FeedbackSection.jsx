@@ -8,7 +8,7 @@ export default function Feedback({ setShowFeedbackForm }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0}}
-                className="absolute text-white mt-8"
+                className="flex flex-col absolute text-white mt-8 max-md:static max-md:items-center"
             >
                 <p className="text-[1.2rem] font-semibold">Have a suggestion?</p>
                 <h3 className="text-3xl font-semibold">Give us feedback!</h3>

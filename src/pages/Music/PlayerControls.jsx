@@ -31,7 +31,7 @@ export default function PlayerControls() {
                 {isVideoPlaying ? <BsPauseFill /> : <BsPlayFill />}
             </button>
 
-            <div className="relative min-w-6 h-6">
+            <div className="relative w-6 h-6">
                 <button onMouseEnter={() => setIsVolumeInputShowing(true)} onMouseLeave={() => setIsVolumeInputShowing(false)} type='button' className='absolute left-0 top-0 flex items-center text-2xl ml-[.2rem]'>
                     {volume == 0 ? <IoVolumeOff onClick={() => setVolume(.5)} /> : <IoVolumeMedium className="ml-[.239rem]" onClick={() => setVolume(0)} />}
                 <AnimatePresence>
