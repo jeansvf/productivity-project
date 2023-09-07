@@ -6,7 +6,11 @@ import { doc, getDoc, increment, setDoc } from "firebase/firestore"
 import { auth, db } from "../firebase-config"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useProfileContext } from "./ProfileContext";
+
 const TimerContextProvider = createContext()
+
+const timerWorker = new Worker("src/workers/worker.js")
+const dbTimerWorker = new Worker("src/workers/db-worker.js")
 
 export default function TimerContext({ children }) {
     // set timer minutes to localStorage minutes, if undefined set to default value ("25", "15", "5")
@@ -25,11 +29,24 @@ export default function TimerContext({ children }) {
     })
     const [user] = useAuthState(auth)
 
-    const timeoutId = useRef()
-    const databaseMinutesInterval = useRef()
-
     const { setCurrentMonthPomodoroMinutes } = useProfileContext()
     
+    useEffect(() => {
+        const unloadCallback = (e) => {
+            if (isPaused) {
+                window.removeEventListener("beforeunload", unloadCallback)
+                return
+            }
+            e.preventDefault()
+            e.returnValue = ""
+            return ""
+        }
+
+        window.addEventListener("beforeunload", unloadCallback)
+
+        return () => window.removeEventListener("beforeunload", unloadCallback)
+    })
+
     useEffect(() => {
         decreaseMinutes()
         !isPaused ? document.title = `${minutes < 10 && minutes.toString().length == 1 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds} - Pomodoro` : null
@@ -41,17 +58,17 @@ export default function TimerContext({ children }) {
 
     useEffect(() => {
         if (isPaused) {
-            clearInterval(databaseMinutesInterval.current)
+            dbTimerWorker.postMessage("pause")
             return
         }
         
-        databaseMinutesInterval.current = setInterval(() => {
-            if (!isPaused) {
-                incrementPomodoroMinutes()
-                setCurrentMonthPomodoroMinutes(prev => prev + 1)
-                incrementLocalStorageMinutes()
-            }
-        }, 60000)
+        dbTimerWorker.postMessage("start")
+        dbTimerWorker.onmessage = (e) => {
+            setSeconds(prev => prev - 1)
+            incrementPomodoroMinutes()
+            setCurrentMonthPomodoroMinutes(prev => prev + 1)
+            incrementLocalStorageMinutes()
+        }
     }, [isPaused])
     
     const incrementPomodoroMinutes = async () => {
@@ -213,14 +230,15 @@ export default function TimerContext({ children }) {
     
     const startTimer = () => {
         setIsPaused(false)
-        timeoutId.current = setInterval(() => {
+        timerWorker.postMessage("start")
+        timerWorker.onmessage = (e) => {
             setSeconds(prev => prev - 1)
-        }, 1000)
+        }
     }
 
     const pauseTimer = () => {
+        timerWorker.postMessage("pause")
         setIsPaused(true)
-        clearInterval(timeoutId.current)
     }
 
     const skipTimer = () => {
