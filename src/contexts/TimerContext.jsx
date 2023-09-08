@@ -9,8 +9,8 @@ import { useProfileContext } from "./ProfileContext";
 
 const TimerContextProvider = createContext()
 
-const timerWorker = new Worker("src/workers/worker.js")
-const dbTimerWorker = new Worker("src/workers/db-worker.js")
+const timerWorker = new Worker(new URL("../workers/worker.js", import.meta.url))
+const dbTimerWorker = new Worker(new URL("../workers/db-worker.js", import.meta.url))
 
 export default function TimerContext({ children }) {
     // set timer minutes to localStorage minutes, if undefined set to default value ("25", "15", "5")
