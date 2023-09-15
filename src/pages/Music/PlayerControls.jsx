@@ -22,7 +22,7 @@ export default function PlayerControls() {
     }
 
     return (
-        <div className='absolute bottom-3 flex items-center justify-center w-[99%] h-12 rounded-lg border border-white border-opacity-30 bg-[#111111] bg-opacity-80 max-sm:bottom-1 max-sm:w-[97%]' style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
+        <div className='fixed bottom-3 flex items-center justify-center w-[99%] h-12 rounded-lg border border-white border-opacity-30 bg-[#111111] bg-opacity-80 max-sm:bottom-1 max-sm:w-[97%]' style={{ backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
             <button type="button" className="text-lg mr-3">
                 <FaImages onClick={() => changeBackground()} />
             </button>

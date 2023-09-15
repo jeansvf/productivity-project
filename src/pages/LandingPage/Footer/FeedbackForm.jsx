@@ -1,6 +1,6 @@
 import emailjs from "@emailjs/browser"
 import { motion } from "framer-motion"
-import LoadingAnimation from "../../components/LoadingAnimation"
+// import LoadingAnimation from "../../components/LoadingAnimation"
 import { useEffect, useState } from "react"
 
 export default function ContactForm({ setShowFeedbackForm, setEmailSent }) {

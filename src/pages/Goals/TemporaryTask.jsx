@@ -3,7 +3,7 @@ import { FaTrash } from "react-icons/fa";
 
 export default function TemporaryTask({ task, taskIndex, setTemporaryGoal, temporaryGoal }) {
     return (
-        <div className="flex items-center">
+        <div className="w-full flex items-center">
             <BsCheck onClick={() => {
                 let newTask = structuredClone(temporaryGoal)
                 newTask.tasks[taskIndex] = {...newTask.tasks[taskIndex], isComplete: !newTask.tasks[taskIndex].isComplete}
@@ -17,7 +17,7 @@ export default function TemporaryTask({ task, taskIndex, setTemporaryGoal, tempo
                     taskContent: event.target.value,
                 }
                 setTemporaryGoal(newTask)
-            }} className="bg-transparent" placeholder="Type task..." />
+            }} className="bg-transparent w-2/3" placeholder="Type task..." />
             
             <FaTrash onClick={() => {
                 let newTask = structuredClone(temporaryGoal)
