@@ -9,9 +9,13 @@ import { useProfileContext } from "./ProfileContext";
 
 const TimerContextProvider = createContext()
 
-const timerWorker = new Worker(new URL("../workers/worker.js", import.meta.url))
-const dbTimerWorker = new Worker(new URL("../workers/db-worker.js", import.meta.url))
-const alarmTimerWorker = new Worker(new URL("../workers/alarm-worker.js"), import.meta.url)
+const alarmWorkerURL = new URL("../workers/alarm-worker.js", import.meta.url);
+const timerWorkerURL = new URL("../workers/worker.js", import.meta.url);
+const dbWorkerURL = new URL("../workers/db-worker.js", import.meta.url);
+
+const alarmTimerWorker = new Worker(alarmWorkerURL);
+const timerWorker = new Worker(timerWorkerURL);
+const dbTimerWorker = new Worker(dbWorkerURL);
 
 export default function TimerContext({ children }) {
     // set timer minutes to localStorage minutes, if undefined set to default value ("25", "15", "5")
@@ -198,7 +202,10 @@ export default function TimerContext({ children }) {
                     pauseTimer()
                 }
 
-                playAlarm()
+                alarmTimerWorker.postMessage("ring")
+                alarmTimerWorker.onmessage = (e) => {
+                    playAlarm()
+                }
 
                 setBreakInfo({...breakInfo,
                     isBreak: true,
@@ -240,9 +247,9 @@ export default function TimerContext({ children }) {
         }
 
         alarmTimerWorker.postMessage("ring")
-        alarmTimerWorker.onmessage(() => {
+        alarmTimerWorker.onmessage = (e) => {
             playAlarm()
-        })
+        }
     }
     
     const startTimer = () => {
