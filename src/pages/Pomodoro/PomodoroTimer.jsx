@@ -4,7 +4,7 @@ import { IoSettingsSharp } from "react-icons/io5"
 import { motion } from "framer-motion"
 
 export default function PomodoroTimer({ setPomodoroConfigOpened }) {
-    const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer } = useTimerContext()
+    const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer, setShowNavigationHint } = useTimerContext()
 
     return (
         <motion.div
@@ -37,15 +37,19 @@ export default function PomodoroTimer({ setPomodoroConfigOpened }) {
             <p className="text-[9.5rem] max-sm:text-[7rem]">{minutes < 10 && minutes.toString().length == 1 ? "0" + minutes : minutes}:{seconds < 10 ? "0" + seconds : seconds}</p>
             {isPaused ? (
                 <div className="flex relative items-center">
-                    <div onClick={() => startTimer()} tabIndex="-1" className={`self-center py-[.4rem] cursor-pointer px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>start</div>
+                    <div onClick={() => {
+                        startTimer()
+                        setShowNavigationHint(true)
+                    }} tabIndex="-1" className={`self-center py-[.4rem] cursor-pointer px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>start</div>
                     <motion.button
-                    animate={{
-                        rotate: 180
-                    }}
-                    transition={{
-                        duration: .5
-                    }}
-                    onClick={() => setPomodoroConfigOpened(true)} className="absolute -right-[3.2rem] text-[1.6rem] p-2 rounded-[0.3rem] cursor-pointer hover:bg-opacity-10 hover:bg-white">
+                        animate={{
+                            rotate: 180
+                        }}
+                        transition={{
+                            duration: .5
+                        }}
+                        onClick={() => setPomodoroConfigOpened(true)} className="absolute -right-[3.2rem] text-[1.6rem] p-2 rounded-[0.3rem] cursor-pointer hover:bg-opacity-10 hover:bg-white"
+                    >
                         <IoSettingsSharp />
                     </motion.button>
                 </div>

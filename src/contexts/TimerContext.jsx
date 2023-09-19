@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import arcadeAlarm from "../assets/alarms/arcade.wav"
 import cartoonAlarm from "../assets/alarms/cartoon.wav"
 import guitarAlarm from "../assets/alarms/guitar.wav"
@@ -18,7 +18,12 @@ export default function TimerContext({ children }) {
     const [longBreakMinutes, setLongBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakMinutes : 15)
     const [shortBreakMinutes, setShortBreakMinutes] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes ? JSON.parse(localStorage.getItem("alarm_settings"))?.shortBreakMinutes : 5)
     const [todayPomodoroMinutes, setTodayPomodoroMinutes] = useState(JSON.parse(localStorage.getItem("daily_pomodoro"))?.minutes ? JSON.parse(localStorage.getItem("daily_pomodoro"))?.minutes : 0)
-
+    const [longBreakInterval, setLongBreakInterval] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakInterval ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakInterval : 4)
+    const [autoStartBreaks, setAutoStartBreaks] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartBreaks ? JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartBreaks : "false")
+    const [autoStartPomodoros, setAutoStartPomodoros] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartPomodoros ? JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartPomodoros : "false")
+    
+    const [showNavigationHint, setShowNavigationHint] = useState(false)
+    
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
     const [isPaused, setIsPaused] = useState(true)
@@ -188,16 +193,20 @@ export default function TimerContext({ children }) {
         
             // if goToBreak() is being called without argument
             default:
+                if (autoStartBreaks === "false") {
+                    pauseTimer()
+                }
+
                 playAlarm()
 
                 setBreakInfo({...breakInfo,
                     isBreak: true,
-                    timerType: breakInfo.totalBreaks >= 3 ? "long_break" : "short_break",
+                    timerType: breakInfo.totalBreaks >= longBreakInterval - 1 ? "long_break" : "short_break",
                     totalBreaks: breakInfo.totalBreaks + 1
                 })
 
-                // after 3 breaks execute a long break
-                if (breakInfo.totalBreaks >= 3) {
+                // after longBreakInterval - 1 breaks execute a long break
+                if (breakInfo.totalBreaks >= longBreakInterval - 1) {
                     setMinutes(longBreakMinutes)
                     setBreakInfo({...breakInfo,
                         isBreak: true,
@@ -212,6 +221,10 @@ export default function TimerContext({ children }) {
     }
 
     const goToPomodoro = (pause) => {
+        if (autoStartPomodoros === "false") {
+            pauseTimer()
+        }
+
         setBreakInfo({...breakInfo,
             isBreak: false,
             timerType: "pomodoro"
@@ -283,8 +296,43 @@ export default function TimerContext({ children }) {
         }
     }
 
+    const customizeLongBreakInterval = (interval) => {
+        if(isNaN(parseInt(interval)) || interval == 0) {
+            return
+        }
+
+        setLongBreakInterval(interval)
+
+        let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
+        newAlarmSettings.longBreakInterval = interval
+
+        localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
+    }
+
+    const customizeAutoStart = (alarmType, condition) => {
+        let newAlarmSettings = JSON.parse(localStorage.getItem("alarm_settings")) ? JSON.parse(localStorage.getItem("alarm_settings")) : {}
+        switch (true) {
+            case (alarmType === "break"):
+                setAutoStartBreaks(condition)
+
+                newAlarmSettings.autoStartBreaks = `${condition}`
+
+                localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
+                break;
+            case (alarmType === "pomodoro"):
+                setAutoStartPomodoros(condition)
+
+                newAlarmSettings.autoStartPomodoros = `${condition}`
+
+                localStorage.setItem("alarm_settings", JSON.stringify(newAlarmSettings))
+                break;
+        }
+    }
+
     // context value
     const value = {
+        showNavigationHint,
+        setShowNavigationHint,
         breakInfo,
         minutes,
         seconds,
@@ -295,6 +343,9 @@ export default function TimerContext({ children }) {
         goToBreak,
         skipTimer,
         customizeTimer,
+        customizeAutoStart,
+        customizeLongBreakInterval,
+        longBreakInterval,
         todayPomodoroMinutes,
         pomodoroMinutes,
         setPomodoroMinutes,

@@ -9,6 +9,7 @@ export default {
       fontFamily : {
         "rubik" : ['Rubik', "sans-serif"],
         "ubuntu" : ['Ubuntu', "sans-serif"],
+        "inter" : ['Inter', "sans-serif"],
       },
       dropShadow: {
         'red-title': '3px 3px 16px rgba(255, 115, 115, 0.6)',
