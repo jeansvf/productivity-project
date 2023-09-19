@@ -11,6 +11,7 @@ const TimerContextProvider = createContext()
 
 const timerWorker = new Worker(new URL("../workers/worker.js", import.meta.url))
 const dbTimerWorker = new Worker(new URL("../workers/db-worker.js", import.meta.url))
+const alarmTimerWorker = new Worker(new URL("../workers/alarm-worker.js"), import.meta.url)
 
 export default function TimerContext({ children }) {
     // set timer minutes to localStorage minutes, if undefined set to default value ("25", "15", "5")
@@ -122,7 +123,7 @@ export default function TimerContext({ children }) {
                 arcade.volume = alarmSettings?.volume ? alarmSettings.volume : .5
                 arcade.play()
                 return;
-        
+
             case "cartoon":
                 let cartoon = new Audio(cartoonAlarm)
                 cartoon.volume = alarmSettings?.volume ? alarmSettings.volume : .5
@@ -238,7 +239,10 @@ export default function TimerContext({ children }) {
             return;
         }
 
-        playAlarm()
+        alarmTimerWorker.postMessage("ring")
+        alarmTimerWorker.onmessage(() => {
+            playAlarm()
+        })
     }
     
     const startTimer = () => {
