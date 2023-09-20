@@ -9,23 +9,23 @@ export default function MusicContext({ children }) {
         url: "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab",
         currentRadio: "lofi hip hop radio 📚 - beats to relax/study to",
         volume: JSON.parse(localStorage.getItem("music_settings"))?.volume ? JSON.parse(localStorage.getItem("music_settings"))?.volume : .5,
-        background: JSON.parse(localStorage.getItem("music_settings"))?.background ? JSON.parse(localStorage.getItem("music_settings"))?.background : "https://i.giphy.com/media/798oH0WDEQnicM4857/giphy.webp"
+        background: JSON.parse(localStorage.getItem("music_settings"))?.background ? JSON.parse(localStorage.getItem("music_settings"))?.background : "gifs/coffe.gif"
     })
 
     const changeBackground = () => {
-        let newBackground = backgrounds[Math.floor(Math.random()*7)]
+        const randomBackground = backgrounds[Math.floor(Math.random()*backgrounds.length)]
 
-        if (newBackground == playerSettings.background) {
+        if (randomBackground == playerSettings.background) {
             changeBackground()
             return
         }
-        
+
         let newMusicSettings = localStorage.getItem("music_settings") ? JSON.parse(localStorage.getItem("music_settings")) : {}
-        newMusicSettings.background = newBackground
-        
+        newMusicSettings.background = randomBackground
+
         localStorage.setItem("music_settings", JSON.stringify(newMusicSettings))
 
-        setPlayerSettings({ ...playerSettings, background: newBackground })
+        setPlayerSettings({ ...playerSettings, background: randomBackground })
     }
 
     const value = {

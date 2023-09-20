@@ -25,10 +25,10 @@ export default function Music() {
         // TODO: compress radio images
         // TODO: fix absolute radiosmenu when resizing
         // TODO: new radios menu hint
+        // TODO: add gifs https://tenor.com/pt-BR/view/lofi-gif-23550450 https://tenor.com/pt-BR/view/rain-gif-24724128 https://tenor.com/view/90s-anime-raining-droplets-aesthetic-gif-17310556
+        // TODO: improve gifs
         
         // TODO: click outside to close radios menu
-        // TODO: improve gifs
-        // TODO: add gifs https://tenor.com/pt-BR/view/lofi-gif-23550450 https://tenor.com/pt-BR/view/rain-gif-24724128 https://tenor.com/view/90s-anime-raining-droplets-aesthetic-gif-17310556 https://steamuserimages-a.akamaihd.net/ugc/806620367840670314/D07C1C650FC5B78893D4E130B045D0ED13CD0132/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false
         // TODO: current radio indicator when opening radios
         // TODO: if selected radio is the same return
         // TODO: check onError and return
@@ -45,7 +45,7 @@ export default function Music() {
 
                 <AnimatePresence>
                     {showHints.radiosMenuHint && !isShowing.radiosMenu ? (
-                        <div className='absolute bottom-0 w-[99%] mb-[3.75rem] max-sm:mb-14 max-sm:w-[98%]'>
+                        <div className='fixed bottom-0 w-[99%] mb-[3.75rem] max-sm:mb-14 max-sm:w-[98%]'>
                             <RadiosMenuHint />
                         </div>
                     ) : null}
