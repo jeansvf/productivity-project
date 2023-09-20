@@ -4,7 +4,7 @@ import { IoSettingsSharp } from "react-icons/io5"
 import { motion } from "framer-motion"
 
 export default function PomodoroTimer({ setPomodoroConfigOpened }) {
-    const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer, setShowNavigationHint } = useTimerContext()
+    const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer } = useTimerContext()
 
     return (
         <motion.div
@@ -39,7 +39,6 @@ export default function PomodoroTimer({ setPomodoroConfigOpened }) {
                 <div className="flex relative items-center">
                     <div onClick={() => {
                         startTimer()
-                        setShowNavigationHint(true)
                     }} tabIndex="-1" className={`self-center py-[.4rem] cursor-pointer px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>start</div>
                     <motion.button
                         animate={{

@@ -12,7 +12,7 @@ export default function AlarmAdvancedSettings() {
     const [longBreakIntervalInputValue, setLongBreakIntervalInputValue] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakInterval ? JSON.parse(localStorage.getItem("alarm_settings"))?.longBreakInterval : 4)
 
     return (
-        <div className="flex items-center mt-7 font-medium text-[17px]">
+        <div className="flex items-center mt-7 font-medium text-[17px] max-md:flex-col">
             <button
                 onClick={() => {
                     let localAutoStartBreaks = JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartBreaks
@@ -21,7 +21,7 @@ export default function AlarmAdvancedSettings() {
                     customizeAutoStart("break", condition)
                     setIsActive({...isActive, break: condition})
                 }}
-                className="flex items-center mr-5"
+                className="flex items-center"
                 type="button"
             >
                 <span className="mr-2">Auto Start Breaks</span>
@@ -36,10 +36,10 @@ export default function AlarmAdvancedSettings() {
                     customizeAutoStart("pomodoro", condition)
                     setIsActive({...isActive, pomodoro: condition})
                 }}
-                className="flex items-center mr-5"
+                className="flex items-center mx-5"
                 type="button"
             >
-                <span className="mr-2">Auto Start Pomodoros</span>
+                <span className="mr-2 max-md:my-3">Auto Start Pomodoros</span>
                 <ToggleSwitch isToggled={isActive.pomodoro} />
             </button>
 

@@ -4,10 +4,10 @@ import { useMusicContext } from "../contexts/MusicContext";
 import LofiPlayer from "../pages/Music/LofiPlayer";
 
 export default function WithNav() {
-    const { isVideoPlaying } = useMusicContext()
+    const { playerSettings } = useMusicContext()
     return (
         <>
-            {isVideoPlaying ? <LofiPlayer /> : null}
+            {playerSettings.isVideoPlaying ? <LofiPlayer /> : null}
             <NavBar />
             <Outlet />
         </>

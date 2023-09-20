@@ -27,8 +27,6 @@ export default function TimerContext({ children }) {
     const [autoStartBreaks, setAutoStartBreaks] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartBreaks ? JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartBreaks : "false")
     const [autoStartPomodoros, setAutoStartPomodoros] = useState(JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartPomodoros ? JSON.parse(localStorage.getItem("alarm_settings"))?.autoStartPomodoros : "false")
     
-    const [showNavigationHint, setShowNavigationHint] = useState(false)
-    
     const [minutes, setMinutes] = useState(pomodoroMinutes)
     const [seconds, setSeconds] = useState(0)
     const [isPaused, setIsPaused] = useState(true)
@@ -342,8 +340,6 @@ export default function TimerContext({ children }) {
 
     // context value
     const value = {
-        showNavigationHint,
-        setShowNavigationHint,
         breakInfo,
         minutes,
         seconds,
