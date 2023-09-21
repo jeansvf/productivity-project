@@ -6,26 +6,28 @@ import { motion } from "framer-motion";
 export default function Radio({ image, text, url, setIsShowing, isShowing, }) {
     const { playerSettings, setPlayerSettings } = useMusicContext()
 
+    const selectRadio = () => {
+        if(url === playerSettings.url) {
+            return
+        }
+
+        setIsShowing({ ...isShowing, radiosMenu: false })
+        setPlayerSettings({ ...playerSettings,
+            url: url,
+            currentRadio: text
+        })
+        
+        let radioSoundEffect = new Audio(radioChange)
+        radioSoundEffect.volume = playerSettings.volume
+        radioSoundEffect.play()
+    }
+
     return (
         <motion.button
             whileHover={{
                 opacity: "75%",
             }}
-            onClick={() => {
-                if(url === playerSettings.url) {
-                    return
-                }
-
-                setIsShowing({ ...isShowing, radiosMenu: false })
-                setPlayerSettings({ ...playerSettings,
-                    url: url,
-                    currentRadio: text
-                })
-                
-                let radioSoundEffect = new Audio(radioChange)
-                radioSoundEffect.volume = playerSettings.volume
-                radioSoundEffect.play()
-            }}
+            onClick={selectRadio}
             className={`relative flex w-full h-[10rem] min-h-[10rem] rounded-xl border-2 my-[.35rem] border-white`}
             style={{ background: `url(${image})`, backgroundSize: "cover", backgroundRepeat: "no-repeat" }}
         >

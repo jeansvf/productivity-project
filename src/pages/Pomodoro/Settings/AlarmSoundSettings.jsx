@@ -70,22 +70,22 @@ export default function AlarmSoundSettings({ setPomodoroConfigOpened }) {
                 <AnimatePresence>
                     {showDropDownMenu ? (
                         <motion.div
-                        initial={{
-                            y: -50,
-                            opacity: 0
-                        }}
-                        animate={{
-                            y: 0,
-                            opacity: 100
-                        }}
-                        exit={{
-                            y: -20,
-                            opacity: 0,
-                            transition:{
-                                duration: .1
-                            }
-                        }}
-                        className="absolute left-0 w-full"
+                            initial={{
+                                y: -50,
+                                opacity: 0
+                            }}
+                            animate={{
+                                y: 0,
+                                opacity: 100
+                            }}
+                            exit={{
+                                y: -20,
+                                opacity: 0,
+                                transition:{
+                                    duration: .1
+                                }
+                            }}
+                            className="absolute left-0 w-full z-50"
                         >
                             <button onClick={() => handleAlarmClick("cartoon")} className={`w-full flex items-center py-1 px-2 text-white bg-[#282828] hover:bg-[#444444]`} type="button">
                                 Cartoon

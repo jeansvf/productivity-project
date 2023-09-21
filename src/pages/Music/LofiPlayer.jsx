@@ -2,7 +2,7 @@ import ReactPlayer from "react-player";
 import { useMusicContext } from "../../contexts/MusicContext";
 
 export default function LofiPlayer() {
-    const { playerSettings } = useMusicContext()
+    const { playerSettings, skipRadio } = useMusicContext()
 
     return (
         <div className='absolute -z-50'>
@@ -11,7 +11,7 @@ export default function LofiPlayer() {
                 playing={playerSettings.isVideoPlaying}
                 volume={playerSettings.volume}
                 url={playerSettings.url}
-                // onError={}
+                onError={skipRadio}
             />
         </div>
     )

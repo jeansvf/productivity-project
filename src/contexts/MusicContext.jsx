@@ -4,13 +4,57 @@ import { backgrounds } from "../pages/Music/backgrounds"
 const MusicContextProvider = createContext()
 
 export default function MusicContext({ children }) {
+    const radios = {
+        coffe_shop: {
+            name: "Coffee Shop Radio ☕ - 24/7 lofi & jazzy hip-hop beats",
+            url: "https://www.youtube.com/watch?v=lP26UCnoH9s&ab_channel=STEEZYASFUCK"
+        },
+        synthwave: {
+            name: "synthwave radio 🌌 - beats to chill/game to",
+            url: "https://www.youtube.com/watch?v=4xDzrJKXOOY&ab_channel=LofiGirl",
+        },
+        lofi_hip_hop: {
+            name: "lofi hip hop radio 📚 - beats to relax/study to",
+            url: "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl",
+        },
+        sleep: {
+            name: "lofi hip hop radio 💤 - beats to sleep/chill to",
+            url: "https://www.youtube.com/watch?v=rUxyKA_-grg&ab_channel=LofiGirl",
+        }
+    }
+
+    const [error, setError] = useState("")
     const [playerSettings, setPlayerSettings] = useState({
         isVideoPlaying: false,
-        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab",
-        currentRadio: "lofi hip hop radio 📚 - beats to relax/study to",
+        url: radios.lofi_hip_hop.url,
+        currentRadio: radios.lofi_hip_hop.name,
         volume: JSON.parse(localStorage.getItem("music_settings"))?.volume ? JSON.parse(localStorage.getItem("music_settings"))?.volume : .5,
-        background: JSON.parse(localStorage.getItem("music_settings"))?.background ? JSON.parse(localStorage.getItem("music_settings"))?.background : "gifs/coffe.gif"
+        background: JSON.parse(localStorage.getItem("music_settings"))?.background ? JSON.parse(localStorage.getItem("music_settings"))?.background : "gifs/coffe.gif",
     })
+
+    const skipRadio = () => {
+        let currentKey = 0
+        let currentRadios = Object.entries(radios)
+        for(let i = 0; i < currentRadios.length; i++) {
+            if(currentRadios[i][1].url == playerSettings.url) {
+                break
+            }
+            currentKey++
+        }
+
+        let randomRadio
+        if(currentKey < 3) {
+            randomRadio = Object.values(radios)[currentKey + 1]
+        } else {
+            randomRadio = Object.values(radios)[0]
+        }
+
+        setPlayerSettings({ ...playerSettings, 
+            currentRadio: randomRadio.name,
+            url: randomRadio.url,
+        })
+        setError("There was an error with the selected radio")
+    }
 
     const changeBackground = () => {
         const randomBackground = backgrounds[Math.floor(Math.random()*backgrounds.length)]
@@ -32,6 +76,10 @@ export default function MusicContext({ children }) {
         playerSettings,
         setPlayerSettings,
         changeBackground,
+        radios,
+        skipRadio,
+        error,
+        setError,
     }
 
     return (
