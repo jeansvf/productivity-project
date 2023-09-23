@@ -19,8 +19,7 @@ export default function CompletedGoal({ goal }) {
                 <p className="font-bold my-[.3rem] bg-transparent">{goal.title}</p>
             </div>
 
-            {/* TODO: remove this id */}
-            <div id="goal-tasks-window" className="pb-24 px-3 overflow-auto">
+            <div className="pb-24 px-3 overflow-auto scrollbar-hidden">
                 {goal?.tasks?.map((task, taskIndex) => (
                     <CompletedTask task={task} key={taskIndex} />
                 ))}

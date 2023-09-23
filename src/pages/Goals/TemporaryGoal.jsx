@@ -100,7 +100,7 @@ export default function temporaryGoal({ getUserGoals, setCreatingTemporaryGoal }
                 </div>
             </div>
             
-            <div id="goal-tasks-window">
+            <div className="overflow-y-auto scrollbar-hidden">
                 {temporaryGoal?.tasks?.map((task, taskIndex) => <TemporaryTask temporaryGoal={temporaryGoal} setTemporaryGoal={setTemporaryGoal} task={task} taskIndex={taskIndex} key={taskIndex} />)}
             </div>
 

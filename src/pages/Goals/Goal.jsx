@@ -211,7 +211,7 @@ export default function Goal({ goals, goal, goalIndex, setGoals, getUserGoals })
                 ) : null}
             </AnimatePresence>
 
-            <div id="goal-tasks-window" className="pb-24 px-3 overflow-auto">
+            <div className="pb-24 px-3 overflow-auto scrollbar-hidden">
                 {goal?.tasks?.map((task, taskIndex) => (
                     <Task setGoals={setGoals} goals={goals} task={task} goalIndex={goalIndex} taskIndex={taskIndex} setGoalError={setGoalError} key={taskIndex} />
                 ))}

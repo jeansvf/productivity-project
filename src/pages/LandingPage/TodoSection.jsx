@@ -15,7 +15,7 @@ export default function TodoSection({ todoImage }) {
             <motion.img
             animate={{
                 opacity: isImgInView ? 1 : 0,
-                x: isImgInView ? 0 : 20,
+                y: isImgInView ? 0 : 20,
             }}
             transition={{
                 ease: "easeInOut",

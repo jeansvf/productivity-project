@@ -2,6 +2,8 @@ import MonthPomodoroStatus from "./MonthPomodoroStatus"
 import GoalsTab from "./GoalsTab"
 import { useEffect } from "react"
 import TodayPomodoroStatus from "./TodayPomodoroStatus"
+import ReleaseNote from "./ReleaseNote"
+import { releaseNotes } from "./release-notes"
 
 export default function Home() {
     const date = new Date()
@@ -17,6 +19,8 @@ export default function Home() {
             localStorage.setItem("daily_pomodoro", JSON.stringify({ date: currentDate, minutes: 0 }))
             return
         }
+
+        
     }, [])
 
     const getNumberSuffix = (number) => {
@@ -47,6 +51,12 @@ export default function Home() {
                     <p className="text-[#EBFF71] text-2xl">"quote of the day"&nbsp;</p>
                     <p className="text-2xl">- author</p>
                 </div> */}
+
+                <div className="flex flex-col w-full justify-start mt-20 overflow-y-auto h-[74vh] scrollbar-hidden">
+                    {releaseNotes.map((releaseNote) => (
+                        <ReleaseNote releaseNote={releaseNote} key={releaseNote.version} />
+                    ))}
+                </div>
             </div>
 
             <GoalsTab />

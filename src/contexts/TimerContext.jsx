@@ -228,6 +228,7 @@ export default function TimerContext({ children }) {
 
     const goToPomodoro = (pause) => {
         if (autoStartPomodoros === "false") {
+            setSeconds(0)
             pauseTimer()
         }
 
@@ -338,7 +339,6 @@ export default function TimerContext({ children }) {
         }
     }
 
-    // context value
     const value = {
         breakInfo,
         minutes,
@@ -368,5 +368,4 @@ export default function TimerContext({ children }) {
     )
 }
 
-// timer context hook
 export const useTimerContext = () => useContext(TimerContextProvider);

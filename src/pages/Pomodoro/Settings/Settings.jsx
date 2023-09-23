@@ -54,7 +54,6 @@ export default function Settings({ setPomodoroConfigOpened }) {
         }
 
         if (newMinutes < 100 && newMinutes.toString().length < 3) {
-            console.log(newMinutes)
             addAlarmMinutesToLocalStorage(selectedTimer, newMinutes)
             customizeTimer(selectedTimer, newMinutes)
         }

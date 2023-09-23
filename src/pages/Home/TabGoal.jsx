@@ -22,8 +22,7 @@ export default function TabGoal({ goal }) {
         <div className="flex flex-col w-full h-52 border-[1px] border-white rounded-md my-3">
             <p className="text-[.92rem] font-bold ml-2 mt-1">{goal.title}</p>
 
-            {/* TODO: remove this id */}
-            <div id="goal-tasks-window" className="overflow-y-auto">
+            <div className="overflow-y-auto scrollbar-hidden">
                 {goal.tasks.map((task, taskIndex) => <TabGoalTask taskContent={task.taskContent} isComplete={task.isComplete} key={taskIndex} />)}
             </div>
 
