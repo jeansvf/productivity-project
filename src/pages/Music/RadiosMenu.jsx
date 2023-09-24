@@ -6,8 +6,9 @@ import synthwave from '../../assets/radios/synthwave-radio.gif'
 import { motion } from 'framer-motion'
 import { useMusicContext } from '../../contexts/MusicContext'
 
-export default function RadiosMenu({ isShowing, setIsShowing, radiosMenuRef }) {
+export default function RadiosMenu({ radiosMenuRef }) {
     const { radios } = useMusicContext()
+    const { isShowing, setIsShowing } = useMusicContext()
 
     return (
         <motion.div

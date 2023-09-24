@@ -6,8 +6,8 @@ import { FaImages } from "react-icons/fa";
 import { PiRadio } from "react-icons/pi";
 import { IoMdClose } from "react-icons/io";
 
-export default function PlayerControls({ isShowing, setIsShowing }) {
-    const { playerSettings, setPlayerSettings, changeBackground, error, setError } = useMusicContext()
+export default function PlayerControls() {
+    const { playerSettings, setPlayerSettings, changeBackground, error, setError, isShowing, setIsShowing } = useMusicContext()
 
     const changeVolume = (volume) => {
         let newMusicSettings = localStorage.getItem("music_settings") ? JSON.parse(localStorage.getItem("music_settings")) : {}

@@ -1,20 +1,12 @@
 import PlayerControls from './PlayerControls'
-import { useMusicContext } from '../../contexts/MusicContext'
 import { BiLinkExternal } from 'react-icons/bi'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import RadiosMenu from './RadiosMenu'
 import { AnimatePresence } from 'framer-motion'
-import RadiosMenuHint from './RadiosMenuHint'
-import { useHintsContext } from '../../contexts/HintsContext'
+import { useMusicContext } from '../../contexts/MusicContext'
 
 export default function Music() {
-    const { playerSettings } = useMusicContext()
-    const { showHints } = useHintsContext()
-
-    const [isShowing, setIsShowing] = useState({
-        volumeInput: false,
-        radiosMenu: false,
-    })
+    const { isShowing, setIsShowing, playerSettings } = useMusicContext()
 
     const radiosMenuRef = useRef(null)
 
@@ -35,18 +27,10 @@ export default function Music() {
             </div>
 
             <AnimatePresence>
-                {showHints.radiosMenuHint && !isShowing.radiosMenu ? (
-                    <div className='fixed bottom-0 w-[99%] mb-[3.75rem] max-sm:mb-14 max-sm:w-[98%]'>
-                        <RadiosMenuHint />
-                    </div>
-                ) : null}
+                {isShowing.radiosMenu ? <RadiosMenu radiosMenuRef={radiosMenuRef} />: null}
             </AnimatePresence>
 
-            <AnimatePresence>
-                {isShowing.radiosMenu ? <RadiosMenu isShowing={isShowing} setIsShowing={setIsShowing} radiosMenuRef={radiosMenuRef} />: null}
-            </AnimatePresence>
-
-            <PlayerControls isShowing={isShowing} setIsShowing={setIsShowing} />
+            <PlayerControls />
         </main>
     )
 }

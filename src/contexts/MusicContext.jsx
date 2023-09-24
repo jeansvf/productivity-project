@@ -31,6 +31,10 @@ export default function MusicContext({ children }) {
         volume: JSON.parse(localStorage.getItem("music_settings"))?.volume ? JSON.parse(localStorage.getItem("music_settings"))?.volume : .5,
         background: JSON.parse(localStorage.getItem("music_settings"))?.background ? JSON.parse(localStorage.getItem("music_settings"))?.background : "gifs/coffe.gif",
     })
+    const [isShowing, setIsShowing] = useState({
+        volumeInput: false,
+        radiosMenu: false,
+    })
 
     const skipRadio = () => {
         let currentKey = 0
@@ -80,6 +84,8 @@ export default function MusicContext({ children }) {
         skipRadio,
         error,
         setError,
+        isShowing,
+        setIsShowing,
     }
 
     return (
