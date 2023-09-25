@@ -76,6 +76,15 @@ export default function MusicContext({ children }) {
         setPlayerSettings({ ...playerSettings, background: randomBackground })
     }
 
+    const changeVolume = (volume) => {
+        let newMusicSettings = localStorage.getItem("music_settings") ? JSON.parse(localStorage.getItem("music_settings")) : {}
+        newMusicSettings.volume = parseFloat(volume)
+
+        localStorage.setItem("music_settings", JSON.stringify(newMusicSettings))
+        
+        setPlayerSettings({ ...playerSettings, volume: parseFloat(volume) })
+    }
+
     const value = {
         playerSettings,
         setPlayerSettings,
@@ -86,6 +95,7 @@ export default function MusicContext({ children }) {
         setError,
         isShowing,
         setIsShowing,
+        changeVolume,
     }
 
     return (

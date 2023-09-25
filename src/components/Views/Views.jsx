@@ -1,8 +1,10 @@
 import { useLocation } from "react-router-dom";
-import PomodoroView from "./PomodoroView";
+import PomodoroView from "./PomodoroView/PomodoroView";
 import { AnimatePresence } from "framer-motion";
 import { useHintsContext } from "../../contexts/HintsContext";
-import DisableViewsHint from "./DisableViewsHint";
+import DisableViewsHint from "./PomodoroView/DisableViewsHint";
+import MusicView from "./MusicView/MusicView";
+
 
 export default function Views() {
     const location = useLocation()
@@ -15,9 +17,15 @@ export default function Views() {
                     <PomodoroView />
                 ) : null}
             </AnimatePresence>
-            
+
             <AnimatePresence>
-                {showHints.disableViewsHint === true && !views.pomodoroView ? (
+                {views.musicView && location.pathname !== "/music" ? (
+                    <MusicView />
+                ) : null}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showHints.disableViewsHint === true ? (
                     <DisableViewsHint />
                 ) : null}
             </AnimatePresence>

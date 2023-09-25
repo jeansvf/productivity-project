@@ -1,8 +1,8 @@
-import { useTimerContext }  from "../../contexts/TimerContext"
+import { useTimerContext }  from "../../../contexts/TimerContext"
 import { IoMdClose } from "react-icons/io"
 import { BsPauseFill, BsPlayFill } from "react-icons/bs"
 import { motion } from "framer-motion"
-import { useHintsContext } from "../../contexts/HintsContext"
+import { useHintsContext } from "../../../contexts/HintsContext"
 
 export default function PomodoroView() {
     const { minutes, seconds, isPaused, startTimer, pauseTimer } = useTimerContext()
@@ -16,7 +16,7 @@ export default function PomodoroView() {
             animate={{
                 x: 0,
                 transition: {
-                    delay: .4,
+                    delay: .2,
                     duration: 1,
                     ease: "circOut",
                 }
