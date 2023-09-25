@@ -6,7 +6,7 @@ export default function RadiosMenuHint() {
     const { showHints, setShowHints } = useHintsContext()
 
     const disableRadiosMenuHint = () => {
-        let currentHints = JSON.parse(localStorage.getItem("hints"))?.radiosMenuHint ? JSON.parse(localStorage.getItem("hints"))?.radiosMenuHint : {}
+        let currentHints = JSON.parse(localStorage.getItem("hints")) ? JSON.parse(localStorage.getItem("hints")) : {}
         currentHints.radiosMenuHint = false
 
         localStorage.setItem("hints", JSON.stringify(currentHints))

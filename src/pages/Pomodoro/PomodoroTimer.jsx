@@ -2,9 +2,11 @@ import { useTimerContext } from "../../contexts/TimerContext"
 import { TbPlayerSkipForwardFilled } from "react-icons/tb"
 import { IoSettingsSharp } from "react-icons/io5"
 import { motion } from "framer-motion"
+import { useHintsContext } from "../../contexts/HintsContext"
 
 export default function PomodoroTimer({ setPomodoroConfigOpened }) {
     const { breakInfo, minutes, seconds, isPaused, startTimer, pauseTimer, goToPomodoro, goToBreak, skipTimer } = useTimerContext()
+    const { views, setViews } = useHintsContext()
 
     return (
         <motion.div
@@ -39,6 +41,7 @@ export default function PomodoroTimer({ setPomodoroConfigOpened }) {
                 <div className="flex relative items-center">
                     <div onClick={() => {
                         startTimer()
+                        setViews({ ...views, pomodoroView: true})
                     }} tabIndex="-1" className={`self-center py-[.4rem] cursor-pointer px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>start</div>
                     <motion.button
                         animate={{
@@ -54,7 +57,10 @@ export default function PomodoroTimer({ setPomodoroConfigOpened }) {
                 </div>
                     ) : (
                 <div className="flex relative items-center">
-                    <div onClick={() => pauseTimer()} tabIndex="-1" className={`py-[.4rem] cursor-pointer outline-none px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>pause</div>
+                    <div onClick={() => {
+                        pauseTimer()
+                        setViews({ ...views, pomodoroView: false })
+                    }} tabIndex="-1" className={`py-[.4rem] cursor-pointer outline-none px-8 rounded-md text-2xl text-black font-normal hover:opacity-80 ${breakInfo.timerType == "pomodoro" ? "bg-[#FF7373]" : breakInfo.timerType == "short_break" ? "bg-[#8CFB8A]" : "bg-[#fff082]"}`}>pause</div>
                     <motion.button onClick={() => skipTimer()} className="absolute -right-[3.2rem] text-[1.7rem] p-2 rounded-[.3rem] cursor-pointer hover:bg-opacity-10 hover:bg-white">
                         <TbPlayerSkipForwardFilled />
                     </motion.button>

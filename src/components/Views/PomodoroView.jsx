@@ -4,9 +4,9 @@ import { BsPauseFill, BsPlayFill } from "react-icons/bs"
 import { motion } from "framer-motion"
 import { useHintsContext } from "../../contexts/HintsContext"
 
-export default function PomodoroView({ views, setViews }) {
+export default function PomodoroView() {
     const { minutes, seconds, isPaused, startTimer, pauseTimer } = useTimerContext()
-    const { setShowHints, showHints } = useHintsContext()
+    const { setShowHints, showHints, views, setViews } = useHintsContext()
 
     return (
         <motion.div
@@ -34,7 +34,7 @@ export default function PomodoroView({ views, setViews }) {
             <button
                 onClick={() => {
                     setViews({ ...views, pomodoroView: false })
-                    showHints.disableViewsHint ? setShowHints({ ...showHints, disableViewsHint: true }) : null
+                    showHints.disableViewsHint === "disabled" ? null : setShowHints({ ...showHints, disableViewsHint: true })
                 }}
                 className="ml-12 mr-1.5 text-2xl hover:bg-opacity-10 hover:bg-white"
                 type="button"
