@@ -1,20 +1,11 @@
 import { useEffect, useRef, useState } from "react"
-import { doc, updateDoc } from "firebase/firestore"
-import { auth, db } from "../../firebase-config"
-import { useNavigate } from "react-router-dom"
-import { useProfileContext } from "../../contexts/ProfileContext"
+import { useProfileContext } from "../../../contexts/ProfileContext"
 import { motion } from "framer-motion"
 import ReactSlider from "react-slider"
-import { useAuthState } from "react-firebase-hooks/auth"
 
-export default function Settings() {
-    const { userInfo, getUserInfo } = useProfileContext()
-    
-    const [hours, setHours] = useState()
-    const navigate = useNavigate()
-
-    const [user] = useAuthState(auth)
-
+export default function InitialHours() {
+    const { userInfo } = useProfileContext()
+    const [hours, setHours] = useState(0)
     const sliderRef = useRef()
     
     useEffect(() => {
@@ -36,20 +27,7 @@ export default function Settings() {
         let newUserInfo = structuredClone(userInfo)
         setHours(newUserInfo.plannedHours)
     }, [userInfo])
-
-    const setNewPlannedHours = () => {
-        if (hours == undefined || isNaN(hours)) {
-            return
-        }
-
-        updateDoc(doc(db, `users/${user.uid}`), {
-            plannedHours: hours
-        })
-        .then(() => {
-            getUserInfo()
-            navigate('/profile')
-        })
-    }
+    
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center items-center flex-col w-full h-screen text-white text-center font-semibold">
             <h1 className="text-5xl flex justify-center items-center flex-col max-sm:text-4xl">Hey! Welcome to&nbsp;<p className="text-[#FF7373]">Focusplace<span className="text-white">.</span>&nbsp;</p></h1>

@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore"
 import { useContext, useEffect, useState } from "react"
 import { createContext } from "react"
 import { db, auth } from "../firebase-config"
@@ -17,7 +17,6 @@ export default function profileContext({ children }) {
     const [studiedTime, setStudiedTime] = useState(0)
 
     const [userInfo, setUserInfo] = useState({})
-    
     const [user] = useAuthState(auth)
     
     const currentDate = new Date()
@@ -114,6 +113,19 @@ export default function profileContext({ children }) {
         return `${year}, ${month}`
     }
 
+    const setNewPlannedHours = (hours) => {
+        if (hours == undefined || hours == userInfo.plannedHours || isNaN(hours)) {
+            return
+        }
+
+        updateDoc(doc(db, `users/${user.uid}`), {
+            plannedHours: hours
+        })
+        .then(() => {
+            getUserInfo()
+        })
+    }
+
     const value = {
         userInfo,
         getUserInfo,
@@ -124,7 +136,8 @@ export default function profileContext({ children }) {
         studiedTime,
         dates,
         currentMonthPomodoroMinutes,
-        setCurrentMonthPomodoroMinutes
+        setCurrentMonthPomodoroMinutes,
+        setNewPlannedHours,
     }
     return (
         <ProfileContextProvider.Provider value={value}>
