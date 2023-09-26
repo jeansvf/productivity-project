@@ -3,15 +3,20 @@ import ToggleSwitch from "../../Pomodoro/Settings/ToggleSwitch"
 import { useState } from "react"
 import { useRef } from "react"
 import { useProfileContext } from "../../../contexts/ProfileContext"
+import { useHintsContext } from "../../../contexts/HintsContext"
 import { useEffect } from "react"
 
 export default function Settings() {
     const { userInfo, setNewPlannedHours } = useProfileContext()
+    const { views, setViews } = useHintsContext()
     const sliderRef = useRef(null)
 
     const [sliderSettings, setSliderSettings] = useState({
         hours: 0,
-        showSlider: false
+        showSlider: false,
+
+        isPomodoroSwitchOn: JSON.parse(localStorage.getItem("views"))?.hidePomodoroView ? JSON.parse(localStorage.getItem("views")).hidePomodoroView : false ,
+        isMusicSwitchOn: JSON.parse(localStorage.getItem("views"))?.hideMusicView ? JSON.parse(localStorage.getItem("views")).hideMusicView : false ,
     })
 
     useEffect(() => {
@@ -38,13 +43,33 @@ export default function Settings() {
         <div className="w-full h-[23rem] mx-auto">
             <div className="pl-16">
                 <h3 className="font-bold text-5xl mb-4">Views</h3>
-                <button className="flex items-center font-medium text-lg" type="button">
-                    <span className="mr-2 mb-2">Show Pomodoro View</span>
-                    <ToggleSwitch />
+                <button
+                    onClick={() => {
+                        setSliderSettings({ ...sliderSettings, isPomodoroSwitchOn: !sliderSettings.isPomodoroSwitchOn })
+                        setViews({ ...views, hidePomodoroView: !sliderSettings.isPomodoroSwitchOn })
+                        let newViews = JSON.parse(localStorage.getItem("views")) ? JSON.parse(localStorage.getItem("views")) : {}
+                        newViews.hidePomodoroView = !sliderSettings.isPomodoroSwitchOn
+                        localStorage.setItem("views", JSON.stringify(newViews))
+                    }}
+                    className="flex items-center mb-2 font-medium text-lg"
+                    type="button"
+                >
+                    <span className="mr-2">Hide Pomodoro View</span>
+                    <ToggleSwitch isToggled={sliderSettings.isPomodoroSwitchOn} />
                 </button>
-                <button className="flex items-center font-medium text-lg mb-16" type="button">
-                    <span className="mr-2">Show Music View</span>
-                    <ToggleSwitch />
+                <button
+                    onClick={() => {
+                        setSliderSettings({ ...sliderSettings, isMusicSwitchOn: !sliderSettings.isMusicSwitchOn })
+                        setViews({ ...views, hideMusicView: !sliderSettings.isMusicSwitchOn })
+                        let newViews = JSON.parse(localStorage.getItem("views")) ? JSON.parse(localStorage.getItem("views")) : {}
+                        newViews.hideMusicView = !sliderSettings.isMusicSwitchOn
+                        localStorage.setItem("views", JSON.stringify(newViews))
+                    }}
+                    className="flex items-center font-medium text-lg mb-16"
+                    type="button"
+                >
+                    <span className="mr-2">Hide Music View</span>
+                    <ToggleSwitch isToggled={sliderSettings.isMusicSwitchOn} />
                 </button>
                 
                 <h3 className="font-bold text-5xl mb-4">Pomodoro</h3>

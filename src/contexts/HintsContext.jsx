@@ -12,6 +12,8 @@ export default function HintsContext({ children }) {
     const [views, setViews] = useState({
         pomodoroView: false,
         musicView: false,
+        hidePomodoroView: JSON.parse(localStorage.getItem("views"))?.hidePomodoroView ? JSON.parse(localStorage.getItem("views"))?.hidePomodoroView : false,
+        hideMusicView: JSON.parse(localStorage.getItem("views"))?.hideMusicView ? JSON.parse(localStorage.getItem("views"))?.hideMusicView : false,
     })
 
     const value = {

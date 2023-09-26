@@ -13,13 +13,13 @@ export default function Views() {
     return (
         <div className="fixed z-50 right-0 bottom-0 mb-6 mr-6 flex flex-col items-end text-white">
             <AnimatePresence>
-                {views.pomodoroView && location.pathname !== "/pomodoro" ? (
+                {views.pomodoroView === true && views.hidePomodoroView === false && location.pathname !== "/pomodoro" ? (
                     <PomodoroView />
                 ) : null}
             </AnimatePresence>
 
             <AnimatePresence>
-                {views.musicView && location.pathname !== "/music" ? (
+                {views.musicView === true && views.hideMusicView === false && location.pathname !== "/music" ? (
                     <MusicView />
                 ) : null}
             </AnimatePresence>
