@@ -3,7 +3,7 @@ import { BsGithub } from "react-icons/bs";
 
 export default function ReleaseNote({ releaseNote }) {
     return (
-        <div className="w-[27.5rem] mb-10 py-1.5 px-3 border rounded-lg border-white bg-gradient-to-br from-[#2E2E2E] to-[#33333300]">
+        <div className="w-[27.5rem] mb-10 py-1.5 px-3 border rounded-lg border-white bg-gradient-to-br from-[#2E2E2E] to-[#33333300] max-sm:w-[90%]">
             <p className="opacity-50">{releaseNote.date}</p>
             <p className="font-semibold text-3xl mt-0.5"><span className="text-[#FF7373]">Focusplace</span> {releaseNote.version}</p>
             <hr className="w-full mx-auto opacity-50 my-2" />

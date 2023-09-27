@@ -52,7 +52,7 @@ export default function Home() {
                     <p className="text-2xl">- author</p>
                 </div> */}
 
-                <div className="flex flex-col w-full justify-start mt-20 overflow-y-auto h-[74vh] scrollbar-hidden">
+                <div className="flex flex-col items-center w-full justify-start mt-20 overflow-y-auto h-[74vh] scrollbar-hidden">
                     {releaseNotes.map((releaseNote) => (
                         <ReleaseNote releaseNote={releaseNote} key={releaseNote.version} />
                     ))}
