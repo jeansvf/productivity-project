@@ -1,19 +1,22 @@
-import ReactSlider from "react-slider"
 import ToggleSwitch from "../../Pomodoro/Settings/ToggleSwitch"
 import { useState } from "react"
 import { useRef } from "react"
 import { useProfileContext } from "../../../contexts/ProfileContext"
 import { useHintsContext } from "../../../contexts/HintsContext"
 import { useEffect } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import PomodoroHoursSlider from "./PomodoroSlider"
+import ConfigureTimeText from "./ConfigureTimeText"
 
-export default function Settings() {
-    const { userInfo, setNewPlannedHours } = useProfileContext()
+export default function Settings({ xl }) {
+    const { userInfo, getUserInfo } = useProfileContext()
     const { views, setViews } = useHintsContext()
     const sliderRef = useRef(null)
 
     const [sliderSettings, setSliderSettings] = useState({
         hours: 0,
         showSlider: false,
+        isLoading: false,
 
         isPomodoroSwitchOn: JSON.parse(localStorage.getItem("views"))?.hidePomodoroView ? JSON.parse(localStorage.getItem("views")).hidePomodoroView : false ,
         isMusicSwitchOn: JSON.parse(localStorage.getItem("views"))?.hideMusicView ? JSON.parse(localStorage.getItem("views")).hideMusicView : false ,
@@ -39,9 +42,35 @@ export default function Settings() {
         setSliderSettings({ ...sliderSettings, hours: newUserInfo.plannedHours })
     }, [userInfo])
 
+    // CONTINUE: create components
+    
     return (
-        <div className="w-full h-[23rem] mx-auto">
-            <div className="pl-16">
+        <motion.div
+            initial={{
+                opacity: 0,
+                translateY: "50%",
+                translateX: xl ? "40%" : "100%",
+            }}
+            animate={{
+                opacity: 1,
+                transition: {
+                    delay: .5
+                }
+            }}
+            exit={{
+                opacity: 0,
+                transition: {
+                    delay: 0,
+                    duration: .1
+                }
+            }}
+            transition={{
+                duration: .1,
+            }}
+            className="absolute top-0 right-1/2 w-[21rem] h-[23rem] max-xl:top-[38rem] max-sm:top-[44rem]"
+            style={{ translateX: xl ? "40%" : "100%" }}
+        >
+            <div className="pl-16 max-xl:flex max-xl:flex-col max-xl:items-center max-xl:text-center">
                 <h3 className="font-bold text-5xl mb-4">Views</h3>
                 <button
                     onClick={() => {
@@ -73,26 +102,19 @@ export default function Settings() {
                 </button>
                 
                 <h3 className="font-bold text-5xl mb-4">Pomodoro</h3>
-
-                {!sliderSettings.showSlider ? (
-                    <div className="flex items-center">
-                        <p className="text-lg font-medium mr-3.5">Study Time Goal</p>
-                        <button onClick={() => setSliderSettings({ ...sliderSettings, showSlider: true })} type="button" className="px-3.5 py-1.5 rounded-md text-lg font-medium bg-[#717171] hover:opacity-80">Configure</button>
-                    </div>
-                ) : null}
-
-                {/* TODO: add animation when opening slider */}
-
-                {sliderSettings.showSlider ? (
-                    <>
-                        <p className="text-lg font-medium">How much time do you plan to study per day?</p>
-                        <ReactSlider ref={sliderRef} className="settings-slider w-[30rem] mt-8" onChange={(value) => setSliderSettings({ ...sliderSettings, hours: value })} value={sliderSettings.hours} min={1} max={12} />
-                        <button onClick={() => setNewPlannedHours(sliderSettings.hours)} type="button" className="px-4 py-1.5 rounded-md text-lg font-medium bg-[#FF7373] hover:opacity-80">Confirm</button>
-                        {/* TODO: make a loading when clicking confirm button and close it after */}
-                        <button onClick={() => setSliderSettings({ ...sliderSettings, showSlider: false })} className="underline opacity-80 ml-3" type="button">Cancel</button>
-                    </>
-                ) : null}
+                <div className="relative flex flex-col w-full items-center">
+                    <AnimatePresence>
+                        {!sliderSettings.showSlider ? (
+                            <ConfigureTimeText setSliderSettings={setSliderSettings} sliderSettings={sliderSettings} />
+                        ) : null}
+                    </AnimatePresence>
+                    <AnimatePresence>
+                        {sliderSettings.showSlider ? (
+                            <PomodoroHoursSlider sliderSettings={sliderSettings} setSliderSettings={setSliderSettings} sliderRef={sliderRef}  />
+                        ) : null}
+                    </AnimatePresence>
+                </div>
             </div>
-        </div>
+        </motion.div>
     )
 }

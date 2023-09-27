@@ -113,19 +113,6 @@ export default function profileContext({ children }) {
         return `${year}, ${month}`
     }
 
-    const setNewPlannedHours = (hours) => {
-        if (hours == undefined || hours == userInfo.plannedHours || isNaN(hours)) {
-            return
-        }
-
-        updateDoc(doc(db, `users/${user.uid}`), {
-            plannedHours: hours
-        })
-        .then(() => {
-            getUserInfo()
-        })
-    }
-
     const value = {
         userInfo,
         getUserInfo,
@@ -137,7 +124,6 @@ export default function profileContext({ children }) {
         dates,
         currentMonthPomodoroMinutes,
         setCurrentMonthPomodoroMinutes,
-        setNewPlannedHours,
     }
     return (
         <ProfileContextProvider.Provider value={value}>
