@@ -23,7 +23,9 @@ export default function LandingPage() {
 
     useEffect(() => {
         window.addEventListener("scroll", () => {
-            window.scrollY > 300 ? setShowBackToTopButton(true) : setShowBackToTopButton(false)
+            window.scrollY > 300
+                ? setShowBackToTopButton(true)
+                : setShowBackToTopButton(false)
         })
     }, [])
 
@@ -31,14 +33,25 @@ export default function LandingPage() {
         <main className="flex flex-col w-full h-full bg-gradient-to-tr from-[#323232] to-[#131313] overflow-x-clip overflow-y-clip">
             <AnimatePresence>
                 {showBackToTopButton ? (
-                    <motion.span initial={{ y: 70 }} animate={{ y: 0 }} exit={{ y: 90 }} onClick={() => window.scrollTo({ top: 0 , behavior: "smooth"})} className="flex justify-center items-center fixed w-11 h-11 max-w-12 max-h-12 bottom-8 right-8 z-20 cursor-pointer bg-white rounded-full text-black text-4xl">
+                    <motion.span
+                        initial={{ y: 70 }}
+                        animate={{ y: 0 }}
+                        exit={{ y: 90 }}
+                        onClick={() =>
+                            window.scrollTo({ top: 0, behavior: "smooth" })
+                        }
+                        className="flex justify-center items-center fixed w-11 h-11 max-w-12 max-h-12 bottom-8 right-8 z-20 cursor-pointer bg-white rounded-full text-black text-4xl"
+                    >
                         <IoIosArrowUp className="mb-0.5" />
                     </motion.span>
                 ) : null}
             </AnimatePresence>
 
-            
-            <MainSection pomodoroImage={pomodoroImage} setIsHovering={setIsHovering} isHovering={isHovering} />
+            <MainSection
+                pomodoroImage={pomodoroImage}
+                setIsHovering={setIsHovering}
+                isHovering={isHovering}
+            />
 
             <hr className="w-[80%] mx-auto opacity-20" />
             <LofiSection musicImage={musicImage} />
@@ -46,8 +59,11 @@ export default function LandingPage() {
             <GoalsSection goalsImage={goalsImage} />
             <hr className="w-[80%] mx-auto opacity-20" />
             <TodoSection todoImage={todoImage} />
-            
-            <Footer setShowFeedbackForm={setShowFeedbackForm} showFeedbackForm={showFeedbackForm} />
+
+            <Footer
+                setShowFeedbackForm={setShowFeedbackForm}
+                showFeedbackForm={showFeedbackForm}
+            />
         </main>
     )
 }
