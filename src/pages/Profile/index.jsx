@@ -2,7 +2,7 @@ import {signOut} from "firebase/auth"
 import PomodoroChart from "./PomodoroChart"
 import UserInfo from "./UserInfo"
 import {auth} from "../../firebase-config"
-import {useState} from "react"
+import {useRef, useState} from "react"
 import Settings from "./Settings/Settings"
 import {AnimatePresence, circOut, motion} from "framer-motion"
 import {useMediaQuery} from "@mui/material"
@@ -10,6 +10,7 @@ import {useMediaQuery} from "@mui/material"
 export default function Profile() {
     const [showSettings, setShowSettings] = useState(false)
     const xl = useMediaQuery("(max-width: 1279px)")
+    const settingsRef = useRef(null)
 
     return (
         <main className="relative flex w-full pt-36 bg-[#393939] items-center text-white max-xl:flex-col max-sm:pb-[30rem]">
@@ -31,7 +32,16 @@ export default function Profile() {
                 <PomodoroChart />
                 <div className="flex items-center mt-3 text-[#bfbfbf] underline max-xl:mb-4">
                     <button
-                        onClick={() => setShowSettings(!showSettings)}
+                        onClick={() => {
+                            setShowSettings(!showSettings)
+                            xl
+                                ? setTimeout(() => {
+                                      settingsRef.current.scrollIntoView({
+                                          behavior: "smooth",
+                                      })
+                                  }, 400)
+                                : null
+                        }}
                         className="mr-4 cursor-pointer hover:text-white"
                         type="button"
                     >
@@ -67,7 +77,7 @@ export default function Profile() {
                             transition={{delay: 0.2}}
                             className="absolute left-1/2 top-24 w-[1px] h-[50rem] mt-5 bg-white max-xl:h-[1px] max-xl:mx-auto max-xl:w-[86vw] max-xl:static max-xl:mt-[35rem] max-sm:mt-[42rem]"
                         ></motion.div>
-                        <Settings xl={xl} />
+                        <Settings xl={xl} settingsRef={settingsRef} />
                     </>
                 ) : null}
             </AnimatePresence>
